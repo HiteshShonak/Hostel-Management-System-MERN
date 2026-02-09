@@ -1,0 +1,32 @@
+{
+  "expo": {
+    "name": "Smart Hostel",
+    "slug": "hms-mobile",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.webp",
+    "scheme": "hostelhub",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "jsEngine": "hermes",
+    "splash": {
+      "backgroundColor": "#1d4ed8"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.hostelhub.app"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/icon.webp",
+        "backgroundColor": "#1d4ed8"
+      },
+      "package": "com.hostelhub.app"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-barcode-scanner",
+      "expo-notifications"
+    ]
+  }
+}

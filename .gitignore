@@ -1,0 +1,36 @@
+# Root level gitignore for HMS-Mobile
+
+# Dependencies
+node_modules/
+
+# Environment files
+.env
+.env*.local
+
+# Logs
+*.log
+logs/
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor directories
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Build output
+dist/
+build/
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+
+Documentation.md

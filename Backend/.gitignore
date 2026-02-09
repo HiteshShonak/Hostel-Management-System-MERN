@@ -1,0 +1,64 @@
+# Dependencies
+node_modules/
+package-lock.json
+yarn.lock
+
+# Build output
+dist/
+build/
+*.tsbuildinfo
+
+# Environment variables
+.env
+.env*.local
+.env.development
+.env.production
+.env.test
+
+# Logs
+*.log
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+logs/
+*.log.*
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor directories
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.classpath
+.settings/
+
+# Testing
+coverage/
+.nyc_output/
+*.lcov
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Database files (if using SQLite during development)
+*.sqlite
+*.sqlite3
+*.db
+
+# Uploads/Generated files
+uploads/
+public/uploads/
+
+# Redis dumps
+dump.rdb
+
+# PM2
+.pm2/
