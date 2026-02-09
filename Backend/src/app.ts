@@ -16,6 +16,8 @@ import routes from './routes';
 
 const app = express();
 
+app.set('trust proxy', 1);
+
 // Gzip compression for all responses (25-40% size reduction)
 app.use(compression());
 
@@ -23,13 +25,17 @@ app.use(compression());
 app.use(helmet());
 
 // Enable CORS
-const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',') || ['http://localhost:19006', 'http://localhost:8081'];
+const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',').map(o => o.trim()) || [];
 app.use(cors({
     origin: (origin, callback) => {
         // Allow requests with no origin (mobile apps, Postman, etc.)
         if (!origin) return callback(null, true);
 
-        if (allowedOrigins.includes(origin)) {
+        // Allow all localhost variations (localhost, 127.0.0.1, any port)
+        const isLocalhost = origin.includes('localhost') || origin.includes('127.0.0.1');
+
+        // Allow if origin is in whitelist OR is localhost (for development)
+        if (allowedOrigins.includes(origin) || isLocalhost) {
             callback(null, true);
         } else {
             callback(new Error('Not allowed by CORS'));
@@ -37,6 +43,7 @@ app.use(cors({
     },
     credentials: true,
 }));
+
 
 // Request logging (dev mode only)
 if (process.env.NODE_ENV === 'development') {

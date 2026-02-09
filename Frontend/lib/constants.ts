@@ -10,11 +10,12 @@
 import Constants from 'expo-constants';
 
 export const API_BASE_URL =
-    process.env.EXPO_PUBLIC_API_URL
-    ||'http://10.255.12.130:5000/api' ||
-    Constants.expoConfig?.extra?.apiUrl
+    process.env.EXPO_PUBLIC_API_URL ||
+    Constants.expoConfig?.extra?.apiUrl ||
+    'http://localhost:5000/api'; // Final fallback for development
 
-    
+
+
 
 // Request timeout in milliseconds
 export const API_TIMEOUT = 15000;

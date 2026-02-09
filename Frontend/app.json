@@ -4,9 +4,13 @@
     "slug": "hms-mobile",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.webp",
+    "icon": "./assets/icon.png",
     "scheme": "hostelhub",
     "userInterfaceStyle": "automatic",
+    "platforms": [
+      "ios",
+      "android"
+    ],
     "newArchEnabled": true,
     "jsEngine": "hermes",
     "splash": {
@@ -18,15 +22,24 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/icon.webp",
+        "foregroundImage": "./assets/icon.png",
         "backgroundColor": "#1d4ed8"
       },
-      "package": "com.hostelhub.app"
+      "package": "com.hostelhub.app",
+      "permissions": [
+        "android.permission.CAMERA"
+      ]
     },
     "plugins": [
       "expo-router",
       "expo-barcode-scanner",
       "expo-notifications"
-    ]
+    ],
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "d0ca44c9-b72a-424f-88e5-ff0c4a1938b1"
+      }
+    }
   }
 }
