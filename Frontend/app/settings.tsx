@@ -5,10 +5,12 @@ import { router } from 'expo-router';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { BottomNav } from '@/components/ui/BottomNav';
 import { useAuth } from '@/lib/auth-context';
+import { useTheme } from '@/lib/theme-context';
 import { useChangePassword } from '@/lib/hooks';
 
 export default function SettingsPage() {
     const { user } = useAuth();
+    const { colors, isDark } = useTheme();
     const changePasswordMutation = useChangePassword();
 
     const [currentPassword, setCurrentPassword] = useState('');
@@ -56,68 +58,78 @@ export default function SettingsPage() {
     }
 
     return (
-        <View style={styles.container}>
+        <View style={[styles.container, { backgroundColor: colors.background }]}>
             <PageHeader title="Settings" showBack />
             <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
                 <View style={styles.content}>
                     {/* Change Password Section */}
                     <View style={styles.section}>
                         <View style={styles.sectionHeader}>
-                            <View style={styles.sectionIconBox}>
-                                <Ionicons name="lock-closed" size={20} color="#1d4ed8" />
+                            <View style={[styles.sectionIconBox, { backgroundColor: isDark ? '#172554' : '#eff6ff' }]}>
+                                <Ionicons name="lock-closed" size={20} color={colors.primary} />
                             </View>
-                            <Text style={styles.sectionTitle}>Change Password</Text>
+                            <Text style={[styles.sectionTitle, { color: colors.text }]}>Change Password</Text>
                         </View>
 
-                        <View style={styles.card}>
+                        <View style={[styles.card, { backgroundColor: colors.card, borderColor: colors.cardBorder }]}>
                             <View style={styles.inputGroup}>
-                                <Text style={styles.label}>Current Password</Text>
-                                <View style={styles.passwordContainer}>
+                                <Text style={[styles.label, { color: colors.text }]}>Current Password</Text>
+                                <View style={[styles.passwordContainer, {
+                                    borderColor: colors.cardBorder,
+                                    backgroundColor: isDark ? colors.backgroundSecondary : '#fafafa'
+                                }]}>
                                     <TextInput
-                                        style={styles.passwordInput}
+                                        style={[styles.passwordInput, { color: colors.text }]}
                                         value={currentPassword}
                                         onChangeText={setCurrentPassword}
                                         placeholder="Enter current password"
-                                        placeholderTextColor="#a3a3a3"
+                                        placeholderTextColor={colors.textTertiary}
                                         secureTextEntry={!showCurrentPassword}
                                     />
                                     <Pressable onPress={() => setShowCurrentPassword(!showCurrentPassword)} style={styles.eyeIcon}>
-                                        <Ionicons name={showCurrentPassword ? 'eye-off-outline' : 'eye-outline'} size={20} color="#737373" />
+                                        <Ionicons name={showCurrentPassword ? 'eye-off-outline' : 'eye-outline'} size={20} color={colors.textSecondary} />
                                     </Pressable>
                                 </View>
                             </View>
 
                             <View style={styles.inputGroup}>
-                                <Text style={styles.label}>New Password</Text>
-                                <View style={styles.passwordContainer}>
+                                <Text style={[styles.label, { color: colors.text }]}>New Password</Text>
+                                <View style={[styles.passwordContainer, {
+                                    borderColor: colors.cardBorder,
+                                    backgroundColor: isDark ? colors.backgroundSecondary : '#fafafa'
+                                }]}>
                                     <TextInput
-                                        style={styles.passwordInput}
+                                        style={[styles.passwordInput, { color: colors.text }]}
                                         value={newPassword}
                                         onChangeText={setNewPassword}
                                         placeholder="Enter new password (min 6 chars)"
-                                        placeholderTextColor="#a3a3a3"
+                                        placeholderTextColor={colors.textTertiary}
                                         secureTextEntry={!showNewPassword}
                                     />
                                     <Pressable onPress={() => setShowNewPassword(!showNewPassword)} style={styles.eyeIcon}>
-                                        <Ionicons name={showNewPassword ? 'eye-off-outline' : 'eye-outline'} size={20} color="#737373" />
+                                        <Ionicons name={showNewPassword ? 'eye-off-outline' : 'eye-outline'} size={20} color={colors.textSecondary} />
                                     </Pressable>
                                 </View>
                             </View>
 
                             <View style={styles.inputGroup}>
-                                <Text style={styles.label}>Confirm New Password</Text>
+                                <Text style={[styles.label, { color: colors.text }]}>Confirm New Password</Text>
                                 <TextInput
-                                    style={styles.input}
+                                    style={[styles.input, {
+                                        borderColor: colors.cardBorder,
+                                        backgroundColor: isDark ? colors.backgroundSecondary : '#fafafa',
+                                        color: colors.text
+                                    }]}
                                     value={confirmPassword}
                                     onChangeText={setConfirmPassword}
                                     placeholder="Confirm new password"
-                                    placeholderTextColor="#a3a3a3"
+                                    placeholderTextColor={colors.textTertiary}
                                     secureTextEntry={!showNewPassword}
                                 />
                             </View>
 
                             <Pressable
-                                style={[styles.saveBtn, changePasswordMutation.isPending && styles.btnDisabled]}
+                                style={[styles.saveBtn, { backgroundColor: colors.primary }, changePasswordMutation.isPending && styles.btnDisabled]}
                                 onPress={handleChangePassword}
                                 disabled={changePasswordMutation.isPending}
                             >
@@ -136,20 +148,20 @@ export default function SettingsPage() {
                     {/* App Info Section */}
                     <View style={styles.section}>
                         <View style={styles.sectionHeader}>
-                            <View style={styles.sectionIconBox}>
-                                <Ionicons name="information-circle" size={20} color="#1d4ed8" />
+                            <View style={[styles.sectionIconBox, { backgroundColor: isDark ? '#172554' : '#eff6ff' }]}>
+                                <Ionicons name="information-circle" size={20} color={colors.primary} />
                             </View>
-                            <Text style={styles.sectionTitle}>App Information</Text>
+                            <Text style={[styles.sectionTitle, { color: colors.text }]}>App Information</Text>
                         </View>
 
-                        <View style={styles.card}>
+                        <View style={[styles.card, { backgroundColor: colors.card, borderColor: colors.cardBorder }]}>
                             <View style={styles.infoRow}>
-                                <Text style={styles.infoLabel}>Version</Text>
-                                <Text style={styles.infoValue}>1.0.0</Text>
+                                <Text style={[styles.infoLabel, { color: colors.textSecondary }]}>Version</Text>
+                                <Text style={[styles.infoValue, { color: colors.text }]}>1.0.0</Text>
                             </View>
-                            <View style={[styles.infoRow, styles.lastRow]}>
-                                <Text style={styles.infoLabel}>Developer</Text>
-                                <Text style={styles.infoValue}>HMS Team</Text>
+                            <View style={[styles.infoRow, styles.lastRow, { borderBottomColor: colors.cardBorder }]}>
+                                <Text style={[styles.infoLabel, { color: colors.textSecondary }]}>Developer</Text>
+                                <Text style={[styles.infoValue, { color: colors.text }]}>HMS Team</Text>
                             </View>
                         </View>
                     </View>
