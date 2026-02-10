@@ -120,9 +120,15 @@ export default function MessMenuPage() {
                     setRatingMeal(null);
                     Alert.alert('Thanks!', 'Your rating has been submitted');
                 },
+                onError: (error: any) => {
+                    setRatingMeal(null);
+                    const errorMessage = error?.response?.data?.message || error?.message || 'Failed to submit rating';
+                    Alert.alert('Error', errorMessage);
+                },
             }
         );
     };
+
 
     // Helper: Check if rating is available for a meal based on time window
     const isRatingAvailable = (mealType: MealType): { canRate: boolean; message: string } => {
@@ -133,8 +139,14 @@ export default function MessMenuPage() {
         const timing = timings[mealType];
         const [startHour, startMinute] = timing.start.split(':').map(Number);
 
-        const now = new Date();
-        const todayMealStart = new Date();
+        // Use IST time (UTC+5:30) to match backend validation
+        const getISTTime = () => {
+            const now = new Date();
+            const istOffset = 5.5 * 60 * 60 * 1000;
+            return new Date(now.getTime() + (istOffset - now.getTimezoneOffset() * 60 * 1000));
+        };
+        const now = getISTTime();
+        const todayMealStart = new Date(now);
         todayMealStart.setHours(startHour, startMinute, 0, 0);
 
         // 12-hour window from meal start time

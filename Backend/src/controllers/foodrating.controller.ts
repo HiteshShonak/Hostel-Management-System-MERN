@@ -39,8 +39,15 @@ export const rateMeal = asyncHandler(async (req: AuthRequest, res: Response) => 
     // Parse meal start time (e.g., "07:30")
     const [startHour, startMinute] = mealTiming.start.split(':').map(Number);
 
-    // Create Date objects for comparison
-    const now = new Date();
+    // Create Date objects for comparison in IST timezone
+    // Meal timings are in IST, so we must convert server time to IST
+    const getISTTime = () => {
+        const now = new Date();
+        // Convert to IST (UTC+5:30)
+        const istOffset = 5.5 * 60 * 60 * 1000; // 5 hours 30 minutes
+        return new Date(now.getTime() + (istOffset - now.getTimezoneOffset() * 60 * 1000));
+    };
+    const now = getISTTime();
     const todayMealStart = new Date();
     todayMealStart.setHours(startHour, startMinute, 0, 0);
 
@@ -62,7 +69,8 @@ export const rateMeal = asyncHandler(async (req: AuthRequest, res: Response) => 
         throw new ApiError(400, `Rating window closed. You can rate ${mealType} within 12 hours of ${mealTiming.start} (until ${formatTime(ratingWindowEnd)})`);
     }
 
-    const today = new Date();
+    // Use IST time for date as well
+    const today = getISTTime();
     today.setHours(0, 0, 0, 0);
 
     // Update or create rating for today
