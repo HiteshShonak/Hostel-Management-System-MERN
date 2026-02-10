@@ -3,6 +3,8 @@ import { router, useSegments, useRootNavigationState } from 'expo-router';
 import { useUser } from './hooks';
 import { getToken, saveToken, removeToken } from './api';
 import { User } from './types';
+import { registerForPushNotificationsAsync } from './notifications';
+import { authService } from './services';
 
 interface AuthContextType {
     user: User | null;
@@ -38,6 +40,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         };
         checkToken();
     }, []);
+
+    // Register or refresh push token when user is authenticated
+    useEffect(() => {
+        if (user && hasToken) {
+            registerForPushNotificationsAsync()
+                .then(pushToken => {
+                    if (pushToken) {
+                        authService.updatePushToken(pushToken).catch(err => {
+                            console.log('Failed to update push token:', err);
+                        });
+                    }
+                })
+                .catch(err => {
+                    console.log('Failed to register push notifications:', err);
+                });
+        }
+    }, [user, hasToken]);
 
     const signIn = (token: string) => {
         saveToken(token);

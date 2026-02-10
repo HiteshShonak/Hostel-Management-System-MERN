@@ -68,6 +68,10 @@ export const authService = {
         await api.put('/auth/password', { currentPassword, newPassword });
     },
 
+    updatePushToken: async (pushToken: string): Promise<void> => {
+        await api.put('/auth/push-token', { pushToken });
+    },
+
     logout: async () => {
         await removeToken();
     },

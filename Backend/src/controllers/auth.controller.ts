@@ -223,3 +223,35 @@ export const changePassword = asyncHandler(async (req: AuthRequest, res: Respons
 
     return res.status(200).json(new ApiResponse(200, null, 'Password changed successfully'));
 });
+
+// @desc    Update push notification token
+// @route   PUT /api/auth/push-token
+export const updatePushToken = asyncHandler(async (req: AuthRequest, res: Response) => {
+    const { pushToken } = req.body;
+
+    if (!pushToken) {
+        throw new ApiError(400, 'Push token is required');
+    }
+
+    // Validate Expo push token format
+    if (!pushToken.startsWith('ExponentPushToken[')) {
+        throw new ApiError(400, 'Invalid push token format');
+    }
+
+    const user = await User.findByIdAndUpdate(
+        req.user?._id,
+        {
+            pushToken,
+            pushTokenUpdatedAt: new Date()
+        },
+        { new: true }
+    ).select('-password');
+
+    if (!user) {
+        throw new ApiError(404, 'User not found');
+    }
+
+    logger.info('Push token updated', { userId: user._id });
+    return res.status(200).json(new ApiResponse(200, { pushToken: user.pushToken }, 'Push token updated successfully'));
+});
+

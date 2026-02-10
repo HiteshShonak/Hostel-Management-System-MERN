@@ -8,6 +8,8 @@ Notifications.setNotificationHandler({
         shouldShowAlert: true,
         shouldPlaySound: true,
         shouldSetBadge: false,
+        shouldShowBanner: true,
+        shouldShowList: true,
     }),
 });
 
@@ -34,12 +36,12 @@ export async function registerForPushNotificationsAsync() {
             alert('Failed to get push token for push notification!');
             return;
         }
-        // Learn more about projectId:
-        // https://docs.expo.dev/push-notifications/push-notifications-setup/#configure-projectid
-        // token = (await Notifications.getExpoPushTokenAsync({ projectId: '...' })).data;
-        // console.log(token);
+        // Get Expo push token
+        token = (await Notifications.getExpoPushTokenAsync({
+            projectId: 'd0ca44c9-b72a-424f-88e5-ff0c4a1938b1'
+        })).data;
     } else {
-        // alert('Must use physical device for Push Notifications');
+        // Silent fail for simulator/emulator
     }
 
     return token;

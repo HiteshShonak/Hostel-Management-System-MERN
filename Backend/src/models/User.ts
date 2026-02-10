@@ -14,6 +14,9 @@ const userSchema = new Schema<IUser>({
     role: { type: String, enum: ['student', 'admin', 'warden', 'mess_staff', 'guard', 'parent'], default: 'student' },
     // Optional parent email for auto-linking during student registration
     parentEmail: { type: String, lowercase: true },
+    // Push notification token
+    pushToken: { type: String },
+    pushTokenUpdatedAt: { type: Date },
     createdAt: { type: Date, default: Date.now },
 });
 

@@ -14,6 +14,8 @@ export interface IUser extends Document {
     avatar: string;
     role: 'student' | 'admin' | 'warden' | 'mess_staff' | 'guard' | 'parent';
     parentEmail?: string; // For auto-linking parents during student registration
+    pushToken?: string; // Expo push token for notifications
+    pushTokenUpdatedAt?: Date; // Track when token was last updated
     createdAt: Date;
     matchPassword(enteredPassword: string): Promise<boolean>;
 }

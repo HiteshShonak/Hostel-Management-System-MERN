@@ -5,6 +5,7 @@ import Notification from '../models/Notification';
 import User from '../models/User';
 import mongoose from 'mongoose';
 import { logger } from '../utils/logger';
+import { sendPushToUser } from './push-notification.service';
 
 export type NotificationType = 'notice' | 'gatepass' | 'complaint' | 'system' | 'visitor';
 
@@ -27,6 +28,16 @@ export const createNotification = async (params: CreateNotificationParams) => {
             message: params.message,
             link: params.link,
             relatedId: params.relatedId,
+        });
+
+        // Send push notification
+        sendPushToUser(params.userId, params.title, params.message, {
+            type: params.type,
+            link: params.link,
+            relatedId: params.relatedId?.toString(),
+        }).catch(err => {
+            // Don't fail if push fails, just log it
+            logger.debug('Push notification failed for user', { userId: params.userId, error: err });
         });
     } catch (error: any) {
         logger.error('Failed to create notification', { error: error.message });
@@ -52,6 +63,16 @@ export const createNotificationsForUsers = async (
             relatedId,
         }));
         await Notification.insertMany(notifications);
+
+        // Send push notifications to all users
+        const { sendPushToMultipleUsers } = await import('./push-notification.service');
+        sendPushToMultipleUsers(userIds, title, message, {
+            type,
+            link,
+            relatedId: relatedId?.toString(),
+        }).catch(err => {
+            logger.debug('Batch push notifications partially failed', { error: err });
+        });
     } catch (error: any) {
         logger.error('Failed to create bulk notifications', { error: error.message });
     }

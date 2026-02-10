@@ -34,6 +34,12 @@
       "expo-router",
       "expo-notifications"
     ],
+    "updates": {
+      "url": "https://u.expo.dev/d0ca44c9-b72a-424f-88e5-ff0c4a1938b1"
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
     "extra": {
       "router": {},
       "apiUrl": "https://hostel-management-system-backend-jde3.onrender.com/api",

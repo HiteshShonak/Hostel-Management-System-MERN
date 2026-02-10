@@ -2,7 +2,7 @@
 // Authentication routes
 
 import { Router } from 'express';
-import { register, login, getMe, updateProfile, changePassword } from '../controllers/auth.controller';
+import { register, login, getMe, updateProfile, changePassword, updatePushToken } from '../controllers/auth.controller';
 import { protect } from '../middleware/auth.middleware';
 import { authLimiter, sensitiveLimiter } from '../middleware/rateLimit.middleware';
 import { validate } from '../middleware/validate.middleware';
@@ -18,5 +18,7 @@ router.post('/login', authLimiter, validate(loginSchema), login);
 router.get('/me', protect, getMe);
 router.put('/profile', protect, validate(updateProfileSchema), updateProfile);
 router.put('/password', protect, sensitiveLimiter, validate(changePasswordSchema), changePassword);
+router.put('/push-token', protect, updatePushToken);
 
 export default router;
+
