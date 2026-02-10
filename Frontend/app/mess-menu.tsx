@@ -124,6 +124,40 @@ export default function MessMenuPage() {
         );
     };
 
+    // Helper: Check if rating is available for a meal based on time window
+    const isRatingAvailable = (mealType: MealType): { canRate: boolean; message: string } => {
+        if (!timings || !timings[mealType]) {
+            return { canRate: false, message: 'Timing not available' };
+        }
+
+        const timing = timings[mealType];
+        const [startHour, startMinute] = timing.start.split(':').map(Number);
+
+        const now = new Date();
+        const todayMealStart = new Date();
+        todayMealStart.setHours(startHour, startMinute, 0, 0);
+
+        // 12-hour window from meal start time
+        const ratingWindowEnd = new Date(todayMealStart);
+        ratingWindowEnd.setHours(ratingWindowEnd.getHours() + 12);
+
+        if (now < todayMealStart) {
+            return {
+                canRate: false,
+                message: `Available from ${timing.start}`
+            };
+        }
+
+        if (now > ratingWindowEnd) {
+            return {
+                canRate: false,
+                message: 'Rating window closed (12h limit)'
+            };
+        }
+
+        return { canRate: true, message: '' };
+    };
+
     if (isLoading) {
         return (
             <View style={[styles.container, { backgroundColor: colors.background }]}>
@@ -241,15 +275,32 @@ export default function MessMenuPage() {
                         </View>
                     )}
 
-                    {/* Rate Button - Students and Guards */}
-                    {(user?.role === 'student' || user?.role === 'guard') && (
-                        <Pressable style={[styles.rateBtn, { backgroundColor: isDark ? '#78350f' : '#fef3c7' }]} onPress={() => setRatingMeal(selectedMeal)}>
-                            <Ionicons name="star" size={18} color="#f59e0b" />
-                            <Text style={[styles.rateBtnText, { color: isDark ? '#fef3c7' : '#92400e' }]}>
-                                {myCurrentRating ? `Your rating: ${myCurrentRating.rating}★` : 'Rate this meal'}
-                            </Text>
-                        </Pressable>
-                    )}
+                    {/* Rate Button - Students and Guards - Time-based availability */}
+                    {(user?.role === 'student' || user?.role === 'guard') && (() => {
+                        const ratingStatus = isRatingAvailable(selectedMeal);
+
+                        if (!ratingStatus.canRate) {
+                            // Show disabled/info state
+                            return (
+                                <View style={[styles.ratingDisabled, { backgroundColor: isDark ? '#1c1917' : '#fef3c7' }]}>
+                                    <Ionicons name="time-outline" size={18} color={isDark ? '#78350f' : '#92400e'} />
+                                    <Text style={[styles.ratingDisabledText, { color: isDark ? '#a8a29e' : '#92400e' }]}>
+                                        {ratingStatus.message}
+                                    </Text>
+                                </View>
+                            );
+                        }
+
+                        // Show active rating button
+                        return (
+                            <Pressable style={[styles.rateBtn, { backgroundColor: isDark ? '#78350f' : '#fef3c7' }]} onPress={() => setRatingMeal(selectedMeal)}>
+                                <Ionicons name="star" size={18} color="#f59e0b" />
+                                <Text style={[styles.rateBtnText, { color: isDark ? '#fef3c7' : '#92400e' }]}>
+                                    {myCurrentRating ? `Your rating: ${myCurrentRating.rating}★` : 'Rate this meal'}
+                                </Text>
+                            </Pressable>
+                        );
+                    })()}
 
                     {/* Menu Items */}
                     <View style={styles.menuList}>
@@ -451,6 +502,9 @@ const styles = StyleSheet.create({
     ratingStarNum: { fontSize: 12, color: '#737373', marginTop: 4 },
     cancelBtn: { marginTop: 24 },
     cancelBtnText: { color: '#737373', fontSize: 16 },
+    // Rating disabled state
+    ratingDisabled: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, padding: 12, backgroundColor: '#fef3c7', borderRadius: 12, opacity: 0.8 },
+    ratingDisabledText: { color: '#92400e', fontWeight: '500', fontSize: 13 },
     // Timing editor styles
     editTimingBtn: { flexDirection: 'row', alignItems: 'center', gap: 4, marginLeft: 'auto', paddingHorizontal: 8, paddingVertical: 4, backgroundColor: '#dbeafe', borderRadius: 6 },
     editTimingText: { fontSize: 12, fontWeight: '600', color: '#6366f1' },

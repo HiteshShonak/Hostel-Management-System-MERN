@@ -25,7 +25,7 @@ const wardenNavItems = [
 const messStaffNavItems = [
   { icon: 'home', label: 'Home', href: '/' },
   { icon: 'restaurant', label: 'Menu', href: '/mess-menu' },
-  { icon: 'star', label: 'Ratings', href: '/mess-menu' },
+  { icon: 'star', label: 'Ratings', href: '/food-ratings' },
   { icon: 'notifications', label: 'Notices', href: '/notices' },
   { icon: 'person', label: 'Profile', href: '/profile' },
 ] as const;

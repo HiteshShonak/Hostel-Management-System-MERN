@@ -178,7 +178,7 @@ function MessStaffDashboard() {
                     </View>
                     <Text style={[styles.quickLabel, { color: colors.text }]}>Edit Menu</Text>
                 </Pressable>
-                <Pressable style={[styles.quickCard, { backgroundColor: colors.card }]} onPress={() => router.push('/mess-menu')}>
+                <Pressable style={[styles.quickCard, { backgroundColor: colors.card }]} onPress={() => router.push('/food-ratings')}>
                     <View style={[styles.quickIcon, { backgroundColor: isDark ? '#451a03' : '#fef3c7' }]}>
                         <Ionicons name="star" size={24} color="#d97706" />
                     </View>

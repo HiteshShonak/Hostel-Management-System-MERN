@@ -3,6 +3,7 @@
 
 import { Response } from 'express';
 import FoodRating from '../models/FoodRating';
+import MessMenu from '../models/MessMenu';
 import { AuthRequest } from '../types';
 import { asyncHandler } from '../utils/asyncHandler';
 import { ApiError } from '../utils/ApiError';
@@ -19,6 +20,46 @@ export const rateMeal = asyncHandler(async (req: AuthRequest, res: Response) => 
 
     if (rating < 1 || rating > 5) {
         throw new ApiError(400, 'Rating must be between 1 and 5');
+    }
+
+    // Validate mealType
+    const validMealTypes = ['Breakfast', 'Lunch', 'Dinner'];
+    if (!validMealTypes.includes(mealType)) {
+        throw new ApiError(400, 'Invalid meal type');
+    }
+
+    // Time-based validation: Check if rating is allowed for this meal
+    const menuData = await MessMenu.findOne();
+    const mealTiming = menuData?.timings?.[mealType as 'Breakfast' | 'Lunch' | 'Dinner'];
+
+    if (!mealTiming) {
+        throw new ApiError(400, 'Meal timing not found. Please contact admin.');
+    }
+
+    // Parse meal start time (e.g., "07:30")
+    const [startHour, startMinute] = mealTiming.start.split(':').map(Number);
+
+    // Create Date objects for comparison
+    const now = new Date();
+    const todayMealStart = new Date();
+    todayMealStart.setHours(startHour, startMinute, 0, 0);
+
+    // Calculate 12-hour window end (from meal start time)
+    const ratingWindowEnd = new Date(todayMealStart);
+    ratingWindowEnd.setHours(ratingWindowEnd.getHours() + 12);
+
+    // Format time for error messages
+    const formatTime = (date: Date) => {
+        return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+    };
+
+    // Validate rating window
+    if (now < todayMealStart) {
+        throw new ApiError(400, `Rating not available yet. ${mealType} starts at ${mealTiming.start}`);
+    }
+
+    if (now > ratingWindowEnd) {
+        throw new ApiError(400, `Rating window closed. You can rate ${mealType} within 12 hours of ${mealTiming.start} (until ${formatTime(ratingWindowEnd)})`);
     }
 
     const today = new Date();

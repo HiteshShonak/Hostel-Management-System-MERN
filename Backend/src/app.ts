@@ -44,7 +44,6 @@ app.use(cors({
     credentials: true,
 }));
 
-
 // Request logging (dev mode only)
 if (process.env.NODE_ENV === 'development') {
     app.use(morgan('dev'));

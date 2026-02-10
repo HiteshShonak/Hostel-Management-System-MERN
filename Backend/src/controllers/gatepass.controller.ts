@@ -6,6 +6,7 @@ import { v4 as uuidv4 } from 'uuid';
 import GatePass from '../models/GatePass';
 import GatePassLog from '../models/GatePassLog';
 import User from '../models/User';
+import ParentStudent from '../models/ParentStudent';
 import { AuthRequest } from '../types';
 import { asyncHandler } from '../utils/asyncHandler';
 import { ApiError } from '../utils/ApiError';
@@ -93,12 +94,48 @@ export const requestGatePass = asyncHandler(async (req: AuthRequest, res: Respon
         throw new ApiError(400, 'You already have a pass for this period');
     }
 
+    // Check if student has an active parent link
+    const hasParentLink = await ParentStudent.findOne({
+        student: req.user?._id,
+        status: 'active'
+    });
+
+    // Set initial status based on parent linkage
+    // If student has a parent, request goes to parent first
+    // If no parent, request goes directly to warden
+    const initialStatus = hasParentLink ? 'PENDING_PARENT' : 'PENDING_WARDEN';
+
     const pass = await GatePass.create({
         user: req.user?._id,
         reason,
         fromDate: from,
         toDate: to,
+        status: initialStatus
     });
+
+    // Notify appropriate parties based on initial status
+    if (initialStatus === 'PENDING_WARDEN') {
+        // Student has no parent - notify wardens directly
+        const wardens = await User.find({ role: 'warden' }).select('_id');
+        for (const warden of wardens) {
+            createNotification({
+                userId: warden._id,
+                type: 'gatepass',
+                title: 'New Gate Pass Pending',
+                message: `Gate pass from ${req.user?.name} is waiting for approval.`,
+                relatedId: pass._id,
+            });
+        }
+    } else if (req.user?._id) {
+        // Student has parent - notify student that request is pending parent approval
+        createNotification({
+            userId: req.user._id,
+            type: 'gatepass',
+            title: 'Gate Pass Submitted',
+            message: 'Your gate pass request has been sent to your parent for approval.',
+            relatedId: pass._id,
+        });
+    }
 
     return res.status(201).json(new ApiResponse(201, pass, 'Gate pass requested successfully'));
 });
@@ -106,7 +143,9 @@ export const requestGatePass = asyncHandler(async (req: AuthRequest, res: Respon
 // @desc    Get all pending passes (Warden)
 // @route   GET /api/gatepass/pending
 export const getPendingPasses = asyncHandler(async (req: AuthRequest, res: Response) => {
-    const passes = await GatePass.find({ status: { $in: ['PENDING_PARENT', 'PENDING_WARDEN'] } })
+    // Wardens should only see passes pending their approval (PENDING_WARDEN)
+    // Passes pending parent approval (PENDING_PARENT) should not be visible to wardens
+    const passes = await GatePass.find({ status: 'PENDING_WARDEN' })
         .populate('user', 'name rollNo room hostel phone')
         .sort({ createdAt: -1 });
 
