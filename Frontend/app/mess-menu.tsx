@@ -280,13 +280,105 @@ export default function MessMenuPage() {
                         const ratingStatus = isRatingAvailable(selectedMeal);
 
                         if (!ratingStatus.canRate) {
-                            // Show disabled/info state
+                            // Determine which restriction applies
+                            const timing = timings?.[selectedMeal];
+                            const now = new Date();
+                            const [startHour, startMinute] = timing?.start.split(':').map(Number) || [0, 0];
+                            const todayMealStart = new Date();
+                            todayMealStart.setHours(startHour, startMinute, 0, 0);
+
+                            const isBeforeMeal = now < todayMealStart;
+                            const ratingWindowEnd = new Date(todayMealStart);
+                            ratingWindowEnd.setHours(ratingWindowEnd.getHours() + 12);
+
+                            // Format time helper
+                            const formatTimeRemaining = (targetDate: Date) => {
+                                const diff = targetDate.getTime() - now.getTime();
+                                const hours = Math.floor(diff / (1000 * 60 * 60));
+                                const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                                return `${hours}h ${minutes}m`;
+                            };
+
                             return (
-                                <View style={[styles.ratingDisabled, { backgroundColor: isDark ? '#1c1917' : '#fef3c7' }]}>
-                                    <Ionicons name="time-outline" size={18} color={isDark ? '#78350f' : '#92400e'} />
-                                    <Text style={[styles.ratingDisabledText, { color: isDark ? '#a8a29e' : '#92400e' }]}>
-                                        {ratingStatus.message}
-                                    </Text>
+                                <View style={[
+                                    styles.ratingBlockedCard,
+                                    {
+                                        backgroundColor: isDark ? '#1f1f23' : '#f8fafc',
+                                        borderColor: isDark ? '#3f3f46' : '#e2e8f0'
+                                    }
+                                ]}>
+                                    {/* Icon and Title */}
+                                    <View style={styles.ratingBlockedHeader}>
+                                        <View style={[
+                                            styles.ratingBlockedIcon,
+                                            {
+                                                backgroundColor: isBeforeMeal
+                                                    ? (isDark ? '#422006' : '#fef3c7')
+                                                    : (isDark ? '#3f1e1e' : '#fee2e2')
+                                            }
+                                        ]}>
+                                            <Ionicons
+                                                name={isBeforeMeal ? "time-outline" : "lock-closed-outline"}
+                                                size={24}
+                                                color={isBeforeMeal ? '#f59e0b' : '#ef4444'}
+                                            />
+                                        </View>
+                                        <View style={styles.ratingBlockedContent}>
+                                            <Text style={[
+                                                styles.ratingBlockedTitle,
+                                                { color: colors.text }
+                                            ]}>
+                                                {isBeforeMeal ? 'Rating Opens Soon' : 'Rating Window Closed'}
+                                            </Text>
+                                            <Text style={[
+                                                styles.ratingBlockedSubtitle,
+                                                { color: colors.textSecondary }
+                                            ]}>
+                                                {isBeforeMeal
+                                                    ? `${selectedMeal} starts at ${timing?.start}`
+                                                    : `Rating period ended 12 hours after meal start`
+                                                }
+                                            </Text>
+                                        </View>
+                                    </View>
+
+                                    {/* Time Information */}
+                                    <View style={[
+                                        styles.ratingBlockedInfo,
+                                        { backgroundColor: isDark ? '#27272a' : '#ffffff' }
+                                    ]}>
+                                        {isBeforeMeal ? (
+                                            <>
+                                                <View style={styles.ratingInfoRow}>
+                                                    <Ionicons name="calendar-outline" size={16} color={colors.textSecondary} />
+                                                    <Text style={[styles.ratingInfoText, { color: colors.textSecondary }]}>
+                                                        Opens in {formatTimeRemaining(todayMealStart)}
+                                                    </Text>
+                                                </View>
+                                                <View style={styles.ratingInfoRow}>
+                                                    <Ionicons name="checkmark-circle-outline" size={16} color="#10b981" />
+                                                    <Text style={[styles.ratingInfoText, { color: colors.textSecondary }]}>
+                                                        Available until {ratingWindowEnd.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true })}
+                                                    </Text>
+                                                </View>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <View style={styles.ratingInfoRow}>
+                                                    <Ionicons name="information-circle-outline" size={16} color={colors.textSecondary} />
+                                                    <Text style={[styles.ratingInfoText, { color: colors.textSecondary }]}>
+                                                        Ratings are accepted for 12 hours from meal start
+                                                    </Text>
+                                                </View>
+                                                <View style={styles.ratingInfoRow}>
+                                                    <Ionicons name="time-outline" size={16} color={colors.textSecondary} />
+                                                    <Text style={[styles.ratingInfoText, { color: colors.textSecondary }]}>
+                                                        Window closed at {ratingWindowEnd.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true })}
+                                                    </Text>
+                                                </View>
+                                            </>
+                                        )}
+                                    </View>
                                 </View>
                             );
                         }
@@ -502,9 +594,51 @@ const styles = StyleSheet.create({
     ratingStarNum: { fontSize: 12, color: '#737373', marginTop: 4 },
     cancelBtn: { marginTop: 24 },
     cancelBtnText: { color: '#737373', fontSize: 16 },
-    // Rating disabled state
-    ratingDisabled: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, padding: 12, backgroundColor: '#fef3c7', borderRadius: 12, opacity: 0.8 },
-    ratingDisabledText: { color: '#92400e', fontWeight: '500', fontSize: 13 },
+    // Rating disabled/blocked state - Premium card design
+    ratingBlockedCard: {
+        borderRadius: 16,
+        borderWidth: 1,
+        padding: 16,
+        gap: 12,
+    },
+    ratingBlockedHeader: {
+        flexDirection: 'row',
+        alignItems: 'flex-start',
+        gap: 12,
+    },
+    ratingBlockedIcon: {
+        width: 48,
+        height: 48,
+        borderRadius: 24,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    ratingBlockedContent: {
+        flex: 1,
+        gap: 4,
+    },
+    ratingBlockedTitle: {
+        fontSize: 16,
+        fontWeight: '600',
+    },
+    ratingBlockedSubtitle: {
+        fontSize: 13,
+        lineHeight: 18,
+    },
+    ratingBlockedInfo: {
+        borderRadius: 12,
+        padding: 12,
+        gap: 10,
+    },
+    ratingInfoRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 8,
+    },
+    ratingInfoText: {
+        fontSize: 13,
+        flex: 1,
+    },
     // Timing editor styles
     editTimingBtn: { flexDirection: 'row', alignItems: 'center', gap: 4, marginLeft: 'auto', paddingHorizontal: 8, paddingVertical: 4, backgroundColor: '#dbeafe', borderRadius: 6 },
     editTimingText: { fontSize: 12, fontWeight: '600', color: '#6366f1' },
