@@ -127,14 +127,16 @@ export const requestGatePass = asyncHandler(async (req: AuthRequest, res: Respon
             });
         }
     } else if (req.user?._id) {
-        // Student has parent - notify student that request is pending parent approval
-        createNotification({
-            userId: req.user._id,
-            type: 'gatepass',
-            title: 'Gate Pass Submitted',
-            message: 'Your gate pass request has been sent to your parent for approval.',
-            relatedId: pass._id,
-        });
+        if (req.user?._id) {
+            // Student has parent - notify student that request is pending parent approval
+            createNotification({
+                userId: req.user._id,
+                type: 'gatepass',
+                title: 'Gate Pass Submitted',
+                message: 'Your gate pass request has been sent to your parent for approval.',
+                relatedId: pass._id,
+            });
+        }
     }
 
     return res.status(201).json(new ApiResponse(201, pass, 'Gate pass requested successfully'));
