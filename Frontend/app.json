@@ -36,6 +36,7 @@
     ],
     "extra": {
       "router": {},
+      "apiUrl": "https://hostel-management-system-backend-jde3.onrender.com/api",
       "eas": {
         "projectId": "d0ca44c9-b72a-424f-88e5-ff0c4a1938b1"
       }

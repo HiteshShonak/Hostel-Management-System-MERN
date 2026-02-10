@@ -11,8 +11,7 @@ import Constants from 'expo-constants';
 
 export const API_BASE_URL =
     process.env.EXPO_PUBLIC_API_URL ||
-    Constants.expoConfig?.extra?.apiUrl ||
-    'http://localhost:5000/api'; // Final fallback for development
+    'https://hostel-management-system-backend-jde3.onrender.com/api'; // Production fallback
 
 
 
