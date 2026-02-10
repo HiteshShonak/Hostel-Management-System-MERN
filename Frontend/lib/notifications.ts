@@ -17,8 +17,10 @@ export async function registerForPushNotificationsAsync() {
     let token;
 
     if (Platform.OS === 'android') {
-        await Notifications.setNotificationChannelAsync('default', {
-            name: 'default',
+        // new channel id to force android to register it again
+        // this fixes silent notifications
+        await Notifications.setNotificationChannelAsync('hms-default-v1', {
+            name: 'HMS Notifications',
             importance: Notifications.AndroidImportance.MAX,
             vibrationPattern: [0, 250, 250, 250],
             lightColor: '#FF231F7C',
@@ -57,7 +59,7 @@ export async function scheduleNotification(title: string, body: string, seconds 
         trigger: {
             type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
             seconds: seconds,
-            channelId: 'default',
+            channelId: 'hms-default-v1',
         },
     });
 }
