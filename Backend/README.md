@@ -627,7 +627,7 @@ curl http://localhost:5000/api/gatepass \
 
 ## 📄 License
 
-Private - All rights reserved
+[MIT License](../LICENSE) - See LICENSE file for details
 
 ## 👨‍💻 Developed By
 

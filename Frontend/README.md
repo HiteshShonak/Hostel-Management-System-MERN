@@ -399,7 +399,7 @@ This is a private hostel management system. For development:
 
 ## 📄 License
 
-Private - All rights reserved
+[MIT License](../LICENSE) - See LICENSE file for details
 
 ## 👨‍💻 Developed By
 

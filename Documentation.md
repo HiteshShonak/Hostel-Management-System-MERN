@@ -752,7 +752,7 @@ npm run logs          # View PM2 logs
 
 ## 📄 License
 
-Private - All rights reserved
+[MIT License](LICENSE) - See LICENSE file for details
 
 ---
 
