@@ -14,9 +14,15 @@ import { sanitizeInput } from './middleware/sanitize.middleware';
 // Routes
 import routes from './routes';
 
+// Firebase Admin (initialize on startup)
+import { initializeFirebaseAdmin } from './services/firebase-admin.service';
+
 const app = express();
 
 app.set('trust proxy', 1);
+
+// Initialize Firebase Admin SDK (graceful fail if not configured)
+initializeFirebaseAdmin();
 
 // Gzip compression for all responses (25-40% size reduction)
 app.use(compression());

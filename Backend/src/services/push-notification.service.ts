@@ -1,9 +1,10 @@
 // src/services/push-notification.service.ts
-// Push notification service using Expo Push API
+// Push notification service with support for both Expo and Firebase
 
 import { logger } from '../utils/logger';
 import User from '../models/User';
 import { Types } from 'mongoose';
+import { sendFirebaseMessage, sendFirebaseMulticast, isFirebaseInitialized } from './firebase-admin.service';
 
 interface PushMessage {
     to: string;
@@ -29,20 +30,61 @@ interface PushReceipt {
 }
 
 /**
- * Send push notification to a single device using Expo Push API
+ * Determine if token is Expo or Firebase format
+ */
+const isExpoToken = (token: string): boolean => {
+    return token.startsWith('ExponentPushToken[');
+};
+
+/**
+ * Send push notification to a single device (auto-detects Expo vs Firebase)
  */
 export const sendPushNotification = async (
+    pushToken: string,
+    title: string,
+    body: string,
+    data?: Record<string, any>
+): Promise<boolean> => {
+    try {
+        // Validate token exists
+        if (!pushToken) {
+            logger.warn('No push token provided');
+            return false;
+        }
+
+        // Auto-detect token type and use appropriate service
+        if (isExpoToken(pushToken)) {
+            // Use Expo Push API
+            return await sendExpoPushNotification(pushToken, title, body, data);
+        } else if (isFirebaseInitialized()) {
+            // Use Firebase Admin SDK
+            const dataStrings = data ? Object.fromEntries(
+                Object.entries(data).map(([k, v]) => [k, String(v)])
+            ) : undefined;
+            return await sendFirebaseMessage(pushToken, title, body, dataStrings);
+        } else {
+            logger.warn('Firebase not initialized, cannot send FCM notification', { token: pushToken });
+            return false;
+        }
+    } catch (error) {
+        logger.error('Failed to send push notification', {
+            error: error instanceof Error ? error.message : String(error),
+            title,
+        });
+        return false;
+    }
+};
+
+/**
+ * Send push notification using Expo Push API
+ */
+const sendExpoPushNotification = async (
     expoPushToken: string,
     title: string,
     body: string,
     data?: Record<string, any>
 ): Promise<boolean> => {
     try {
-        // Validate token format
-        if (!expoPushToken || !expoPushToken.startsWith('ExponentPushToken[')) {
-            logger.warn('Invalid push token format', { token: expoPushToken });
-            return false;
-        }
 
         const message: PushMessage = {
             to: expoPushToken,
@@ -115,7 +157,7 @@ export const sendPushToUser = async (
 };
 
 /**
- * Send push notifications to multiple users (batched)
+ * Send push notifications to multiple users (batched, auto-detects Expo vs Firebase)
  */
 export const sendPushToMultipleUsers = async (
     userIds: (Types.ObjectId | string)[],
@@ -133,10 +175,27 @@ export const sendPushToMultipleUsers = async (
             return { sent: 0, failed: 0 };
         }
 
-        const messages: PushMessage[] = users
-            .filter(user => user.pushToken)
-            .map(user => ({
-                to: user.pushToken!,
+        // Separate Expo and Firebase tokens
+        const expoTokens: string[] = [];
+        const firebaseTokens: string[] = [];
+
+        users.forEach(user => {
+            if (user.pushToken) {
+                if (isExpoToken(user.pushToken)) {
+                    expoTokens.push(user.pushToken);
+                } else {
+                    firebaseTokens.push(user.pushToken);
+                }
+            }
+        });
+
+        let totalSent = 0;
+        let totalFailed = 0;
+
+        // Send Expo notifications
+        if (expoTokens.length > 0) {
+            const messages: PushMessage[] = expoTokens.map(token => ({
+                to: token,
                 sound: 'default',
                 title,
                 body,
@@ -144,55 +203,63 @@ export const sendPushToMultipleUsers = async (
                 priority: 'high',
             }));
 
-        if (messages.length === 0) {
-            return { sent: 0, failed: 0 };
-        }
+            // Send in batches of 100 (Expo limit)
+            const batchSize = 100;
+            let sent = 0;
+            let failed = 0;
 
-        // Send in batches of 100 (Expo limit)
-        const batchSize = 100;
-        let sent = 0;
-        let failed = 0;
+            for (let i = 0; i < messages.length; i += batchSize) {
+                const batch = messages.slice(i, i + batchSize);
 
-        for (let i = 0; i < messages.length; i += batchSize) {
-            const batch = messages.slice(i, i + batchSize);
-
-            try {
-                const response = await fetch('https://exp.host/--/api/v2/push/send', {
-                    method: 'POST',
-                    headers: {
-                        'Accept': 'application/json',
-                        'Accept-Encoding': 'gzip, deflate',
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(batch),
-                });
-
-                const result = await response.json() as { data?: PushTicket[] };
-
-                if (result.data && Array.isArray(result.data)) {
-                    result.data.forEach((ticket: PushTicket) => {
-                        if (ticket.status === 'ok') {
-                            sent++;
-                        } else {
-                            failed++;
-                            logger.warn('Push ticket failed', {
-                                error: ticket.message,
-                                details: ticket.details,
-                            });
-                        }
+                try {
+                    const response = await fetch('https://exp.host/--/api/v2/push/send', {
+                        method: 'POST',
+                        headers: {
+                            'Accept': 'application/json',
+                            'Accept-Encoding': 'gzip, deflate',
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(batch),
                     });
+
+                    const result = await response.json() as { data?: PushTicket[] };
+
+                    if (result.data && Array.isArray(result.data)) {
+                        result.data.forEach((ticket: PushTicket) => {
+                            if (ticket.status === 'ok') {
+                                sent++;
+                            } else {
+                                failed++;
+                                logger.warn('Push ticket failed', {
+                                    error: ticket.message,
+                                    details: ticket.details,
+                                });
+                            }
+                        });
+                    }
+                } catch (batchError) {
+                    logger.error('Batch push failed', {
+                        error: batchError instanceof Error ? batchError.message : String(batchError),
+                        batchSize: batch.length,
+                    });
+                    failed += batch.length;
                 }
-            } catch (batchError) {
-                logger.error('Batch push failed', {
-                    error: batchError instanceof Error ? batchError.message : String(batchError),
-                    batchSize: batch.length,
-                });
-                failed += batch.length;
             }
+
         }
 
-        logger.info('Batch push notifications sent', { sent, failed, total: messages.length });
-        return { sent, failed };
+        // Send Firebase notifications
+        if (firebaseTokens.length > 0 && isFirebaseInitialized()) {
+            const dataStrings = data ? Object.fromEntries(
+                Object.entries(data).map(([k, v]) => [k, String(v)])
+            ) : undefined;
+            const firebaseResult = await sendFirebaseMulticast(firebaseTokens, title, body, dataStrings);
+            totalSent += firebaseResult.successCount;
+            totalFailed += firebaseResult.failureCount;
+        }
+
+        logger.info('Batch push notifications sent', { sent: totalSent, failed: totalFailed, expo: expoTokens.length, firebase: firebaseTokens.length });
+        return { sent: totalSent, failed: totalFailed };
     } catch (error) {
         logger.error('Failed to send batch push notifications', {
             error: error instanceof Error ? error.message : String(error),
