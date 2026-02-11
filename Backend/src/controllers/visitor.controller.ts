@@ -1,5 +1,5 @@
 // src/controllers/visitor.controller.ts
-// Visitor controller with production-grade patterns
+// Visitor controller for guest registration
 
 import { Response } from 'express';
 import Visitor from '../models/Visitor';

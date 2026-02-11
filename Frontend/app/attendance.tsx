@@ -4,7 +4,8 @@ import { Ionicons } from '@expo/vector-icons';
 import * as Location from 'expo-location';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { BottomNav } from '@/components/ui/BottomNav';
-import { useUser, useTodayAttendance, useAttendanceStats, useMarkAttendance, useRefreshDashboard, useAttendanceHistory } from '@/lib/hooks';
+import { useUser, useTodayAttendance, useAttendanceStats, useMarkAttendance, useRefreshDashboard, useAttendanceHistory, useSystemConfig } from '@/lib/hooks';
+import { formatDateLong, formatTime, formatDateWithDay, getCurrentISTHour, formatHour, isWithinTimeWindow } from '@/lib/utils/date';
 
 export default function AttendancePage() {
     const { data: user } = useUser();
@@ -13,6 +14,7 @@ export default function AttendancePage() {
     const { data: stats } = useAttendanceStats();
     const { data: history, isLoading: loadingHistory } = useAttendanceHistory();
     const markMutation = useMarkAttendance();
+    const { data: config } = useSystemConfig();
 
     const [locationStatus, setLocationStatus] = useState<'idle' | 'requesting' | 'denied' | 'ready'>('idle');
     const [currentCoords, setCurrentCoords] = useState<{ latitude: number; longitude: number } | null>(null);
@@ -21,6 +23,13 @@ export default function AttendancePage() {
     const isMarked = todayData?.marked || false;
     const isScanning = markMutation.isPending || locationStatus === 'requesting';
     const geofence = todayData?.geofence;
+
+    // Check if within attendance window using dynamic config
+    const attendanceWindow = config?.attendanceWindow;
+    const isWindowEnabled = attendanceWindow?.enabled ?? true;
+    const windowStart = attendanceWindow?.startHour ?? 19;
+    const windowEnd = attendanceWindow?.endHour ?? 22;
+    const isWithinWindow = isWindowEnabled ? isWithinTimeWindow(windowStart, windowEnd) : true;
 
     // Request location permission on mount
     useEffect(() => {
@@ -50,6 +59,16 @@ export default function AttendancePage() {
 
     const handleMark = async () => {
         if (isMarked || isScanning) return;
+
+        // Check if within attendance window
+        if (isWindowEnabled && !isWithinWindow) {
+            Alert.alert(
+                'Attendance Window Closed',
+                `Attendance can only be marked between ${formatHour(windowStart)} and ${formatHour(windowEnd)} IST.`,
+                [{ text: 'OK' }]
+            );
+            return;
+        }
 
         // Check permission
         if (locationStatus === 'denied') {
@@ -118,7 +137,7 @@ export default function AttendancePage() {
                 <View style={styles.userInfo}>
                     <Text style={styles.userName}>{user?.name || 'Student'}</Text>
                     <Text style={styles.userRoom}>{user?.room || 'Room'} | {user?.hostel || 'Hostel'}</Text>
-                    <Text style={styles.date}>{new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</Text>
+                    <Text style={styles.date}>{formatDateLong(new Date())} (IST)</Text>
                 </View>
 
                 {/* Geofence Info Banner */}
@@ -131,10 +150,20 @@ export default function AttendancePage() {
                             </Text>
                             {geofence.attendanceWindow && (
                                 <Text style={styles.geofenceTime}>
-                                    Open {geofence.attendanceWindow.start > 12 ? geofence.attendanceWindow.start - 12 : geofence.attendanceWindow.start} PM - {geofence.attendanceWindow.end > 12 ? geofence.attendanceWindow.end - 12 : geofence.attendanceWindow.end} PM
+                                    Open {formatHour(geofence.attendanceWindow.start)} - {formatHour(geofence.attendanceWindow.end)} IST
                                 </Text>
                             )}
                         </View>
+                    </View>
+                )}
+
+                {/* Attendance Window Status */}
+                {isWindowEnabled && !isWithinWindow && !isMarked && (
+                    <View style={styles.windowClosedBanner}>
+                        <Ionicons name="time-outline" size={20} color="#dc2626" />
+                        <Text style={styles.windowClosedText}>
+                            Attendance window is {getCurrentISTHour() < windowStart ? 'not open yet' : 'closed'}. Open {formatHour(windowStart)} - {formatHour(windowEnd)} IST
+                        </Text>
                     </View>
                 )}
 
@@ -166,7 +195,7 @@ export default function AttendancePage() {
                         {isMarked ? (
                             <>
                                 <Text style={styles.markedText}>Attendance Marked!</Text>
-                                <Text style={styles.timeText}>Recorded at {new Date(todayData?.attendance?.markedAt || '').toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}</Text>
+                                <Text style={styles.timeText}>Recorded at {formatTime(todayData?.attendance?.markedAt || new Date())}</Text>
                                 {todayData?.attendance?.location?.distanceFromHostel && (
                                     <Text style={styles.distanceText}>📍 {todayData.attendance.location.distanceFromHostel}m from hostel</Text>
                                 )}
@@ -208,10 +237,10 @@ export default function AttendancePage() {
                                     </View>
                                     <View style={styles.historyContent}>
                                         <Text style={styles.historyDate}>
-                                            {new Date(record.date).toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}
+                                            {formatDateWithDay(record.date)}
                                         </Text>
                                         <Text style={styles.historyTime}>
-                                            Marked at {new Date(record.markedAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
+                                            Marked at {formatTime(record.markedAt)}
                                             {record.location?.distanceFromHostel && ` • ${record.location.distanceFromHostel}m`}
                                         </Text>
                                     </View>
@@ -245,6 +274,8 @@ const styles = StyleSheet.create({
     geofenceTime: { fontSize: 12, color: '#6b7280', marginTop: 2 },
     warningBanner: { flexDirection: 'row', alignItems: 'center', gap: 10, padding: 12, backgroundColor: '#fef3c7', borderRadius: 10 },
     warningText: { flex: 1, fontSize: 13, color: '#92400e' },
+    windowClosedBanner: { flexDirection: 'row', alignItems: 'center', gap: 10, padding: 12, backgroundColor: '#fee2e2', borderRadius: 10 },
+    windowClosedText: { flex: 1, fontSize: 13, color: '#991b1b', fontWeight: '500' },
     scanArea: { alignItems: 'center', justifyContent: 'center', paddingVertical: 32 },
     scanCircle: { width: 192, height: 192, borderRadius: 96, backgroundColor: '#f5f5f5', borderWidth: 4, borderColor: '#e5e5e5', alignItems: 'center', justifyContent: 'center' },
     scanCircleScanning: { backgroundColor: 'rgba(29, 78, 216, 0.1)', borderColor: '#1d4ed8' },

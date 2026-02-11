@@ -1,5 +1,5 @@
 // src/controllers/complaint.controller.ts
-// Complaint controller with production-grade patterns
+// Complaint controller for student maintenance issues
 
 import { Response } from 'express';
 import Complaint from '../models/Complaint';

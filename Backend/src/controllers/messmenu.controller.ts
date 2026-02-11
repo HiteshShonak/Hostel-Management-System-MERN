@@ -1,5 +1,5 @@
 // src/controllers/messmenu.controller.ts
-// Mess Menu controller with production-grade patterns
+// Mess menu controller for daily meal schedules
 
 import { Response } from 'express';
 import MessMenu from '../models/MessMenu';

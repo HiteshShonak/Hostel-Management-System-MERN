@@ -7,7 +7,7 @@ import { useMessMenu, useUpdateMessMenu, useUpdateTimings, useFoodRatingAverage,
 import { useAuth } from '@/lib/auth-context';
 import { useTheme } from '@/lib/theme-context';
 import type { MealType, DayType, MessTimings } from '@/lib/types';
-import { getISTTime } from '@/lib/timezone';
+import { nowIST, getCurrentISTHour, formatHour } from '@/lib/utils/date';
 
 const DAYS: DayType[] = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 const MEALS: { type: MealType; icon: string; color: string }[] = [
@@ -23,10 +23,10 @@ export default function MessMenuPage() {
     const isWarden = user?.role === 'warden' || user?.role === 'admin';
     const { refreshing, onRefresh } = useRefreshDashboard();
 
-    const today = new Date().toLocaleDateString('en-US', { weekday: 'long' }) as DayType;
+    const today = nowIST().toLocaleDateString('en-IN', { weekday: 'long' }) as DayType;
 
     const getInitialMeal = (): MealType => {
-        const hour = new Date().getHours();
+        const hour = getCurrentISTHour();
         if (hour < 10) return 'Breakfast';
         if (hour < 15) return 'Lunch';
         return 'Dinner';
@@ -41,7 +41,7 @@ export default function MessMenuPage() {
     // Calculate the actual date for the selected day in the current week
     const getDateForDay = (day: DayType): string => {
         const dayIndex = DAYS.indexOf(day);
-        const todayDate = new Date();
+        const todayDate = nowIST();
         const currentDayIndex = (todayDate.getDay() + 6) % 7; // Convert to Mon=0, Sun=6
         const diff = dayIndex - currentDayIndex;
         const targetDate = new Date(todayDate);
@@ -141,8 +141,8 @@ export default function MessMenuPage() {
     };
 
     const isRatingAvailable = (mealType: MealType, dayToCheck: DayType): { canRate: boolean; message: string } => {
-        const currentISTTime = getISTTime();
-        const currentDayName = currentISTTime.toLocaleDateString('en-US', { weekday: 'long' }) as DayType;
+        const currentISTTime = nowIST();
+        const currentDayName = currentISTTime.toLocaleDateString('en-IN', { weekday: 'long' }) as DayType;
 
         if (dayToCheck !== currentDayName) {
             const currentDayIndex = DAYS.indexOf(currentDayName);
@@ -307,8 +307,8 @@ export default function MessMenuPage() {
 
                         if (!ratingStatus.canRate) {
                             const timing = timings?.[selectedMeal];
-                            const now = getISTTime();
-                            const currentDayName = now.toLocaleDateString('en-US', { weekday: 'long' }) as DayType;
+                            const now = nowIST();
+                            const currentDayName = now.toLocaleDateString('en-IN', { weekday: 'long' }) as DayType;
                             const isDifferentDay = selectedDay !== currentDayName;
 
                             const [startHour, startMinute] = timing?.start.split(':').map(Number) || [0, 0];
@@ -411,7 +411,7 @@ export default function MessMenuPage() {
                         }
 
                         const timing = timings?.[selectedMeal];
-                        const now = getISTTime();
+                        const now = nowIST();
                         const [startHour, startMinute] = timing?.start.split(':').map(Number) || [0, 0];
                         const todayMealStart = new Date(now);
                         todayMealStart.setHours(startHour, startMinute, 0, 0);

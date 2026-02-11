@@ -6,6 +6,7 @@ import { BottomNav } from '@/components/ui/BottomNav';
 import { useFoodRatingAverage, useRefreshDashboard } from '@/lib/hooks';
 import { useTheme } from '@/lib/theme-context';
 import type { MealType } from '@/lib/types';
+import { nowIST, startOfDay } from '@/lib/utils/date';
 
 const MEALS: { type: MealType; icon: string; color: string; colorDark: string }[] = [
     { type: 'Breakfast', icon: 'cafe', color: '#f59e0b', colorDark: '#fbbf24' },
@@ -18,17 +19,17 @@ export default function FoodRatingsPage() {
     const { refreshing, onRefresh } = useRefreshDashboard();
     const dateScrollRef = useRef<ScrollView>(null);
 
-    // Get today's date
-    const today = new Date();
+    // Get today's date in IST
+    const today = nowIST();
     const [selectedDate, setSelectedDate] = useState(today.toISOString().split('T')[0]);
 
     const { data: ratings, isLoading } = useFoodRatingAverage(selectedDate);
 
-    // Generate past week dates
+    // Generate past week dates in IST
     const getPastWeekDates = () => {
         const dates = [];
         for (let i = 6; i >= 0; i--) {
-            const date = new Date();
+            const date = nowIST();
             date.setDate(date.getDate() - i);
             dates.push(date);
         }
@@ -46,7 +47,7 @@ export default function FoodRatingsPage() {
     }, []);
 
     const formatDate = (date: Date) => {
-        const day = date.toLocaleDateString('en-US', { weekday: 'short' });
+        const day = date.toLocaleDateString('en-IN', { weekday: 'short' });
         const dayNum = date.getDate();
         return { day, dayNum };
     };

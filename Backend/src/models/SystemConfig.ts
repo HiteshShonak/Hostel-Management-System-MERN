@@ -58,4 +58,9 @@ systemConfigSchema.statics.getConfig = async function (): Promise<ISystemConfig>
     return config;
 };
 
-export default mongoose.model<ISystemConfig>('SystemConfig', systemConfigSchema);
+// Interface for static methods
+interface ISystemConfigModel extends mongoose.Model<ISystemConfig> {
+    getConfig(): Promise<ISystemConfig>;
+}
+
+export default mongoose.model<ISystemConfig, ISystemConfigModel>('SystemConfig', systemConfigSchema);

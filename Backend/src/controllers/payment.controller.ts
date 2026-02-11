@@ -1,5 +1,5 @@
 // src/controllers/payment.controller.ts
-// Payment controller with production-grade patterns
+// Payment controller for hostel fee management
 
 import { Response } from 'express';
 import Payment from '../models/Payment';

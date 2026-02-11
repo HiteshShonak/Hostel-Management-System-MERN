@@ -124,11 +124,11 @@ export default function VisitorsPage() {
                                     {visitor.checkInTime && (
                                         <View style={[styles.checkTimes, { borderTopColor: colors.cardBorder }]}>
                                             <Text style={[styles.checkText, { color: colors.textSecondary }]}>
-                                                Checked in: {new Date(visitor.checkInTime).toLocaleString()}
+                                                Checked in: {new Date(visitor.checkInTime).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })}
                                             </Text>
                                             {visitor.checkOutTime && (
                                                 <Text style={[styles.checkText, { color: colors.textSecondary }]}>
-                                                    Checked out: {new Date(visitor.checkOutTime).toLocaleString()}
+                                                    Checked out: {new Date(visitor.checkOutTime).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })}
                                                 </Text>
                                             )}
                                         </View>

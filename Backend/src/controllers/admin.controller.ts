@@ -9,6 +9,7 @@ import { asyncHandler } from '../utils/asyncHandler';
 import { ApiError } from '../utils/ApiError';
 import { ApiResponse } from '../utils/ApiResponse';
 import { getPaginationParams, getPaginationMeta } from '../utils/pagination';
+import { getISTDate, toISTDate, getISTTime } from '../utils/timezone';
 
 // @desc    Link a parent to a student
 // @route   POST /api/admin/link-parent
@@ -293,8 +294,8 @@ export const getAllAttendance = asyncHandler(async (req: AuthRequest, res: Respo
     const matchStage: any = {};
     if (studentId) matchStage.user = new Types.ObjectId(studentId as string);
     if (date) {
-        const targetDate = new Date(date as string);
-        targetDate.setHours(0, 0, 0, 0);
+        // Convert to IST timezone
+        const targetDate = toISTDate(new Date(date as string));
         const nextDay = new Date(targetDate);
         nextDay.setDate(nextDay.getDate() + 1);
         matchStage.date = { $gte: targetDate, $lt: nextDay };
@@ -342,8 +343,8 @@ export const getAllAttendance = asyncHandler(async (req: AuthRequest, res: Respo
 // @desc    Get system statistics for admin dashboard
 // @route   GET /api/admin/stats
 export const getSystemStats = asyncHandler(async (req: AuthRequest, res: Response) => {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    // Use IST for today
+    const today = getISTDate();
 
     // Calculate start of current month
     const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
@@ -542,8 +543,8 @@ export const getAllComplaints = asyncHandler(async (req: AuthRequest, res: Respo
 // @desc    Get warden dashboard statistics
 // @route   GET /api/admin/warden/dashboard-stats
 export const getWardenDashboardStats = asyncHandler(async (req: AuthRequest, res: Response) => {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    // Use IST for today
+    const today = getISTDate();
 
     const Attendance = (await import('../models/Attendance')).default;
     const GatePass = (await import('../models/GatePass')).default;
@@ -595,8 +596,8 @@ export const getWardenStudentList = asyncHandler(async (req: AuthRequest, res: R
     const { page, limit, skip } = getPaginationParams(req, 20);
     const { search } = req.query;
 
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    // Use IST for today
+    const today = getISTDate();
 
     // Build search filter
     const searchFilter: Record<string, unknown> = { role: 'student' };
@@ -660,8 +661,8 @@ export const getStudentDetail = asyncHandler(async (req: AuthRequest, res: Respo
         throw new ApiError(404, 'Student not found');
     }
 
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    // Use IST for today
+    const today = getISTDate();
     const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
 
     const Attendance = (await import('../models/Attendance')).default;
@@ -720,8 +721,8 @@ export const wardenMarkAttendance = asyncHandler(async (req: AuthRequest, res: R
         throw new ApiError(404, 'Student not found');
     }
 
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    // Use IST for today
+    const today = getISTDate();
 
     const Attendance = (await import('../models/Attendance')).default;
 

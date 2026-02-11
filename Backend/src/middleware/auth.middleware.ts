@@ -1,5 +1,5 @@
 // src/middleware/auth.middleware.ts
-// Authentication middleware with production-grade patterns
+// Auth middleware for protecting routes and checking roles
 
 import { Response, NextFunction } from 'express';
 import User from '../models/User';

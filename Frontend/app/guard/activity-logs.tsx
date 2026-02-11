@@ -5,6 +5,7 @@ import { PageHeader } from '@/components/ui/PageHeader';
 import { BottomNav } from '@/components/ui/BottomNav';
 import { useActivityLogs } from '@/lib/hooks';
 import { PRIMARY_COLOR } from '@/lib/constants';
+import { nowIST } from '@/lib/utils/date';
 
 interface LogEntry {
     _id: string;
@@ -37,7 +38,7 @@ export default function ActivityLogsScreen() {
     };
 
     const getTimeAgo = (dateStr: string) => {
-        const now = new Date();
+        const now = nowIST();
         const date = new Date(dateStr);
         const diff = Math.floor((now.getTime() - date.getTime()) / 1000 / 60);
         if (diff < 1) return 'Just now';

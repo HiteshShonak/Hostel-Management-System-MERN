@@ -542,7 +542,7 @@ export const queryKeys = {
 };
 
 // ==================== PARENT HOOKS ====================
-// Gold-level implementation with proper caching strategies
+// Parent hooks with smart caching to reduce unnecessary requests
 
 import { parentService, adminService, ParentChild, PendingGatePass, ChildAttendance, AdminUser, ParentStudentLink } from './services';
 
@@ -691,7 +691,7 @@ export const useParentChildAttendance = (studentId: string, page: number = 1) =>
 };
 
 // ==================== ADMIN HOOKS ====================
-// Gold-level implementation with proper caching and optimistic updates
+// Admin hooks with caching and optimistic updates for better UX
 
 /**
  * Get users with filters

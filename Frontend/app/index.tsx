@@ -9,12 +9,15 @@ import { RecentNotices } from '../components/dashboard/recent-notices';
 import { BottomNav } from '@/components/ui/BottomNav';
 import { useAuth } from '@/lib/auth-context';
 import { useTheme } from '@/lib/theme-context';
-import { usePendingGatePasses, useActiveAlerts, useResolveAlert, useRefreshDashboard, useWardenDashboardStats } from '@/lib/hooks';
-import { ATTENDANCE_START_HOUR, ATTENDANCE_END_HOUR } from '@/lib/constants';
+import { usePendingGatePasses, useActiveAlerts, useResolveAlert, useRefreshDashboard, useWardenDashboardStats, useSystemConfig } from '@/lib/hooks';
+import { getCurrentISTHour, isWithinTimeWindow } from '@/lib/utils/date';
 
 function StudentDashboard() {
-    const currentHour = new Date().getHours();
-    const isAttendanceTime = currentHour >= ATTENDANCE_START_HOUR && currentHour < ATTENDANCE_END_HOUR;
+    const { data: config } = useSystemConfig();
+    const currentHour = getCurrentISTHour();
+    const isAttendanceTime = config?.attendanceWindow?.enabled
+        ? isWithinTimeWindow(config.attendanceWindow.startHour, config.attendanceWindow.endHour)
+        : currentHour >= 19 && currentHour < 22; // Fallback while config loads
 
     return (
         <>

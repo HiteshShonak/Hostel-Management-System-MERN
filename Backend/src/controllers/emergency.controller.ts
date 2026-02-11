@@ -1,5 +1,4 @@
-// src/controllers/emergency.controller.ts
-// Emergency controller with production-grade patterns
+// Emergency controller for SOS alerts and emergency contacts
 
 import { Response } from 'express';
 import Emergency from '../models/Emergency';
@@ -32,7 +31,7 @@ export const sendSOS = asyncHandler(async (req: AuthRequest, res: Response) => {
         location: location || '',
     });
 
-    // TODO: Send push notification to wardens
+    // Push notifications to wardens would be nice to add here
 
     return res.status(201).json(new ApiResponse(201, {
         success: true,

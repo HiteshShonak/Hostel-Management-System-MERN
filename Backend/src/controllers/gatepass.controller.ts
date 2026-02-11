@@ -1,5 +1,4 @@
-// src/controllers/gatepass.controller.ts
-// Gate Pass controller with production-grade patterns
+// Gate pass controller for handling student leave requests
 
 import { Response } from 'express';
 import { v4 as uuidv4 } from 'uuid';
@@ -12,6 +11,8 @@ import { asyncHandler } from '../utils/asyncHandler';
 import { ApiError } from '../utils/ApiError';
 import { ApiResponse } from '../utils/ApiResponse';
 import { getPaginationParams, getPaginationMeta } from '../utils/pagination';
+import { getISTTime, getISTDate, toISTDate } from '../utils/timezone';
+import SystemConfig from '../models/SystemConfig';
 import { createNotification } from '../services/notification.service';
 
 // @desc    Get user's gate passes (paginated)
@@ -74,13 +75,30 @@ export const requestGatePass = asyncHandler(async (req: AuthRequest, res: Respon
         throw new ApiError(400, 'From date must be before to date');
     }
 
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const fromDateOnly = new Date(from);
-    fromDateOnly.setHours(0, 0, 0, 0);
+    // Validate date is not in the past (use IST)
+    const today = getISTDate();
+    const fromDateOnly = toISTDate(new Date(from));
 
     if (fromDateOnly < today) {
         throw new ApiError(400, 'From date cannot be in the past');
+    }
+
+    // Get dynamic config for validation
+    const config = await SystemConfig.getConfig();
+
+    // Validate gate pass duration against dynamic limit
+    const diffDays = Math.ceil((to.getTime() - from.getTime()) / (1000 * 60 * 60 * 24));
+    if (diffDays > config.appConfig.maxGatePassDays) {
+        throw new ApiError(400, `Gate pass cannot exceed ${config.appConfig.maxGatePassDays} days`);
+    }
+
+    // Check max pending passes (dynamic from config)
+    const pendingCount = await GatePass.countDocuments({
+        user: req.user?._id,
+        status: { $in: ['PENDING_PARENT', 'PENDING_WARDEN'] },
+    });
+    if (pendingCount >= config.appConfig.maxPendingPasses) {
+        throw new ApiError(400, `You can only have ${config.appConfig.maxPendingPasses} pending passes at a time`);
     }
 
     // Check for overlapping pending/approved passes
@@ -439,8 +457,8 @@ export const getStudentsOut = asyncHandler(async (req: AuthRequest, res: Respons
 // @desc    Get recent entries (students who returned today)
 // @route   GET /api/gatepass/recent-entries
 export const getRecentEntries = asyncHandler(async (req: AuthRequest, res: Response) => {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    // Get today's date in IST
+    const today = getISTDate();
 
     const passes = await GatePass.find({
         entryTime: { $gte: today }

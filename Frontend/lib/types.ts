@@ -172,6 +172,9 @@ export interface Attendance {
     user: string;
     date: string;
     markedAt: string;
+    location?: {
+        distanceFromHostel?: number;
+    };
 }
 
 export interface AttendanceStats {

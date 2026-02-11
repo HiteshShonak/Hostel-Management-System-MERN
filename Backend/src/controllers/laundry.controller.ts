@@ -1,5 +1,5 @@
 // src/controllers/laundry.controller.ts
-// Laundry controller with production-grade patterns
+// Laundry controller for scheduling and tracking
 
 import { Response } from 'express';
 import Laundry from '../models/Laundry';

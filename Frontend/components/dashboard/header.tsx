@@ -7,6 +7,7 @@ import { useAuth } from '@/lib/auth-context';
 import { useTheme } from '@/lib/theme-context';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/Avatar';
 import { notificationService } from '@/lib/services';
+import { getCurrentISTHour } from '@/lib/utils/date';
 
 export function DashboardHeader() {
     const { user, isLoading } = useAuth();
@@ -37,7 +38,7 @@ export function DashboardHeader() {
     });
 
     const getGreeting = () => {
-        const hour = new Date().getHours();
+        const hour = getCurrentISTHour();
         if (hour < 12) return 'Good Morning';
         if (hour < 17) return 'Good Afternoon';
         return 'Good Evening';

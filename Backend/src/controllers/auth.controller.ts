@@ -1,5 +1,5 @@
 // src/controllers/auth.controller.ts
-// Authentication controller with production-grade patterns
+// Auth controller for login, register, and password management
 
 import { Request, Response } from 'express';
 import User from '../models/User';

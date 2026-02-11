@@ -1,5 +1,5 @@
 // src/controllers/foodrating.controller.ts
-// Food Rating controller with production-grade patterns
+// Food rating controller for mess meal feedback
 
 import { Response } from 'express';
 import FoodRating from '../models/FoodRating';
@@ -8,7 +8,7 @@ import { AuthRequest } from '../types';
 import { asyncHandler } from '../utils/asyncHandler';
 import { ApiError } from '../utils/ApiError';
 import { ApiResponse } from '../utils/ApiResponse';
-import { getISTTime, getISTDate } from '../utils/timezone';
+import { getISTDate, toISTDate, getISTTime } from '../utils/timezone';
 
 // @desc    Rate a meal
 // @route   POST /api/food-rating
@@ -73,8 +73,8 @@ export const rateMeal = asyncHandler(async (req: AuthRequest, res: Response) => 
 // @route   GET /api/food-rating/average
 export const getAverageRatings = asyncHandler(async (req: AuthRequest, res: Response) => {
     const dateParam = req.query.date as string | undefined;
-    const queryDate = dateParam ? new Date(dateParam) : new Date();
-    queryDate.setHours(0, 0, 0, 0);
+    // Use IST for date queries
+    const queryDate = dateParam ? toISTDate(new Date(dateParam)) : getISTDate();
 
     const aggregation = await FoodRating.aggregate([
         { $match: { date: queryDate } },
@@ -99,8 +99,8 @@ export const getAverageRatings = asyncHandler(async (req: AuthRequest, res: Resp
 // @route   GET /api/food-rating/my-ratings?date=YYYY-MM-DD
 export const getMyRatings = asyncHandler(async (req: AuthRequest, res: Response) => {
     const dateParam = req.query.date as string | undefined;
-    const queryDate = dateParam ? new Date(dateParam) : new Date();
-    queryDate.setHours(0, 0, 0, 0);
+    // Use IST for date queries
+    const queryDate = dateParam ? toISTDate(new Date(dateParam)) : getISTDate();
 
     const ratings = await FoodRating.find({ user: req.user?._id, date: queryDate });
 

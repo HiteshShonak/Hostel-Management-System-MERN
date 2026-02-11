@@ -4,11 +4,12 @@ import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@/lib/theme-context';
 import { useAttendance } from '@/lib/hooks';
+import { nowIST } from '@/lib/utils/date';
 
 export function AttendanceCard() {
     const router = useRouter();
     const { colors, isDark } = useTheme();
-    const { data: attendance } = useAttendance(new Date().toISOString().split('T')[0]);
+    const { data: attendance } = useAttendance();
 
     // If already marked, maybe show status?
     // For now, simple CTA

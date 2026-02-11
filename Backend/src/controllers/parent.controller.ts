@@ -11,6 +11,7 @@ import { asyncHandler } from '../utils/asyncHandler';
 import { ApiError } from '../utils/ApiError';
 import { ApiResponse } from '../utils/ApiResponse';
 import { getPaginationParams, getPaginationMeta } from '../utils/pagination';
+import { getISTDate } from '../utils/timezone';
 import { createNotification } from '../services/notification.service';
 
 // @desc    Get all children linked to current parent
@@ -312,9 +313,8 @@ export const getChildAttendance = asyncHandler(async (req: AuthRequest, res: Res
         Attendance.countDocuments({ user: studentId })
     ]);
 
-    // Check today's attendance
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    // Check today's attendance (use IST)
+    const today = getISTDate();
     const todayAttendance = await Attendance.findOne({
         user: studentId,
         date: { $gte: today }
@@ -334,8 +334,8 @@ export const getChildAttendance = asyncHandler(async (req: AuthRequest, res: Res
 export const getTodayAttendance = asyncHandler(async (req: AuthRequest, res: Response) => {
     const parentId = req.user?._id;
 
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    // Use IST for today's date
+    const today = getISTDate();
 
     const result = await ParentStudent.aggregate([
         { $match: { parent: new Types.ObjectId(parentId), status: 'active' } },

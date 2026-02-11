@@ -19,13 +19,6 @@ export const API_BASE_URL =
 // Request timeout in milliseconds
 export const API_TIMEOUT = 15000;
 
-// Smart Attendance Configuration
-// ------------------------------
-// Time window for showing Smart Attendance on student dashboard
-// 24-hour format: 19 = 7 PM, 20 = 8 PM
-export const ATTENDANCE_START_HOUR = 19; // 7 PM
-export const ATTENDANCE_END_HOUR = 20;   // Midnight (adjust as needed)
-
 // Notification Configuration
 // --------------------------
 // How often to refresh unread notification count (milliseconds)

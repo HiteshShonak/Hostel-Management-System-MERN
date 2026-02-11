@@ -1,5 +1,5 @@
 // src/utils/logger.ts
-// Production-grade logging utility for SmartHostel Backend
+// Logger utility for debugging and tracking errors
 // Provides structured logging with different levels and formats
 
 type LogLevel = 'debug' | 'info' | 'warn' | 'error';

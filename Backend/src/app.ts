@@ -1,5 +1,5 @@
 // src/app.ts
-// Express application setup with production-grade configuration
+// Main Express app setup with middleware and routes
 
 import express from 'express';
 import cors from 'cors';

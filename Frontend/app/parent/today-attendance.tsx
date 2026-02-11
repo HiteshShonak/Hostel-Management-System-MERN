@@ -40,6 +40,7 @@ export default function ParentTodayAttendance() {
         day: 'numeric',
         month: 'long',
         year: 'numeric',
+        timeZone: 'Asia/Kolkata',
     });
 
     return (

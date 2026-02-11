@@ -147,7 +147,7 @@ export default function NotificationsPage() {
                                     </View>
                                     <Text style={[styles.message, { color: colors.textSecondary }]} numberOfLines={2}>{notification.message}</Text>
                                     <Text style={[styles.time, { color: colors.textTertiary }]}>
-                                        {new Date(notification.createdAt).toLocaleDateString('en-US', {
+                                        {new Date(notification.createdAt).toLocaleDateString('en-IN', {
                                             month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
                                         })}
                                     </Text>

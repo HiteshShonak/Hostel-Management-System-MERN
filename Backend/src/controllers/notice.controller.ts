@@ -1,5 +1,5 @@
 // src/controllers/notice.controller.ts
-// Notice controller with production-grade patterns
+// Notice controller for hostel announcements
 
 import { Response } from 'express';
 import Notice from '../models/Notice';

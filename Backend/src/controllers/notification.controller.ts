@@ -1,5 +1,5 @@
 // src/controllers/notification.controller.ts
-// Notification controller with production-grade patterns
+// Notification controller for in-app alerts
 
 import { Response } from 'express';
 import Notification from '../models/Notification';

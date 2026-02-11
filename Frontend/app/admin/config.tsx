@@ -102,7 +102,7 @@ export default function AdminConfigScreen() {
                             <TextInput style={[styles.input, { backgroundColor: colors.backgroundSecondary, color: colors.text, borderColor: colors.cardBorder }]} value={endHour} onChangeText={setEndHour} keyboardType="number-pad" placeholder="22" placeholderTextColor={colors.textTertiary} />
                         </View>
                     </View>
-                    <Text style={[styles.hint, { color: colors.textTertiary }]}>Attendance can only be marked between these hours</Text>
+                    <Text style={[styles.hint, { color: colors.textTertiary }]}>Attendance can only be marked between these hours (IST - Indian Standard Time)</Text>
                 </View>
 
                 {/* Save Button */}
