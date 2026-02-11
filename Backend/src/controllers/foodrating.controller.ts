@@ -8,6 +8,7 @@ import { AuthRequest } from '../types';
 import { asyncHandler } from '../utils/asyncHandler';
 import { ApiError } from '../utils/ApiError';
 import { ApiResponse } from '../utils/ApiResponse';
+import { getISTTime, getISTDate } from '../utils/timezone';
 
 // @desc    Rate a meal
 // @route   POST /api/food-rating
@@ -36,31 +37,20 @@ export const rateMeal = asyncHandler(async (req: AuthRequest, res: Response) => 
         throw new ApiError(400, 'Meal timing not found. Please contact admin.');
     }
 
-    // Parse meal start time (e.g., "07:30")
     const [startHour, startMinute] = mealTiming.start.split(':').map(Number);
 
-    // Create Date objects for comparison in IST timezone
-    // Meal timings are in IST, so we must convert server time to IST
-    const getISTTime = () => {
-        const now = new Date();
-        // Convert to IST (UTC+5:30)
-        const istOffset = 5.5 * 60 * 60 * 1000; // 5 hours 30 minutes
-        return new Date(now.getTime() + (istOffset - now.getTimezoneOffset() * 60 * 1000));
-    };
     const now = getISTTime();
-    const todayMealStart = new Date();
+    const validationDay = getISTDate();
+    const todayMealStart = new Date(now);
     todayMealStart.setHours(startHour, startMinute, 0, 0);
 
-    // Calculate 12-hour window end (from meal start time)
     const ratingWindowEnd = new Date(todayMealStart);
     ratingWindowEnd.setHours(ratingWindowEnd.getHours() + 12);
 
-    // Format time for error messages
     const formatTime = (date: Date) => {
         return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
     };
 
-    // Validate rating window
     if (now < todayMealStart) {
         throw new ApiError(400, `Rating not available yet. ${mealType} starts at ${mealTiming.start}`);
     }
@@ -69,14 +59,10 @@ export const rateMeal = asyncHandler(async (req: AuthRequest, res: Response) => 
         throw new ApiError(400, `Rating window closed. You can rate ${mealType} within 12 hours of ${mealTiming.start} (until ${formatTime(ratingWindowEnd)})`);
     }
 
-    // Use IST time for date as well
-    const today = getISTTime();
-    today.setHours(0, 0, 0, 0);
-
     // Update or create rating for today
     const foodRating = await FoodRating.findOneAndUpdate(
-        { user: req.user?._id, mealType, date: today },
-        { rating, comment, date: today },
+        { user: req.user?._id, mealType, date: validationDay },
+        { rating, comment, date: validationDay },
         { new: true, upsert: true }
     );
 

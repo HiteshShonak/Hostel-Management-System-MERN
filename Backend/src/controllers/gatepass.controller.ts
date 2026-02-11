@@ -115,7 +115,6 @@ export const requestGatePass = asyncHandler(async (req: AuthRequest, res: Respon
 
     // Notify appropriate parties based on initial status
     if (initialStatus === 'PENDING_WARDEN') {
-        // Student has no parent - notify wardens directly
         const wardens = await User.find({ role: 'warden' }).select('_id');
         for (const warden of wardens) {
             createNotification({
@@ -126,17 +125,29 @@ export const requestGatePass = asyncHandler(async (req: AuthRequest, res: Respon
                 relatedId: pass._id,
             });
         }
-    } else if (req.user?._id) {
-        if (req.user?._id) {
-            // Student has parent - notify student that request is pending parent approval
+    } else if (hasParentLink && req.user?._id) {
+        const parentLinkData = await ParentStudent.findOne({
+            student: req.user._id,
+            status: 'active'
+        }).populate('parent');
+
+        if (parentLinkData?.parent) {
             createNotification({
-                userId: req.user._id,
+                userId: (parentLinkData.parent as any)._id,
                 type: 'gatepass',
-                title: 'Gate Pass Submitted',
-                message: 'Your gate pass request has been sent to your parent for approval.',
+                title: 'Gate Pass Approval Needed',
+                message: `${req.user.name} has requested a gate pass.`,
                 relatedId: pass._id,
             });
         }
+    } else if (req.user?._id) {
+        createNotification({
+            userId: req.user._id,
+            type: 'gatepass',
+            title: 'Gate Pass Submitted',
+            message: 'Your gate pass request has been sent to your parent for approval.',
+            relatedId: pass._id,
+        });
     }
 
     return res.status(201).json(new ApiResponse(201, pass, 'Gate pass requested successfully'));

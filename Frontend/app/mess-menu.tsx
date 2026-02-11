@@ -7,6 +7,7 @@ import { useMessMenu, useUpdateMessMenu, useUpdateTimings, useFoodRatingAverage,
 import { useAuth } from '@/lib/auth-context';
 import { useTheme } from '@/lib/theme-context';
 import type { MealType, DayType, MessTimings } from '@/lib/types';
+import { getISTTime } from '@/lib/timezone';
 
 const DAYS: DayType[] = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 const MEALS: { type: MealType; icon: string; color: string }[] = [
@@ -130,8 +131,28 @@ export default function MessMenuPage() {
     };
 
 
-    // Helper: Check if rating is available for a meal based on time window
-    const isRatingAvailable = (mealType: MealType): { canRate: boolean; message: string } => {
+    const formatISTTime = (date: Date): string => {
+        const hours = date.getHours();
+        const minutes = date.getMinutes();
+        const ampm = hours >= 12 ? 'PM' : 'AM';
+        const displayHours = hours % 12 || 12;
+        const displayMinutes = minutes.toString().padStart(2, '0');
+        return `${displayHours}:${displayMinutes} ${ampm}`;
+    };
+
+    const isRatingAvailable = (mealType: MealType, dayToCheck: DayType): { canRate: boolean; message: string } => {
+        const currentISTTime = getISTTime();
+        const currentDayName = currentISTTime.toLocaleDateString('en-US', { weekday: 'long' }) as DayType;
+
+        if (dayToCheck !== currentDayName) {
+            const currentDayIndex = DAYS.indexOf(currentDayName);
+            const checkDayIndex = DAYS.indexOf(dayToCheck);
+            return {
+                canRate: false,
+                message: checkDayIndex < currentDayIndex ? 'Past meals cannot be rated' : 'Future meals cannot be rated'
+            };
+        }
+
         if (!timings || !timings[mealType]) {
             return { canRate: false, message: 'Timing not available' };
         }
@@ -139,17 +160,10 @@ export default function MessMenuPage() {
         const timing = timings[mealType];
         const [startHour, startMinute] = timing.start.split(':').map(Number);
 
-        // Use IST time (UTC+5:30) to match backend validation
-        const getISTTime = () => {
-            const now = new Date();
-            const istOffset = 5.5 * 60 * 60 * 1000;
-            return new Date(now.getTime() + (istOffset - now.getTimezoneOffset() * 60 * 1000));
-        };
-        const now = getISTTime();
+        const now = currentISTTime;
         const todayMealStart = new Date(now);
         todayMealStart.setHours(startHour, startMinute, 0, 0);
 
-        // 12-hour window from meal start time
         const ratingWindowEnd = new Date(todayMealStart);
         ratingWindowEnd.setHours(ratingWindowEnd.getHours() + 12);
 
@@ -289,26 +303,29 @@ export default function MessMenuPage() {
 
                     {/* Rate Button - Students and Guards - Time-based availability */}
                     {(user?.role === 'student' || user?.role === 'guard') && (() => {
-                        const ratingStatus = isRatingAvailable(selectedMeal);
+                        const ratingStatus = isRatingAvailable(selectedMeal, selectedDay);
 
                         if (!ratingStatus.canRate) {
-                            // Determine which restriction applies
                             const timing = timings?.[selectedMeal];
-                            const now = new Date();
+                            const now = getISTTime();
+                            const currentDayName = now.toLocaleDateString('en-US', { weekday: 'long' }) as DayType;
+                            const isDifferentDay = selectedDay !== currentDayName;
+
                             const [startHour, startMinute] = timing?.start.split(':').map(Number) || [0, 0];
-                            const todayMealStart = new Date();
+                            const todayMealStart = new Date(now);
                             todayMealStart.setHours(startHour, startMinute, 0, 0);
 
-                            const isBeforeMeal = now < todayMealStart;
-                            const ratingWindowEnd = new Date(todayMealStart);
-                            ratingWindowEnd.setHours(ratingWindowEnd.getHours() + 12);
+                            const isBeforeMeal = now < todayMealStart && !isDifferentDay;
+                            const ratingWindowEnd = new Date(todayMealStart.getTime() + (12 * 60 * 60 * 1000));
 
-                            // Format time helper
                             const formatTimeRemaining = (targetDate: Date) => {
                                 const diff = targetDate.getTime() - now.getTime();
                                 const hours = Math.floor(diff / (1000 * 60 * 60));
                                 const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-                                return `${hours}h ${minutes}m`;
+                                if (hours > 0) {
+                                    return `${hours}h ${minutes}m`;
+                                }
+                                return `${minutes}m`;
                             };
 
                             return (
@@ -324,15 +341,17 @@ export default function MessMenuPage() {
                                         <View style={[
                                             styles.ratingBlockedIcon,
                                             {
-                                                backgroundColor: isBeforeMeal
-                                                    ? (isDark ? '#422006' : '#fef3c7')
-                                                    : (isDark ? '#3f1e1e' : '#fee2e2')
+                                                backgroundColor: isDifferentDay
+                                                    ? (isDark ? '#27272a' : '#f1f5f9')
+                                                    : isBeforeMeal
+                                                        ? (isDark ? '#422006' : '#fef3c7')
+                                                        : (isDark ? '#3f1e1e' : '#fee2e2')
                                             }
                                         ]}>
                                             <Ionicons
-                                                name={isBeforeMeal ? "time-outline" : "lock-closed-outline"}
+                                                name={isDifferentDay ? "calendar-outline" : isBeforeMeal ? "time-outline" : "lock-closed-outline"}
                                                 size={24}
-                                                color={isBeforeMeal ? '#f59e0b' : '#ef4444'}
+                                                color={isDifferentDay ? colors.textSecondary : isBeforeMeal ? '#f59e0b' : '#ef4444'}
                                             />
                                         </View>
                                         <View style={styles.ratingBlockedContent}>
@@ -340,15 +359,20 @@ export default function MessMenuPage() {
                                                 styles.ratingBlockedTitle,
                                                 { color: colors.text }
                                             ]}>
-                                                {isBeforeMeal ? 'Rating Opens Soon' : 'Rating Window Closed'}
+                                                {isDifferentDay
+                                                    ? ratingStatus.message
+                                                    : isBeforeMeal ? 'Rating Opens Soon' : 'Rating Window Closed'
+                                                }
                                             </Text>
                                             <Text style={[
                                                 styles.ratingBlockedSubtitle,
                                                 { color: colors.textSecondary }
                                             ]}>
-                                                {isBeforeMeal
-                                                    ? `${selectedMeal} starts at ${timing?.start}`
-                                                    : `Rating period ended 12 hours after meal start`
+                                                {isDifferentDay
+                                                    ? `You can only rate ${currentDayName}'s meals`
+                                                    : isBeforeMeal
+                                                        ? `${selectedMeal} starts at ${timing?.start}`
+                                                        : `Rating period ended 12 hours after meal start`
                                                 }
                                             </Text>
                                         </View>
@@ -359,50 +383,68 @@ export default function MessMenuPage() {
                                         styles.ratingBlockedInfo,
                                         { backgroundColor: isDark ? '#27272a' : '#ffffff' }
                                     ]}>
-                                        {isBeforeMeal ? (
-                                            <>
-                                                <View style={styles.ratingInfoRow}>
-                                                    <Ionicons name="calendar-outline" size={16} color={colors.textSecondary} />
-                                                    <Text style={[styles.ratingInfoText, { color: colors.textSecondary }]}>
-                                                        Opens in {formatTimeRemaining(todayMealStart)}
-                                                    </Text>
-                                                </View>
-                                                <View style={styles.ratingInfoRow}>
-                                                    <Ionicons name="checkmark-circle-outline" size={16} color="#10b981" />
-                                                    <Text style={[styles.ratingInfoText, { color: colors.textSecondary }]}>
-                                                        Available until {ratingWindowEnd.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true })}
-                                                    </Text>
-                                                </View>
-                                            </>
+                                        {isDifferentDay ? (
+                                            <View style={styles.ratingInfoRow}>
+                                                <Ionicons name="information-circle-outline" size={16} color={colors.textSecondary} />
+                                                <Text style={[styles.ratingInfoText, { color: colors.textSecondary }]}>
+                                                    Switch to {currentDayName} to rate today's meals
+                                                </Text>
+                                            </View>
+                                        ) : isBeforeMeal ? (
+                                            <View style={styles.ratingInfoRow}>
+                                                <Ionicons name="time-outline" size={16} color={colors.textSecondary} />
+                                                <Text style={[styles.ratingInfoText, { color: colors.textSecondary }]}>
+                                                    Opens in {formatTimeRemaining(todayMealStart)}
+                                                </Text>
+                                            </View>
                                         ) : (
-                                            <>
-                                                <View style={styles.ratingInfoRow}>
-                                                    <Ionicons name="information-circle-outline" size={16} color={colors.textSecondary} />
-                                                    <Text style={[styles.ratingInfoText, { color: colors.textSecondary }]}>
-                                                        Ratings are accepted for 12 hours from meal start
-                                                    </Text>
-                                                </View>
-                                                <View style={styles.ratingInfoRow}>
-                                                    <Ionicons name="time-outline" size={16} color={colors.textSecondary} />
-                                                    <Text style={[styles.ratingInfoText, { color: colors.textSecondary }]}>
-                                                        Window closed at {ratingWindowEnd.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true })}
-                                                    </Text>
-                                                </View>
-                                            </>
+                                            <View style={styles.ratingInfoRow}>
+                                                <Ionicons name="information-circle-outline" size={16} color={colors.textSecondary} />
+                                                <Text style={[styles.ratingInfoText, { color: colors.textSecondary }]}>
+                                                    Rating window has closed for this meal
+                                                </Text>
+                                            </View>
                                         )}
                                     </View>
                                 </View>
                             );
                         }
 
-                        // Show active rating button
+                        const timing = timings?.[selectedMeal];
+                        const now = getISTTime();
+                        const [startHour, startMinute] = timing?.start.split(':').map(Number) || [0, 0];
+                        const todayMealStart = new Date(now);
+                        todayMealStart.setHours(startHour, startMinute, 0, 0);
+                        const ratingWindowEnd = new Date(todayMealStart.getTime() + (12 * 60 * 60 * 1000));
+
+                        const formatTimeRemaining = (targetDate: Date) => {
+                            const diff = targetDate.getTime() - now.getTime();
+                            const hours = Math.floor(diff / (1000 * 60 * 60));
+                            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                            if (hours > 0) {
+                                return `${hours}h ${minutes}m`;
+                            }
+                            return `${minutes}m`;
+                        };
+
                         return (
-                            <Pressable style={[styles.rateBtn, { backgroundColor: isDark ? '#78350f' : '#fef3c7' }]} onPress={() => setRatingMeal(selectedMeal)}>
-                                <Ionicons name="star" size={18} color="#f59e0b" />
-                                <Text style={[styles.rateBtnText, { color: isDark ? '#fef3c7' : '#92400e' }]}>
-                                    {myCurrentRating ? `Your rating: ${myCurrentRating.rating}★` : 'Rate this meal'}
-                                </Text>
-                            </Pressable>
+                            <>
+                                <View style={[
+                                    styles.ratingAvailableBanner,
+                                    { backgroundColor: isDark ? '#1a2e1a' : '#f0fdf4', borderColor: isDark ? '#2d5f2d' : '#86efac' }
+                                ]}>
+                                    <Ionicons name="time-outline" size={16} color="#10b981" />
+                                    <Text style={[styles.ratingAvailableText, { color: isDark ? '#86efac' : '#065f46' }]}>
+                                        Rating closes in {formatTimeRemaining(ratingWindowEnd)} at {formatISTTime(ratingWindowEnd)}
+                                    </Text>
+                                </View>
+                                <Pressable style={[styles.rateBtn, { backgroundColor: isDark ? '#78350f' : '#fef3c7' }]} onPress={() => setRatingMeal(selectedMeal)}>
+                                    <Ionicons name="star" size={18} color="#f59e0b" />
+                                    <Text style={[styles.rateBtnText, { color: isDark ? '#fef3c7' : '#92400e' }]}>
+                                        {myCurrentRating ? `Your rating: ${myCurrentRating.rating}★` : 'Rate this meal'}
+                                    </Text>
+                                </Pressable>
+                            </>
                         );
                     })()}
 
@@ -649,6 +691,21 @@ const styles = StyleSheet.create({
     },
     ratingInfoText: {
         fontSize: 13,
+        flex: 1,
+    },
+    ratingAvailableBanner: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 8,
+        padding: 12,
+        borderRadius: 12,
+        borderWidth: 1,
+        marginHorizontal: 16,
+        marginBottom: 8,
+    },
+    ratingAvailableText: {
+        fontSize: 13,
+        fontWeight: '500',
         flex: 1,
     },
     // Timing editor styles
