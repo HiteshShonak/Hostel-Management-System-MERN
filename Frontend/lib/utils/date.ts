@@ -169,7 +169,7 @@ export const endOfDay = (date?: Date | string): Date => {
  * Format hour for display (e.g., 14 -> "2 PM", 9 -> "9 AM")
  */
 export const formatHour = (hour: number): string => {
-    if (hour === 0) return '12 AM';
+    if (hour === 0 || hour === 24) return '12 AM';
     if (hour === 12) return '12 PM';
     if (hour < 12) return `${hour} AM`;
     return `${hour - 12} PM`;
