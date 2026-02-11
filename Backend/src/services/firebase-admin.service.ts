@@ -20,13 +20,24 @@ export const initializeFirebaseAdmin = (): boolean => {
             return true;
         }
 
-        // Path to service account key
-        const serviceAccountPath = path.join(__dirname, '..', '..', 'firebase-admin-key.json');
+        // Path to service account key - check multiple locations
+        const localPath = path.join(__dirname, '..', '..', 'firebase-admin-key.json');
+        const renderSecretPath = '/etc/secrets/firebase-admin-key.json'; // Render.com secret files path
 
-        // Check if file exists
-        if (!fs.existsSync(serviceAccountPath)) {
+        let serviceAccountPath = '';
+
+        // Check local path first (for development)
+        if (fs.existsSync(localPath)) {
+            serviceAccountPath = localPath;
+        }
+        // Check Render secret files path (for production)
+        else if (fs.existsSync(renderSecretPath)) {
+            serviceAccountPath = renderSecretPath;
+        }
+        // File not found in either location
+        else {
             logger.warn('Firebase service account key not found, Firebase push notifications disabled');
-            logger.warn(`Expected path: ${serviceAccountPath}`);
+            logger.warn(`Checked paths: ${localPath}, ${renderSecretPath}`);
             return false;
         }
 
