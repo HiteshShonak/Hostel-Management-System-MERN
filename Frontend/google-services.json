@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "241699173905",
+    "project_id": "smart-hostel-f1ccf",
+    "storage_bucket": "smart-hostel-f1ccf.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:241699173905:android:e744f296e9124e7f23a3b0",
+        "android_client_info": {
+          "package_name": "com.hostelhub.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC-Vn4-NKQHrGeFcTyMKkepbzQXd6AASp0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
