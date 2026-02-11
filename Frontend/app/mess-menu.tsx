@@ -7,7 +7,7 @@ import { useMessMenu, useUpdateMessMenu, useUpdateTimings, useFoodRatingAverage,
 import { useAuth } from '@/lib/auth-context';
 import { useTheme } from '@/lib/theme-context';
 import type { MealType, DayType, MessTimings } from '@/lib/types';
-import { nowIST, getCurrentISTHour, formatHour } from '@/lib/utils/date';
+import { nowIST, getCurrentISTHour, formatHour, formatDateYMD } from '@/lib/utils/date';
 
 const DAYS: DayType[] = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 const MEALS: { type: MealType; icon: string; color: string }[] = [
@@ -41,12 +41,11 @@ export default function MessMenuPage() {
     // Calculate the actual date for the selected day in the current week
     const getDateForDay = (day: DayType): string => {
         const dayIndex = DAYS.indexOf(day);
-        const todayDate = nowIST();
-        const currentDayIndex = (todayDate.getDay() + 6) % 7; // Convert to Mon=0, Sun=6
+        const now = new Date();
+        const currentDayIndex = (now.getDay() + 6) % 7; // Mon=0, Sun=6
         const diff = dayIndex - currentDayIndex;
-        const targetDate = new Date(todayDate);
-        targetDate.setDate(todayDate.getDate() + diff);
-        return targetDate.toISOString().split('T')[0]; // YYYY-MM-DD format
+        const targetDate = new Date(now.getTime() + diff * 24 * 60 * 60 * 1000);
+        return formatDateYMD(targetDate);
     };
 
     const selectedDate = getDateForDay(selectedDay);
@@ -164,8 +163,9 @@ export default function MessMenuPage() {
         const todayMealStart = new Date(now);
         todayMealStart.setHours(startHour, startMinute, 0, 0);
 
-        const ratingWindowEnd = new Date(todayMealStart);
-        ratingWindowEnd.setHours(ratingWindowEnd.getHours() + 12);
+
+        const ratingWindowEnd = new Date(todayMealStart.getTime() + 12 * 60 * 60 * 1000);
+
 
         if (now < todayMealStart) {
             return {

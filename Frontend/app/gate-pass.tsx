@@ -11,7 +11,7 @@ import { LoadMore } from '@/components/ui/LoadMore';
 import { useGatePasses, usePendingGatePasses, useRequestGatePass, useApproveGatePass, useRejectGatePass, useRefreshDashboard } from '@/lib/hooks';
 import { useAuth } from '@/lib/auth-context';
 import { useTheme } from '@/lib/theme-context';
-import { nowIST, formatDate } from '@/lib/utils/date';
+import { formatDate } from '@/lib/utils/date';
 import { GatePass, User } from '@/lib/types';
 import { getErrorMessage, getErrorTitle } from '@/lib/error-utils';
 
@@ -61,8 +61,8 @@ export default function GatePassPage() {
 
     const [showModal, setShowModal] = useState(false);
     const [reason, setReason] = useState('');
-    const [fromDate, setFromDate] = useState(nowIST());
-    const [toDate, setToDate] = useState(nowIST());
+    const [fromDate, setFromDate] = useState(new Date());
+    const [toDate, setToDate] = useState(new Date());
 
     // Picker states
     const [mode, setMode] = useState<'date' | 'time'>('date');
@@ -98,7 +98,7 @@ export default function GatePassPage() {
             return;
         }
 
-        if (fromDate < nowIST()) {
+        if (fromDate < new Date()) {
             alert('Start time cannot be in the past');
             return;
         }
@@ -109,8 +109,8 @@ export default function GatePassPage() {
                 onSuccess: () => {
                     setShowModal(false);
                     setReason('');
-                    setFromDate(nowIST());
-                    setToDate(nowIST());
+                    setFromDate(new Date());
+                    setToDate(new Date());
                     setPage(1); // Reset to first page
                 },
                 onError: (error: unknown) => {

@@ -16,6 +16,9 @@ export default function AdminConfigScreen() {
     const [radius, setRadius] = React.useState('');
     const [startHour, setStartHour] = React.useState('');
     const [endHour, setEndHour] = React.useState('');
+    const [maxGatePassDays, setMaxGatePassDays] = React.useState('');
+    const [maxPendingPasses, setMaxPendingPasses] = React.useState('');
+    const [gracePeriod, setGracePeriod] = React.useState('');
 
     React.useEffect(() => {
         if (config) {
@@ -24,6 +27,9 @@ export default function AdminConfigScreen() {
             setRadius(config.geofenceRadiusMeters?.toString() || '50');
             setStartHour(config.attendanceWindow?.startHour?.toString() || '19');
             setEndHour(config.attendanceWindow?.endHour?.toString() || '22');
+            setMaxGatePassDays(config.appConfig?.maxGatePassDays?.toString() || '14');
+            setMaxPendingPasses(config.appConfig?.maxPendingPasses?.toString() || '3');
+            setGracePeriod(config.appConfig?.attendanceGracePeriod?.toString() || '5');
         }
     }, [config]);
 
@@ -33,6 +39,7 @@ export default function AdminConfigScreen() {
                 hostelCoords: { latitude: parseFloat(latitude), longitude: parseFloat(longitude), name: config?.hostelCoords?.name || 'Main Hostel' },
                 geofenceRadiusMeters: parseInt(radius),
                 attendanceWindow: { enabled: config?.attendanceWindow?.enabled ?? true, startHour: parseInt(startHour), endHour: parseInt(endHour), timezone: config?.attendanceWindow?.timezone || 'Asia/Kolkata' },
+                appConfig: { maxGatePassDays: parseInt(maxGatePassDays) || 14, maxPendingPasses: parseInt(maxPendingPasses) || 3, attendanceGracePeriod: parseInt(gracePeriod) || 5 },
             },
             {
                 onSuccess: () => { Alert.alert('Success', 'Configuration updated successfully'); refetch(); },
@@ -103,6 +110,27 @@ export default function AdminConfigScreen() {
                         </View>
                     </View>
                     <Text style={[styles.hint, { color: colors.textTertiary }]}>Attendance can only be marked between these hours (IST - Indian Standard Time)</Text>
+                </View>
+
+                {/* App Settings */}
+                <View style={[styles.section, { backgroundColor: colors.card }]}>
+                    <View style={styles.sectionHeader}>
+                        <Ionicons name="settings" size={22} color={isDark ? '#fcd34d' : '#d97706'} />
+                        <Text style={[styles.sectionTitle, { color: colors.text }]}>App Settings</Text>
+                    </View>
+                    <View style={styles.inputGroup}>
+                        <Text style={[styles.inputLabel, { color: colors.textSecondary }]}>Max Gate Pass Days</Text>
+                        <TextInput style={[styles.input, { backgroundColor: colors.backgroundSecondary, color: colors.text, borderColor: colors.cardBorder }]} value={maxGatePassDays} onChangeText={setMaxGatePassDays} keyboardType="number-pad" placeholder="14" placeholderTextColor={colors.textTertiary} />
+                    </View>
+                    <View style={styles.inputGroup}>
+                        <Text style={[styles.inputLabel, { color: colors.textSecondary }]}>Max Pending Passes</Text>
+                        <TextInput style={[styles.input, { backgroundColor: colors.backgroundSecondary, color: colors.text, borderColor: colors.cardBorder }]} value={maxPendingPasses} onChangeText={setMaxPendingPasses} keyboardType="number-pad" placeholder="3" placeholderTextColor={colors.textTertiary} />
+                    </View>
+                    <View style={styles.inputGroup}>
+                        <Text style={[styles.inputLabel, { color: colors.textSecondary }]}>Attendance Grace Period (minutes)</Text>
+                        <TextInput style={[styles.input, { backgroundColor: colors.backgroundSecondary, color: colors.text, borderColor: colors.cardBorder }]} value={gracePeriod} onChangeText={setGracePeriod} keyboardType="number-pad" placeholder="5" placeholderTextColor={colors.textTertiary} />
+                    </View>
+                    <Text style={[styles.hint, { color: colors.textTertiary }]}>These settings control gate pass limits and attendance grace period after window closes</Text>
                 </View>
 
                 {/* Save Button */}

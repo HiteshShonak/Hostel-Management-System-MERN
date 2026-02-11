@@ -4,7 +4,6 @@ import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@/lib/theme-context';
 import { useAttendance } from '@/lib/hooks';
-import { nowIST } from '@/lib/utils/date';
 
 export function AttendanceCard() {
     const router = useRouter();

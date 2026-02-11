@@ -771,6 +771,7 @@ export const updateSystemConfig = asyncHandler(async (req: AuthRequest, res: Res
     const { hostelCoords, geofenceRadiusMeters, attendanceWindow, appConfig } = req.body;
 
     const SystemConfig = (await import('../models/SystemConfig')).default;
+    const { logger } = await import('../utils/logger');
 
     // Get or create config
     let config = await SystemConfig.findById('system-config');
@@ -778,34 +779,78 @@ export const updateSystemConfig = asyncHandler(async (req: AuthRequest, res: Res
         config = await SystemConfig.create({ _id: 'system-config' });
     }
 
+    // Track what changed for logging
+    const changes: string[] = [];
+
     // Update fields if provided
     if (hostelCoords) {
-        if (hostelCoords.latitude !== undefined) config.hostelCoords.latitude = hostelCoords.latitude;
-        if (hostelCoords.longitude !== undefined) config.hostelCoords.longitude = hostelCoords.longitude;
-        if (hostelCoords.name) config.hostelCoords.name = hostelCoords.name;
+        if (hostelCoords.latitude !== undefined && hostelCoords.latitude !== config.hostelCoords.latitude) {
+            changes.push(`hostelCoords.latitude: ${config.hostelCoords.latitude} → ${hostelCoords.latitude}`);
+            config.hostelCoords.latitude = hostelCoords.latitude;
+        }
+        if (hostelCoords.longitude !== undefined && hostelCoords.longitude !== config.hostelCoords.longitude) {
+            changes.push(`hostelCoords.longitude: ${config.hostelCoords.longitude} → ${hostelCoords.longitude}`);
+            config.hostelCoords.longitude = hostelCoords.longitude;
+        }
+        if (hostelCoords.name && hostelCoords.name !== config.hostelCoords.name) {
+            changes.push(`hostelCoords.name: "${config.hostelCoords.name}" → "${hostelCoords.name}"`);
+            config.hostelCoords.name = hostelCoords.name;
+        }
     }
 
-    if (geofenceRadiusMeters !== undefined) {
+    if (geofenceRadiusMeters !== undefined && geofenceRadiusMeters !== config.geofenceRadiusMeters) {
+        changes.push(`geofenceRadiusMeters: ${config.geofenceRadiusMeters} → ${geofenceRadiusMeters}`);
         config.geofenceRadiusMeters = geofenceRadiusMeters;
     }
 
     if (attendanceWindow) {
-        if (attendanceWindow.enabled !== undefined) config.attendanceWindow.enabled = attendanceWindow.enabled;
-        if (attendanceWindow.startHour !== undefined) config.attendanceWindow.startHour = attendanceWindow.startHour;
-        if (attendanceWindow.endHour !== undefined) config.attendanceWindow.endHour = attendanceWindow.endHour;
-        if (attendanceWindow.timezone) config.attendanceWindow.timezone = attendanceWindow.timezone;
+        if (attendanceWindow.enabled !== undefined && attendanceWindow.enabled !== config.attendanceWindow.enabled) {
+            changes.push(`attendanceWindow.enabled: ${config.attendanceWindow.enabled} → ${attendanceWindow.enabled}`);
+            config.attendanceWindow.enabled = attendanceWindow.enabled;
+        }
+        if (attendanceWindow.startHour !== undefined && attendanceWindow.startHour !== config.attendanceWindow.startHour) {
+            changes.push(`attendanceWindow.startHour: ${config.attendanceWindow.startHour} → ${attendanceWindow.startHour}`);
+            config.attendanceWindow.startHour = attendanceWindow.startHour;
+        }
+        if (attendanceWindow.endHour !== undefined && attendanceWindow.endHour !== config.attendanceWindow.endHour) {
+            changes.push(`attendanceWindow.endHour: ${config.attendanceWindow.endHour} → ${attendanceWindow.endHour}`);
+            config.attendanceWindow.endHour = attendanceWindow.endHour;
+        }
+        if (attendanceWindow.timezone && attendanceWindow.timezone !== config.attendanceWindow.timezone) {
+            changes.push(`attendanceWindow.timezone: "${config.attendanceWindow.timezone}" → "${attendanceWindow.timezone}"`);
+            config.attendanceWindow.timezone = attendanceWindow.timezone;
+        }
     }
 
     if (appConfig) {
-        if (appConfig.maxGatePassDays !== undefined) config.appConfig.maxGatePassDays = appConfig.maxGatePassDays;
-        if (appConfig.maxPendingPasses !== undefined) config.appConfig.maxPendingPasses = appConfig.maxPendingPasses;
-        if (appConfig.attendanceGracePeriod !== undefined) config.appConfig.attendanceGracePeriod = appConfig.attendanceGracePeriod;
+        if (appConfig.maxGatePassDays !== undefined && appConfig.maxGatePassDays !== config.appConfig.maxGatePassDays) {
+            changes.push(`appConfig.maxGatePassDays: ${config.appConfig.maxGatePassDays} → ${appConfig.maxGatePassDays}`);
+            config.appConfig.maxGatePassDays = appConfig.maxGatePassDays;
+        }
+        if (appConfig.maxPendingPasses !== undefined && appConfig.maxPendingPasses !== config.appConfig.maxPendingPasses) {
+            changes.push(`appConfig.maxPendingPasses: ${config.appConfig.maxPendingPasses} → ${appConfig.maxPendingPasses}`);
+            config.appConfig.maxPendingPasses = appConfig.maxPendingPasses;
+        }
+        if (appConfig.attendanceGracePeriod !== undefined && appConfig.attendanceGracePeriod !== config.appConfig.attendanceGracePeriod) {
+            changes.push(`appConfig.attendanceGracePeriod: ${config.appConfig.attendanceGracePeriod} → ${appConfig.attendanceGracePeriod}`);
+            config.appConfig.attendanceGracePeriod = appConfig.attendanceGracePeriod;
+        }
     }
 
     config.updatedAt = new Date();
     config.updatedBy = req.user?._id;
 
     await config.save();
+
+    // Log the changes
+    if (changes.length > 0) {
+        logger.info(`🔧 System config updated by ${req.user?.name || 'Unknown'} (${req.user?.role})`, {
+            userId: req.user?._id?.toString(),
+            changes,
+        });
+    } else {
+        logger.info(`🔧 System config save (no changes detected) by ${req.user?.name || 'Unknown'}`);
+    }
 
     return res.status(200).json(new ApiResponse(200, config, 'System configuration updated'));
 });

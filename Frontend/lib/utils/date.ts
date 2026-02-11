@@ -1,19 +1,24 @@
 /**
  * Date and time utilities for Indian Standard Time (IST)
  * All functions return dates/times in Asia/Kolkata timezone
+ * Uses manual offset calculation to work reliably on Hermes (React Native)
  */
 
 const IST_TIMEZONE = 'Asia/Kolkata';
 const IST_LOCALE = 'en-IN';
+// IST is UTC+5:30
+const IST_OFFSET_MS = 5.5 * 60 * 60 * 1000;
 
 /**
  * Convert any date to IST timezone
+ * Returns a Date whose local-time methods (getHours, getDate, etc.) return IST values
+ * Note: getTime() on the result is shifted - only use local-time methods
  */
 export const toIST = (date: Date | string | number): Date => {
     const d = typeof date === 'string' || typeof date === 'number' ? new Date(date) : date;
-    // Create a new date in IST timezone
-    const istString = d.toLocaleString('en-US', { timeZone: IST_TIMEZONE });
-    return new Date(istString);
+    // Convert to UTC milliseconds, then add IST offset
+    const utcMs = d.getTime() + d.getTimezoneOffset() * 60000;
+    return new Date(utcMs + IST_OFFSET_MS);
 };
 
 /**
@@ -28,6 +33,17 @@ export const nowIST = (): Date => {
  */
 export const getCurrentISTHour = (): number => {
     return nowIST().getHours();
+};
+
+/**
+ * Format a Date to YYYY-MM-DD string using local time methods
+ * Safe alternative to toISOString().split('T')[0] which can crash on Hermes
+ */
+export const formatDateYMD = (date: Date): string => {
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, '0');
+    const d = String(date.getDate()).padStart(2, '0');
+    return `${y}-${m}-${d}`;
 };
 
 /**
@@ -164,5 +180,10 @@ export const formatHour = (hour: number): string => {
  */
 export const isWithinTimeWindow = (startHour: number, endHour: number): boolean => {
     const currentHour = getCurrentISTHour();
-    return currentHour >= startHour && currentHour <= endHour;
+    // Handle overnight windows (e.g. 21 to 5)
+    if (startHour > endHour) {
+        return currentHour >= startHour || currentHour < endHour;
+    }
+    // Standard window (e.g. 19 to 22)
+    return currentHour >= startHour && currentHour < endHour;
 };

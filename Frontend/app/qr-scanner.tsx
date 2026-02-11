@@ -7,7 +7,6 @@ import { useValidateGatePass, useMarkExit, useMarkEntry } from '@/lib/hooks';
 import { useAuth } from '@/lib/auth-context';
 import { useTheme } from '@/lib/theme-context';
 import { GatePass, User } from '@/lib/types';
-import { nowIST } from '@/lib/utils/date';
 
 type ScanResult = {
     type: 'success' | 'error' | 'invalid' | 'pending' | 'late' | 'expired';
@@ -208,8 +207,8 @@ export default function QRScannerPage() {
     const studentInfo = scanResult?.pass ? getUserInfo(scanResult.pass.user) : null;
     const hasExited = scanResult?.pass?.exitTime && !scanResult?.pass?.entryTime;
 
-    // Check if pass is expired (student outside and past toDate) - using IST
-    const isPassExpired = scanResult?.pass && hasExited && nowIST() > new Date(scanResult.pass.toDate);
+    // Check if pass is expired (student outside and past toDate)
+    const isPassExpired = scanResult?.pass && hasExited && new Date() > new Date(scanResult.pass.toDate);
 
     return (
         <View style={[styles.container, { backgroundColor: '#000' }]}>

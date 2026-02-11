@@ -6,7 +6,7 @@ import { BottomNav } from '@/components/ui/BottomNav';
 import { useFoodRatingAverage, useRefreshDashboard } from '@/lib/hooks';
 import { useTheme } from '@/lib/theme-context';
 import type { MealType } from '@/lib/types';
-import { nowIST, startOfDay } from '@/lib/utils/date';
+import { formatDateYMD } from '@/lib/utils/date';
 
 const MEALS: { type: MealType; icon: string; color: string; colorDark: string }[] = [
     { type: 'Breakfast', icon: 'cafe', color: '#f59e0b', colorDark: '#fbbf24' },
@@ -20,17 +20,17 @@ export default function FoodRatingsPage() {
     const dateScrollRef = useRef<ScrollView>(null);
 
     // Get today's date in IST
-    const today = nowIST();
-    const [selectedDate, setSelectedDate] = useState(today.toISOString().split('T')[0]);
+    const today = new Date();
+    const [selectedDate, setSelectedDate] = useState(formatDateYMD(today));
 
     const { data: ratings, isLoading } = useFoodRatingAverage(selectedDate);
 
-    // Generate past week dates in IST
+    // Generate past week dates
     const getPastWeekDates = () => {
         const dates = [];
+        const now = new Date();
         for (let i = 6; i >= 0; i--) {
-            const date = nowIST();
-            date.setDate(date.getDate() - i);
+            const date = new Date(now.getTime() - i * 24 * 60 * 60 * 1000);
             dates.push(date);
         }
         return dates;
@@ -53,11 +53,11 @@ export default function FoodRatingsPage() {
     };
 
     const isToday = (date: Date) => {
-        return date.toISOString().split('T')[0] === today.toISOString().split('T')[0];
+        return formatDateYMD(date) === formatDateYMD(today);
     };
 
     const isSelected = (date: Date) => {
-        return date.toISOString().split('T')[0] === selectedDate;
+        return formatDateYMD(date) === selectedDate;
     };
 
     const renderStarRating = (rating: number) => {
@@ -103,8 +103,8 @@ export default function FoodRatingsPage() {
 
                                 return (
                                     <Pressable
-                                        key={date.toISOString()}
-                                        onPress={() => setSelectedDate(date.toISOString().split('T')[0])}
+                                        key={formatDateYMD(date)}
+                                        onPress={() => setSelectedDate(formatDateYMD(date))}
                                         style={[
                                             styles.dateCard,
                                             {

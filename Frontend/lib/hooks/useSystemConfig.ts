@@ -30,12 +30,12 @@ export interface SystemConfig {
 
 export const useSystemConfig = () => {
     return useQuery<SystemConfig>({
-        queryKey: ['system-config'],
+        queryKey: ['admin', 'config'],
         queryFn: async () => {
             const response = await apiClient.get('/admin/config');
-            return response.data.data;
+            return response.data;
         },
-        staleTime: 5 * 60 * 1000, // Cache for 5 minutes
-        gcTime: 10 * 60 * 1000, // Keep in cache for 10 minutes
+        staleTime: 5 * 60 * 1000,
+        gcTime: 10 * 60 * 1000,
     });
 };

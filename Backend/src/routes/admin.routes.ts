@@ -49,6 +49,10 @@ router.get('/warden/students', getWardenStudentList);
 router.get('/warden/students/:id', getStudentDetail);
 router.post('/warden/mark-attendance/:studentId', wardenMarkAttendance);
 
+// ==================== PUBLIC CONFIG (any authenticated user can read) ====================
+// This MUST be before adminOnly so students/wardens/parents can read config
+router.get('/config', getSystemConfig);
+
 // ==================== ADMIN ONLY ROUTES ====================
 router.use(adminOnly);
 
@@ -56,8 +60,7 @@ router.use(adminOnly);
 router.get('/stats', getSystemStats);
 router.get('/system-stats', getSystemStats);
 
-// System Configuration
-router.get('/config', getSystemConfig);
+// System Configuration (write is admin-only)
 router.put('/config', updateSystemConfig);
 
 // Parent-student linking

@@ -176,7 +176,7 @@ export default function AttendancePage() {
                 )}
 
                 <View style={styles.scanArea}>
-                    <Pressable onPress={handleMark} disabled={isScanning || isMarked}>
+                    <Pressable onPress={handleMark} disabled={isScanning || isMarked || (isWindowEnabled && !isWithinWindow)}>
                         <Animated.View style={[
                             styles.scanCircle,
                             isMarked && styles.scanCircleMarked,
