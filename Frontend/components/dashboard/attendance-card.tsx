@@ -3,16 +3,15 @@ import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@/lib/theme-context';
-import { useAttendance } from '@/lib/hooks';
+import { useTodayAttendance } from '@/lib/hooks';
 
 export function AttendanceCard() {
     const router = useRouter();
     const { colors, isDark } = useTheme();
-    const { data: attendance } = useAttendance();
+    const { data: todayData } = useTodayAttendance();
 
-    // If already marked, maybe show status?
-    // For now, simple CTA
-    const isMarked = !!attendance;
+    // Check if specifically marked today
+    const isMarked = todayData?.marked || false;
 
     // Dynamic styles based on state
     const themeColor = isMarked

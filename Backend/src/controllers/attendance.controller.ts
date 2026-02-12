@@ -34,10 +34,9 @@ export const getAttendance = asyncHandler(async (req: AuthRequest, res: Response
 export const markAttendance = asyncHandler(async (req: AuthRequest, res: Response) => {
     const { latitude, longitude } = req.body;
 
-    // Get dynamic system configuration
     const config = await SystemConfig.getConfig();
 
-    // 1. Validate location input
+    // Validate location
     if (latitude === undefined || longitude === undefined) {
         throw new ApiError(400, 'Location access is required to mark attendance. Please enable GPS.');
     }
@@ -46,7 +45,7 @@ export const markAttendance = asyncHandler(async (req: AuthRequest, res: Respons
         throw new ApiError(400, 'Invalid GPS coordinates provided.');
     }
 
-    // 2. Check geofence (dynamic from config)
+    // Check if within geofence
     const { isInside, distance } = isInsideGeofence(
         latitude,
         longitude,
@@ -62,13 +61,12 @@ export const markAttendance = asyncHandler(async (req: AuthRequest, res: Respons
         );
     }
 
-    // 3. Check time window (dynamic from config, using IST)
+    // Check time window if enabled
     if (config.attendanceWindow.enabled) {
         const istTime = getISTTime();
-        const hour = istTime.getHours();
-        const minutes = istTime.getMinutes();
+        const hour = istTime.getUTCHours();
+        const minutes = istTime.getUTCMinutes();
 
-        // Calculate effective end with grace period (e.g. endHour=22, grace=5 => allow until 22:05)
         const gracePeriod = config.appConfig.attendanceGracePeriod || 0;
         const totalMinutes = hour * 60 + minutes;
         const windowStart = config.attendanceWindow.startHour * 60;
@@ -89,15 +87,14 @@ export const markAttendance = asyncHandler(async (req: AuthRequest, res: Respons
         }
     }
 
-    // 4. Create attendance record (unique index will prevent duplicates)
-    // Use IST for today's date
+    // Create attendance record
     const today = getISTDate();
 
     try {
         const attendance = await Attendance.create({
             user: req.user?._id,
             date: today,
-            markedAt: getISTTime(), // Use IST for timestamp
+            markedAt: new Date(), // Store as UTC, frontend converts to IST
             location: {
                 latitude,
                 longitude,
@@ -145,11 +142,9 @@ export const getTodayAttendance = asyncHandler(async (req: AuthRequest, res: Res
 // @desc    Get attendance stats for current month
 // @route   GET /api/attendance/stats
 export const getAttendanceStats = asyncHandler(async (req: AuthRequest, res: Response) => {
-    const now = new Date();
-    const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
-
-    // Use current day of month as total (not full month)
-    const totalDays = now.getDate();
+    const now = getISTTime();
+    const firstDay = new Date(now.getUTCFullYear(), now.getUTCMonth(), 1);
+    const totalDays = now.getUTCDate();
 
     const attendance = await Attendance.countDocuments({
         user: req.user?._id,
@@ -163,6 +158,6 @@ export const getAttendanceStats = asyncHandler(async (req: AuthRequest, res: Res
         absent: totalDays - attendance,
         total: totalDays,
         percentage,
-        month: now.toLocaleString('default', { month: 'long', year: 'numeric' }),
+        month: now.toLocaleString('default', { month: 'long', year: 'numeric', timeZone: 'UTC' }),
     }, 'Attendance stats retrieved'));
 });
