@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, Pressable, ActivityIndicator, StyleSheet, Modal, TextInput, Alert, RefreshControl } from 'react-native';
+import { View, Text, ScrollView, Pressable, ActivityIndicator, StyleSheet, Modal, TextInput, Alert, RefreshControl, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { BottomNav } from '@/components/ui/BottomNav';
 import { useMessMenu, useUpdateMessMenu, useUpdateTimings, useFoodRatingAverage, useMyFoodRatings, useRateMeal, useRefreshDashboard } from '@/lib/hooks';
 import { useAuth } from '@/lib/auth-context';
 import { useTheme } from '@/lib/theme-context';
+import { TimeScrollPicker } from '@/components/TimeScrollPicker';
 import type { MealType, DayType, MessTimings } from '@/lib/types';
 import { nowIST, getCurrentISTHour, formatHour, formatDateYMD } from '@/lib/utils/date';
 
@@ -41,8 +42,8 @@ export default function MessMenuPage() {
     // Calculate the actual date for the selected day in the current week
     const getDateForDay = (day: DayType): string => {
         const dayIndex = DAYS.indexOf(day);
-        const now = new Date();
-        const currentDayIndex = (now.getDay() + 6) % 7; // Mon=0, Sun=6
+        const now = nowIST();
+        const currentDayIndex = (now.getUTCDay() + 6) % 7; // Mon=0, Sun=6
         const diff = dayIndex - currentDayIndex;
         const targetDate = new Date(now.getTime() + diff * 24 * 60 * 60 * 1000);
         return formatDateYMD(targetDate);
@@ -131,8 +132,8 @@ export default function MessMenuPage() {
 
 
     const formatISTTime = (date: Date): string => {
-        const hours = date.getHours();
-        const minutes = date.getMinutes();
+        const hours = date.getUTCHours();
+        const minutes = date.getUTCMinutes();
         const ampm = hours >= 12 ? 'PM' : 'AM';
         const displayHours = hours % 12 || 12;
         const displayMinutes = minutes.toString().padStart(2, '0');
@@ -143,15 +144,6 @@ export default function MessMenuPage() {
         const currentISTTime = nowIST();
         const currentDayName = currentISTTime.toLocaleDateString('en-IN', { weekday: 'long' }) as DayType;
 
-        if (dayToCheck !== currentDayName) {
-            const currentDayIndex = DAYS.indexOf(currentDayName);
-            const checkDayIndex = DAYS.indexOf(dayToCheck);
-            return {
-                canRate: false,
-                message: checkDayIndex < currentDayIndex ? 'Past meals cannot be rated' : 'Future meals cannot be rated'
-            };
-        }
-
         if (!timings || !timings[mealType]) {
             return { canRate: false, message: 'Timing not available' };
         }
@@ -159,13 +151,43 @@ export default function MessMenuPage() {
         const timing = timings[mealType];
         const [startHour, startMinute] = timing.start.split(':').map(Number);
 
+        // Check if this is a different day
+        if (dayToCheck !== currentDayName) {
+            const currentDayIndex = DAYS.indexOf(currentDayName);
+            const checkDayIndex = DAYS.indexOf(dayToCheck);
+
+            // Allow yesterday only (for overnight windows like dinner)
+            const isYesterday = checkDayIndex === (currentDayIndex - 1 + 7) % 7;
+
+            if (!isYesterday) {
+                return {
+                    canRate: false,
+                    message: checkDayIndex < currentDayIndex ? 'Past meals cannot be rated' : 'Future meals cannot be rated'
+                };
+            }
+
+            // For yesterday, check if within 12h window
+            const yesterdayMealStart = new Date(currentISTTime);
+            yesterdayMealStart.setUTCDate(yesterdayMealStart.getUTCDate() - 1);
+            yesterdayMealStart.setUTCHours(startHour, startMinute, 0, 0);
+            const yesterdayWindowEnd = new Date(yesterdayMealStart.getTime() + 12 * 60 * 60 * 1000);
+
+            if (currentISTTime > yesterdayWindowEnd) {
+                return {
+                    canRate: false,
+                    message: `Rating period ended. Switch to ${currentDayName} to rate today's ${mealType.toLowerCase()}`
+                };
+            }
+
+            return { canRate: true, message: '' };
+        }
+
+        // Today's meal - normal flow
         const now = currentISTTime;
         const todayMealStart = new Date(now);
-        todayMealStart.setHours(startHour, startMinute, 0, 0);
-
+        todayMealStart.setUTCHours(startHour, startMinute, 0, 0);
 
         const ratingWindowEnd = new Date(todayMealStart.getTime() + 12 * 60 * 60 * 1000);
-
 
         if (now < todayMealStart) {
             return {
@@ -177,7 +199,7 @@ export default function MessMenuPage() {
         if (now > ratingWindowEnd) {
             return {
                 canRate: false,
-                message: 'Rating window closed (12h limit)'
+                message: `Rating period for ${mealType.toLowerCase()} has ended`
             };
         }
 
@@ -313,7 +335,7 @@ export default function MessMenuPage() {
 
                             const [startHour, startMinute] = timing?.start.split(':').map(Number) || [0, 0];
                             const todayMealStart = new Date(now);
-                            todayMealStart.setHours(startHour, startMinute, 0, 0);
+                            todayMealStart.setUTCHours(startHour, startMinute, 0, 0);
 
                             const isBeforeMeal = now < todayMealStart && !isDifferentDay;
                             const ratingWindowEnd = new Date(todayMealStart.getTime() + (12 * 60 * 60 * 1000));
@@ -412,10 +434,23 @@ export default function MessMenuPage() {
 
                         const timing = timings?.[selectedMeal];
                         const now = nowIST();
+                        const currentDayName = now.toLocaleDateString('en-IN', { weekday: 'long' }) as DayType;
                         const [startHour, startMinute] = timing?.start.split(':').map(Number) || [0, 0];
-                        const todayMealStart = new Date(now);
-                        todayMealStart.setHours(startHour, startMinute, 0, 0);
-                        const ratingWindowEnd = new Date(todayMealStart.getTime() + (12 * 60 * 60 * 1000));
+
+                        // Calculate meal start for the SELECTED day, not current day
+                        let mealStart: Date;
+                        if (selectedDay !== currentDayName) {
+                            // Yesterday's meal
+                            mealStart = new Date(now);
+                            mealStart.setUTCDate(mealStart.getUTCDate() - 1);
+                            mealStart.setUTCHours(startHour, startMinute, 0, 0);
+                        } else {
+                            // Today's meal
+                            mealStart = new Date(now);
+                            mealStart.setUTCHours(startHour, startMinute, 0, 0);
+                        }
+
+                        const ratingWindowEnd = new Date(mealStart.getTime() + (12 * 60 * 60 * 1000));
 
                         const formatTimeRemaining = (targetDate: Date) => {
                             const diff = targetDate.getTime() - now.getTime();
@@ -427,6 +462,9 @@ export default function MessMenuPage() {
                             return `${minutes}m`;
                         };
 
+                        // Check if meal has started
+                        const mealNotStarted = now < mealStart;
+
                         return (
                             <>
                                 <View style={[
@@ -435,7 +473,10 @@ export default function MessMenuPage() {
                                 ]}>
                                     <Ionicons name="time-outline" size={16} color="#10b981" />
                                     <Text style={[styles.ratingAvailableText, { color: isDark ? '#86efac' : '#065f46' }]}>
-                                        Rating closes in {formatTimeRemaining(ratingWindowEnd)} at {formatISTTime(ratingWindowEnd)}
+                                        {mealNotStarted
+                                            ? `Opens in ${formatTimeRemaining(mealStart)} at ${formatISTTime(mealStart)}`
+                                            : `Rating closes in ${formatTimeRemaining(ratingWindowEnd)} at ${formatISTTime(ratingWindowEnd)}`
+                                        }
                                     </Text>
                                 </View>
                                 <Pressable style={[styles.rateBtn, { backgroundColor: isDark ? '#78350f' : '#fef3c7' }]} onPress={() => setRatingMeal(selectedMeal)}>
@@ -546,28 +587,32 @@ export default function MessMenuPage() {
                         {(['Breakfast', 'Lunch', 'Dinner'] as MealType[]).map((meal) => (
                             <View key={meal} style={[styles.timingInputRow, { borderBottomColor: colors.cardBorder }]}>
                                 <Text style={[styles.timingLabel, { color: colors.text }]}>{meal}</Text>
-                                <View style={styles.timingInputs}>
-                                    <TextInput
-                                        style={[styles.timeInput, { borderColor: colors.inputBorder, backgroundColor: colors.inputBackground, color: colors.text }]}
-                                        value={editTimings[meal]?.start || ''}
-                                        onChangeText={(text) => setEditTimings({
-                                            ...editTimings,
-                                            [meal]: { ...editTimings[meal], start: text }
-                                        })}
-                                        placeholder="07:30"
-                                        placeholderTextColor={colors.textTertiary}
-                                    />
-                                    <Text style={[styles.timingDash, { color: colors.textSecondary }]}>-</Text>
-                                    <TextInput
-                                        style={[styles.timeInput, { borderColor: colors.inputBorder, backgroundColor: colors.inputBackground, color: colors.text }]}
-                                        value={editTimings[meal]?.end || ''}
-                                        onChangeText={(text) => setEditTimings({
-                                            ...editTimings,
-                                            [meal]: { ...editTimings[meal], end: text }
-                                        })}
-                                        placeholder="09:30"
-                                        placeholderTextColor={colors.textTertiary}
-                                    />
+                                <View style={styles.timingPickerContainer}>
+                                    <View style={styles.timePickerSection}>
+                                        <Text style={[styles.timeLabel, { color: colors.textSecondary }]}>Start</Text>
+                                        <TimeScrollPicker
+                                            value={editTimings[meal]?.start || '07:00'}
+                                            onChange={(time) => {
+                                                setEditTimings({
+                                                    ...editTimings,
+                                                    [meal]: { ...editTimings[meal], start: time }
+                                                });
+                                            }}
+                                        />
+                                    </View>
+                                    <Text style={[styles.timingDash, { color: colors.textSecondary }]}>→</Text>
+                                    <View style={styles.timePickerSection}>
+                                        <Text style={[styles.timeLabel, { color: colors.textSecondary }]}>End</Text>
+                                        <TimeScrollPicker
+                                            value={editTimings[meal]?.end || '09:00'}
+                                            onChange={(time) => {
+                                                setEditTimings({
+                                                    ...editTimings,
+                                                    [meal]: { ...editTimings[meal], end: time }
+                                                });
+                                            }}
+                                        />
+                                    </View>
                                 </View>
                             </View>
                         ))}
@@ -711,9 +756,12 @@ const styles = StyleSheet.create({
     // Timing editor styles
     editTimingBtn: { flexDirection: 'row', alignItems: 'center', gap: 4, marginLeft: 'auto', paddingHorizontal: 8, paddingVertical: 4, backgroundColor: '#dbeafe', borderRadius: 6 },
     editTimingText: { fontSize: 12, fontWeight: '600', color: '#6366f1' },
-    timingInputRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: '#f5f5f5' },
-    timingLabel: { fontSize: 16, fontWeight: '600', color: '#0a0a0a', width: 100 },
+    timingInputRow: { paddingVertical: 16, borderBottomWidth: 1, gap: 12 },
+    timingLabel: { fontSize: 16, fontWeight: '600' },
+    timingPickerContainer: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around', gap: 8, paddingVertical: 8 },
+    timePickerSection: { alignItems: 'center', gap: 8 },
+    timeLabel: { fontSize: 12, fontWeight: '500', textTransform: 'uppercase' },
     timingInputs: { flexDirection: 'row', alignItems: 'center', gap: 8 },
     timeInput: { borderWidth: 1, borderColor: '#e5e5e5', borderRadius: 8, paddingVertical: 8, paddingHorizontal: 12, fontSize: 14, backgroundColor: '#fafafa', width: 70, textAlign: 'center' },
-    timingDash: { fontSize: 16, color: '#737373' },
+    timingDash: { fontSize: 20, fontWeight: '300' },
 });

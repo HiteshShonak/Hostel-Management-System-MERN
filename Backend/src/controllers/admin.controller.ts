@@ -346,8 +346,9 @@ export const getSystemStats = asyncHandler(async (req: AuthRequest, res: Respons
     // Use IST for today
     const today = getISTDate();
 
-    // Calculate start of current month
-    const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+    const startOfMonth = new Date(today);
+    startOfMonth.setUTCDate(1);
+    startOfMonth.setUTCHours(0, 0, 0, 0);
 
     const GatePass = (await import('../models/GatePass')).default;
     const Attendance = (await import('../models/Attendance')).default;
@@ -388,8 +389,7 @@ export const getSystemStats = asyncHandler(async (req: AuthRequest, res: Respons
         Complaint.countDocuments({ status: 'Pending' }),
     ]);
 
-    // Calculate average attendance for the month
-    const daysInMonth = today.getDate();
+    const daysInMonth = today.getUTCDate();
     const expectedRecords = totalStudents * daysInMonth;
     const averagePercentage = expectedRecords > 0
         ? Math.round((monthlyAttendance / expectedRecords) * 100)
@@ -663,12 +663,13 @@ export const getStudentDetail = asyncHandler(async (req: AuthRequest, res: Respo
 
     // Use IST for today
     const today = getISTDate();
-    const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
+    const monthStart = new Date(today);
+    monthStart.setUTCDate(1);
+    monthStart.setUTCHours(0, 0, 0, 0);
 
     const Attendance = (await import('../models/Attendance')).default;
     const GatePass = (await import('../models/GatePass')).default;
 
-    // Get attendance and pass history in parallel
     const [
         todayAttendance,
         monthlyAttendance,
@@ -686,8 +687,7 @@ export const getStudentDetail = asyncHandler(async (req: AuthRequest, res: Respo
         }),
     ]);
 
-    // Calculate attendance percentage
-    const daysInMonth = today.getDate();
+    const daysInMonth = today.getUTCDate();
     const attendancePercentage = daysInMonth > 0
         ? Math.round((monthlyAttendance.length / daysInMonth) * 100)
         : 0;
