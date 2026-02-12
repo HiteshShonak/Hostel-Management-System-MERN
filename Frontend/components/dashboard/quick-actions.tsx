@@ -30,34 +30,34 @@ export function QuickActions() {
             color: 'white',
             bg: '#f59e0b', // Amber
         },
-        {
-            icon: 'notifications',
-            label: 'Notices',
-            route: '/notices',
-            color: 'white',
-            bg: '#6366f1', // Indigo
-        },
-        {
-            icon: 'shirt',
-            label: 'Laundry',
-            route: '/laundry',
-            color: 'white',
-            bg: '#06b6d4', // Cyan
-        },
-        {
-            icon: 'people',
-            label: 'Visitors',
-            route: '/visitors',
-            color: 'white',
-            bg: '#14b8a6', // Teal
-        },
-        {
-            icon: 'card',
-            label: 'Payments',
-            route: '/payments',
-            color: 'white',
-            bg: '#10b981', // Emerald
-        },
+        // {
+        //     icon: 'notifications',
+        //     label: 'Notices',
+        //     route: '/notices',
+        //     color: 'white',
+        //     bg: '#6366f1', // Indigo
+        // },
+        // {
+        //     icon: 'shirt',
+        //     label: 'Laundry',
+        //     route: '/laundry',
+        //     color: 'white',
+        //     bg: '#06b6d4', // Cyan
+        // },
+        // {
+        //     icon: 'people',
+        //     label: 'Visitors',
+        //     route: '/visitors',
+        //     color: 'white',
+        //     bg: '#14b8a6', // Teal
+        // },
+        // {
+        //     icon: 'card',
+        //     label: 'Payments',
+        //     route: '/payments',
+        //     color: 'white',
+        //     bg: '#10b981', // Emerald
+        // },
         {
             icon: 'alert-circle',
             label: 'Emergency',

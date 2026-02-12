@@ -85,3 +85,8 @@ ios/build/
 ios/.xcode.env.local
 *.xcworkspace
 *.xcuserdata
+
+# Google Services (Firebase/GCP credentials)
+google-services.json
+GoogleService-Info.plist
+firebase-config.js

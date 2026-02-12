@@ -10,7 +10,7 @@ import { Badge } from '@/components/ui/Badge';
 export function RecentNotices() {
     const { colors, isDark } = useTheme();
     const { data: noticesResponse, isLoading } = useNotices();
-    const recentNotices = noticesResponse?.data?.slice(0, 2) || [];
+    const recentNotices = noticesResponse?.data?.slice(0, 3) || [];
 
     if (isLoading) {
         return (

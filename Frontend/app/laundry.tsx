@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, Pressable, StyleSheet, ActivityIndicator, Modal, TextInput, Alert, RefreshControl } from 'react-native';
+import { View, Text, ScrollView, Pressable, StyleSheet, ActivityIndicator, Modal, TextInput, Alert, RefreshControl, KeyboardAvoidingView, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { BottomNav } from '@/components/ui/BottomNav';
@@ -104,7 +104,7 @@ export default function LaundryPage() {
                             </Text>
 
                             {/* Timeline */}
-                            <View style={[styles.timeline, { borderTopColor: isDark ? colors.border : '#bfdbfe' }]}>
+                            <View style={[styles.timeline, { borderTopColor: isDark ? colors.cardBorder : '#bfdbfe' }]}>
                                 <View style={[styles.timelineStep, { opacity: 1 }]}>
                                     <View style={[styles.timelineDot, { backgroundColor: '#16a34a' }]} />
                                     <Text style={[styles.timelineText, { color: isDark ? colors.text : '#1e40af' }]}>Scheduled</Text>
@@ -177,49 +177,59 @@ export default function LaundryPage() {
             {/* Schedule Modal */}
             <Modal visible={showModal} animationType="slide" transparent>
                 <View style={styles.modalOverlay}>
-                    <View style={[styles.modalContent, { backgroundColor: colors.card }]}>
-                        <View style={styles.modalHeader}>
-                            <Text style={[styles.modalTitle, { color: colors.text }]}>Schedule Laundry</Text>
-                            <Pressable onPress={() => setShowModal(false)}>
-                                <Ionicons name="close" size={24} color={colors.textSecondary} />
-                            </Pressable>
-                        </View>
-
-                        <View style={styles.inputGroup}>
-                            <Text style={[styles.label, { color: colors.text }]}>Items Description</Text>
-                            <TextInput
-                                style={[styles.input, styles.textArea, { borderColor: colors.inputBorder, backgroundColor: colors.inputBackground, color: colors.text }]}
-                                placeholder="e.g., 3 shirts, 2 pants, underwear"
-                                placeholderTextColor={colors.textTertiary}
-                                value={items}
-                                onChangeText={setItems}
-                                multiline
-                            />
-                        </View>
-
-                        <View style={styles.inputGroup}>
-                            <Text style={[styles.label, { color: colors.text }]}>Pickup Date</Text>
-                            <TextInput
-                                style={[styles.input, { borderColor: colors.inputBorder, backgroundColor: colors.inputBackground, color: colors.text }]}
-                                placeholder="YYYY-MM-DD"
-                                placeholderTextColor={colors.textTertiary}
-                                value={scheduledDate}
-                                onChangeText={setScheduledDate}
-                            />
-                        </View>
-
-                        <Pressable
-                            style={[styles.submitBtn, { backgroundColor: colors.primary }, scheduleMutation.isPending && styles.btnDisabled]}
-                            onPress={handleSchedule}
-                            disabled={scheduleMutation.isPending}
+                    <KeyboardAvoidingView
+                        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                        style={{ flex: 1 }}
+                    >
+                        <ScrollView
+                            keyboardShouldPersistTaps="handled"
+                            contentContainerStyle={{ flexGrow: 1, justifyContent: 'flex-end' }}
                         >
-                            {scheduleMutation.isPending ? (
-                                <ActivityIndicator color="white" />
-                            ) : (
-                                <Text style={styles.submitBtnText}>Schedule Pickup</Text>
-                            )}
-                        </Pressable>
-                    </View>
+                            <View style={[styles.modalContent, { backgroundColor: colors.card }]}>
+                                <View style={styles.modalHeader}>
+                                    <Text style={[styles.modalTitle, { color: colors.text }]}>Schedule Laundry</Text>
+                                    <Pressable onPress={() => setShowModal(false)}>
+                                        <Ionicons name="close" size={24} color={colors.textSecondary} />
+                                    </Pressable>
+                                </View>
+
+                                <View style={styles.inputGroup}>
+                                    <Text style={[styles.label, { color: colors.text }]}>Items Description</Text>
+                                    <TextInput
+                                        style={[styles.input, styles.textArea, { borderColor: colors.inputBorder, backgroundColor: colors.inputBackground, color: colors.text }]}
+                                        placeholder="e.g., 3 shirts, 2 pants, underwear"
+                                        placeholderTextColor={colors.textTertiary}
+                                        value={items}
+                                        onChangeText={setItems}
+                                        multiline
+                                    />
+                                </View>
+
+                                <View style={styles.inputGroup}>
+                                    <Text style={[styles.label, { color: colors.text }]}>Pickup Date</Text>
+                                    <TextInput
+                                        style={[styles.input, { borderColor: colors.inputBorder, backgroundColor: colors.inputBackground, color: colors.text }]}
+                                        placeholder="YYYY-MM-DD"
+                                        placeholderTextColor={colors.textTertiary}
+                                        value={scheduledDate}
+                                        onChangeText={setScheduledDate}
+                                    />
+                                </View>
+
+                                <Pressable
+                                    style={[styles.submitBtn, { backgroundColor: colors.primary }, scheduleMutation.isPending && styles.btnDisabled]}
+                                    onPress={handleSchedule}
+                                    disabled={scheduleMutation.isPending}
+                                >
+                                    {scheduleMutation.isPending ? (
+                                        <ActivityIndicator color="white" />
+                                    ) : (
+                                        <Text style={styles.submitBtnText}>Schedule Pickup</Text>
+                                    )}
+                                </Pressable>
+                            </View>
+                        </ScrollView>
+                    </KeyboardAvoidingView>
                 </View>
             </Modal>
 

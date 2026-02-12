@@ -45,6 +45,7 @@ export interface GatePass {
     parentApprovedBy?: string;
     validatedBy?: string;
     validatedAt?: string;
+    parentRejectionReason?: string;
     rejectionReason?: string;
     // Entry/Exit tracking
     exitTime?: string;

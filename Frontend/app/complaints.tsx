@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, ScrollView, Pressable, StyleSheet, ActivityIndicator, Modal, TextInput, RefreshControl } from 'react-native';
+import { View, Text, ScrollView, Pressable, StyleSheet, ActivityIndicator, Modal, TextInput, RefreshControl, KeyboardAvoidingView, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { BottomNav } from '@/components/ui/BottomNav';
@@ -227,73 +227,83 @@ export default function ComplaintsPage() {
             {/* Lodge Complaint Modal */}
             <Modal visible={showModal} animationType="slide" transparent>
                 <View style={styles.modalOverlay}>
-                    <View style={[styles.modalContent, { backgroundColor: colors.card }]}>
-                        <View style={styles.modalHeader}>
-                            <Text style={[styles.modalTitle, { color: colors.text }]}>Lodge Complaint</Text>
-                            <Pressable onPress={() => setShowModal(false)}>
-                                <Ionicons name="close" size={24} color={colors.textSecondary} />
-                            </Pressable>
-                        </View>
-
-                        <View style={styles.inputGroup}>
-                            <Text style={[styles.label, { color: colors.text }]}>Category</Text>
-                            <View style={styles.categoryRow}>
-                                {CATEGORIES.map((cat) => (
-                                    <Pressable
-                                        key={cat}
-                                        style={[
-                                            styles.categoryBtn,
-                                            { backgroundColor: category === cat ? colors.primary : (isDark ? colors.background : '#f5f5f5') }
-                                        ]}
-                                        onPress={() => setCategory(cat)}
-                                    >
-                                        <Text style={[
-                                            styles.categoryText,
-                                            { color: category === cat ? 'white' : colors.textSecondary }
-                                        ]}>
-                                            {cat}
-                                        </Text>
-                                    </Pressable>
-                                ))}
-                            </View>
-                        </View>
-
-                        <View style={styles.inputGroup}>
-                            <Text style={[styles.label, { color: colors.text }]}>Title</Text>
-                            <TextInput
-                                style={[styles.input, { borderColor: colors.inputBorder, backgroundColor: colors.inputBackground, color: colors.text }]}
-                                placeholder="Brief title"
-                                placeholderTextColor={colors.textTertiary}
-                                value={title}
-                                onChangeText={setTitle}
-                            />
-                        </View>
-
-                        <View style={styles.inputGroup}>
-                            <Text style={[styles.label, { color: colors.text }]}>Description</Text>
-                            <TextInput
-                                style={[styles.input, styles.textArea, { borderColor: colors.inputBorder, backgroundColor: colors.inputBackground, color: colors.text }]}
-                                placeholder="Describe the issue in detail..."
-                                placeholderTextColor={colors.textTertiary}
-                                value={description}
-                                onChangeText={setDescription}
-                                multiline
-                                numberOfLines={4}
-                            />
-                        </View>
-
-                        <Pressable
-                            style={[styles.submitBtn, { backgroundColor: '#f59e0b' }, createMutation.isPending && styles.btnDisabled]}
-                            onPress={handleSubmit}
-                            disabled={createMutation.isPending}
+                    <KeyboardAvoidingView
+                        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                        style={{ flex: 1 }}
+                    >
+                        <ScrollView
+                            keyboardShouldPersistTaps="handled"
+                            contentContainerStyle={{ flexGrow: 1, justifyContent: 'flex-end' }}
                         >
-                            {createMutation.isPending ? (
-                                <ActivityIndicator color="white" />
-                            ) : (
-                                <Text style={styles.submitBtnText}>Submit Complaint</Text>
-                            )}
-                        </Pressable>
-                    </View>
+                            <View style={[styles.modalContent, { backgroundColor: colors.card }]}>
+                                <View style={styles.modalHeader}>
+                                    <Text style={[styles.modalTitle, { color: colors.text }]}>Lodge Complaint</Text>
+                                    <Pressable onPress={() => setShowModal(false)}>
+                                        <Ionicons name="close" size={24} color={colors.textSecondary} />
+                                    </Pressable>
+                                </View>
+
+                                <View style={styles.inputGroup}>
+                                    <Text style={[styles.label, { color: colors.text }]}>Category</Text>
+                                    <View style={styles.categoryRow}>
+                                        {CATEGORIES.map((cat) => (
+                                            <Pressable
+                                                key={cat}
+                                                style={[
+                                                    styles.categoryBtn,
+                                                    { backgroundColor: category === cat ? colors.primary : (isDark ? colors.background : '#f5f5f5') }
+                                                ]}
+                                                onPress={() => setCategory(cat)}
+                                            >
+                                                <Text style={[
+                                                    styles.categoryText,
+                                                    { color: category === cat ? 'white' : colors.textSecondary }
+                                                ]}>
+                                                    {cat}
+                                                </Text>
+                                            </Pressable>
+                                        ))}
+                                    </View>
+                                </View>
+
+                                <View style={styles.inputGroup}>
+                                    <Text style={[styles.label, { color: colors.text }]}>Title</Text>
+                                    <TextInput
+                                        style={[styles.input, { borderColor: colors.inputBorder, backgroundColor: colors.inputBackground, color: colors.text }]}
+                                        placeholder="Brief title"
+                                        placeholderTextColor={colors.textTertiary}
+                                        value={title}
+                                        onChangeText={setTitle}
+                                    />
+                                </View>
+
+                                <View style={styles.inputGroup}>
+                                    <Text style={[styles.label, { color: colors.text }]}>Description</Text>
+                                    <TextInput
+                                        style={[styles.input, styles.textArea, { borderColor: colors.inputBorder, backgroundColor: colors.inputBackground, color: colors.text }]}
+                                        placeholder="Describe the issue in detail..."
+                                        placeholderTextColor={colors.textTertiary}
+                                        value={description}
+                                        onChangeText={setDescription}
+                                        multiline
+                                        numberOfLines={4}
+                                    />
+                                </View>
+
+                                <Pressable
+                                    style={[styles.submitBtn, { backgroundColor: '#f59e0b' }, createMutation.isPending && styles.btnDisabled]}
+                                    onPress={handleSubmit}
+                                    disabled={createMutation.isPending}
+                                >
+                                    {createMutation.isPending ? (
+                                        <ActivityIndicator color="white" />
+                                    ) : (
+                                        <Text style={styles.submitBtnText}>Submit Complaint</Text>
+                                    )}
+                                </Pressable>
+                            </View>
+                        </ScrollView>
+                    </KeyboardAvoidingView>
                 </View>
             </Modal>
 

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, Pressable, ActivityIndicator, StyleSheet, Modal, TextInput, Alert, RefreshControl, Platform } from 'react-native';
+import { View, Text, ScrollView, Pressable, ActivityIndicator, StyleSheet, Modal, TextInput, Alert, RefreshControl, Platform, KeyboardAvoidingView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { BottomNav } from '@/components/ui/BottomNav';
@@ -516,39 +516,49 @@ export default function MessMenuPage() {
             </ScrollView>
 
             {/* Edit Modal (Mess Staff) */}
-            < Modal visible={showEditModal} animationType="slide" transparent >
+            <Modal visible={showEditModal} animationType="slide" transparent>
                 <View style={styles.modalOverlay}>
-                    <View style={[styles.modalContent, { backgroundColor: colors.card }]}>
-                        <View style={styles.modalHeader}>
-                            <Text style={[styles.modalTitle, { color: colors.text }]}>Edit {selectedMeal} - {selectedDay}</Text>
-                            <Pressable onPress={() => setShowEditModal(false)}>
-                                <Ionicons name="close" size={24} color={colors.textSecondary} />
-                            </Pressable>
-                        </View>
-                        <Text style={[styles.modalHint, { color: colors.textSecondary }]}>Enter one item per line</Text>
-                        <TextInput
-                            style={[styles.editInput, { borderColor: colors.inputBorder, backgroundColor: colors.inputBackground, color: colors.text }]}
-                            multiline
-                            numberOfLines={8}
-                            value={editItems}
-                            onChangeText={setEditItems}
-                            placeholder="Poha\nTea\nBread"
-                            placeholderTextColor={colors.textTertiary}
-                        />
-                        <Pressable
-                            style={[styles.saveBtn, { backgroundColor: colors.success }, updateMenuMutation.isPending && styles.btnDisabled]}
-                            onPress={handleSaveMenu}
-                            disabled={updateMenuMutation.isPending}
+                    <KeyboardAvoidingView
+                        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                        style={{ flex: 1 }}
+                    >
+                        <ScrollView
+                            keyboardShouldPersistTaps="handled"
+                            contentContainerStyle={{ flexGrow: 1, justifyContent: 'flex-end' }}
                         >
-                            {updateMenuMutation.isPending ? (
-                                <ActivityIndicator color="white" />
-                            ) : (
-                                <Text style={styles.saveBtnText}>Save Menu</Text>
-                            )}
-                        </Pressable>
-                    </View>
+                            <View style={[styles.modalContent, { backgroundColor: colors.card }]}>
+                                <View style={styles.modalHeader}>
+                                    <Text style={[styles.modalTitle, { color: colors.text }]}>Edit {selectedMeal} - {selectedDay}</Text>
+                                    <Pressable onPress={() => setShowEditModal(false)}>
+                                        <Ionicons name="close" size={24} color={colors.textSecondary} />
+                                    </Pressable>
+                                </View>
+                                <Text style={[styles.modalHint, { color: colors.textSecondary }]}>Enter one item per line</Text>
+                                <TextInput
+                                    style={[styles.editInput, { borderColor: colors.inputBorder, backgroundColor: colors.inputBackground, color: colors.text }]}
+                                    multiline
+                                    numberOfLines={8}
+                                    value={editItems}
+                                    onChangeText={setEditItems}
+                                    placeholder="Poha\nTea\nBread"
+                                    placeholderTextColor={colors.textTertiary}
+                                />
+                                <Pressable
+                                    style={[styles.saveBtn, { backgroundColor: colors.success }, updateMenuMutation.isPending && styles.btnDisabled]}
+                                    onPress={handleSaveMenu}
+                                    disabled={updateMenuMutation.isPending}
+                                >
+                                    {updateMenuMutation.isPending ? (
+                                        <ActivityIndicator color="white" />
+                                    ) : (
+                                        <Text style={styles.saveBtnText}>Save Menu</Text>
+                                    )}
+                                </Pressable>
+                            </View>
+                        </ScrollView>
+                    </KeyboardAvoidingView>
                 </View>
-            </Modal >
+            </Modal>
 
             {/* Rating Modal (Students) */}
             < Modal visible={!!ratingMeal
@@ -575,60 +585,70 @@ export default function MessMenuPage() {
             {/* Timing Editor Modal (Mess Staff) */}
             <Modal visible={showTimingModal} animationType="slide" transparent>
                 <View style={styles.modalOverlay}>
-                    <View style={[styles.modalContent, { backgroundColor: colors.card }]}>
-                        <View style={styles.modalHeader}>
-                            <Text style={[styles.modalTitle, { color: colors.text }]}>Edit Meal Timings</Text>
-                            <Pressable onPress={() => setShowTimingModal(false)}>
-                                <Ionicons name="close" size={24} color={colors.textSecondary} />
-                            </Pressable>
-                        </View>
-                        <Text style={[styles.modalHint, { color: colors.textSecondary }]}>Changing timings will create an urgent notice</Text>
-
-                        {(['Breakfast', 'Lunch', 'Dinner'] as MealType[]).map((meal) => (
-                            <View key={meal} style={[styles.timingInputRow, { borderBottomColor: colors.cardBorder }]}>
-                                <Text style={[styles.timingLabel, { color: colors.text }]}>{meal}</Text>
-                                <View style={styles.timingPickerContainer}>
-                                    <View style={styles.timePickerSection}>
-                                        <Text style={[styles.timeLabel, { color: colors.textSecondary }]}>Start</Text>
-                                        <TimeScrollPicker
-                                            value={editTimings[meal]?.start || '07:00'}
-                                            onChange={(time) => {
-                                                setEditTimings({
-                                                    ...editTimings,
-                                                    [meal]: { ...editTimings[meal], start: time }
-                                                });
-                                            }}
-                                        />
-                                    </View>
-                                    <Text style={[styles.timingDash, { color: colors.textSecondary }]}>→</Text>
-                                    <View style={styles.timePickerSection}>
-                                        <Text style={[styles.timeLabel, { color: colors.textSecondary }]}>End</Text>
-                                        <TimeScrollPicker
-                                            value={editTimings[meal]?.end || '09:00'}
-                                            onChange={(time) => {
-                                                setEditTimings({
-                                                    ...editTimings,
-                                                    [meal]: { ...editTimings[meal], end: time }
-                                                });
-                                            }}
-                                        />
-                                    </View>
-                                </View>
-                            </View>
-                        ))}
-
-                        <Pressable
-                            style={[styles.saveBtn, { backgroundColor: colors.success }, updateTimingsMutation.isPending && styles.btnDisabled]}
-                            onPress={handleSaveTimings}
-                            disabled={updateTimingsMutation.isPending}
+                    <KeyboardAvoidingView
+                        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                        style={{ flex: 1 }}
+                    >
+                        <ScrollView
+                            keyboardShouldPersistTaps="handled"
+                            contentContainerStyle={{ flexGrow: 1, justifyContent: 'flex-end' }}
                         >
-                            {updateTimingsMutation.isPending ? (
-                                <ActivityIndicator color="white" />
-                            ) : (
-                                <Text style={styles.saveBtnText}>Save Timings</Text>
-                            )}
-                        </Pressable>
-                    </View>
+                            <View style={[styles.modalContent, { backgroundColor: colors.card }]}>
+                                <View style={styles.modalHeader}>
+                                    <Text style={[styles.modalTitle, { color: colors.text }]}>Edit Meal Timings</Text>
+                                    <Pressable onPress={() => setShowTimingModal(false)}>
+                                        <Ionicons name="close" size={24} color={colors.textSecondary} />
+                                    </Pressable>
+                                </View>
+                                <Text style={[styles.modalHint, { color: colors.textSecondary }]}>Changing timings will create an urgent notice</Text>
+
+                                {(['Breakfast', 'Lunch', 'Dinner'] as MealType[]).map((meal) => (
+                                    <View key={meal} style={[styles.timingInputRow, { borderBottomColor: colors.cardBorder }]}>
+                                        <Text style={[styles.timingLabel, { color: colors.text }]}>{meal}</Text>
+                                        <View style={styles.timingPickerContainer}>
+                                            <View style={styles.timePickerSection}>
+                                                <Text style={[styles.timeLabel, { color: colors.textSecondary }]}>Start</Text>
+                                                <TimeScrollPicker
+                                                    value={editTimings[meal]?.start || '07:00'}
+                                                    onChange={(time) => {
+                                                        setEditTimings({
+                                                            ...editTimings,
+                                                            [meal]: { ...editTimings[meal], start: time }
+                                                        });
+                                                    }}
+                                                />
+                                            </View>
+                                            <Text style={[styles.timingDash, { color: colors.textSecondary }]}>→</Text>
+                                            <View style={styles.timePickerSection}>
+                                                <Text style={[styles.timeLabel, { color: colors.textSecondary }]}>End</Text>
+                                                <TimeScrollPicker
+                                                    value={editTimings[meal]?.end || '09:00'}
+                                                    onChange={(time) => {
+                                                        setEditTimings({
+                                                            ...editTimings,
+                                                            [meal]: { ...editTimings[meal], end: time }
+                                                        });
+                                                    }}
+                                                />
+                                            </View>
+                                        </View>
+                                    </View>
+                                ))}
+
+                                <Pressable
+                                    style={[styles.saveBtn, { backgroundColor: colors.success }, updateTimingsMutation.isPending && styles.btnDisabled]}
+                                    onPress={handleSaveTimings}
+                                    disabled={updateTimingsMutation.isPending}
+                                >
+                                    {updateTimingsMutation.isPending ? (
+                                        <ActivityIndicator color="white" />
+                                    ) : (
+                                        <Text style={styles.saveBtnText}>Save Timings</Text>
+                                    )}
+                                </Pressable>
+                            </View>
+                        </ScrollView>
+                    </KeyboardAvoidingView>
                 </View>
             </Modal>
 

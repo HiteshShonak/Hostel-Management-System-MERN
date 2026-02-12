@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, Pressable, StyleSheet, ActivityIndicator, Modal, TextInput, Alert } from 'react-native';
+import { View, Text, ScrollView, Pressable, StyleSheet, ActivityIndicator, Modal, TextInput, Alert, KeyboardAvoidingView, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { BottomNav } from '@/components/ui/BottomNav';
@@ -149,95 +149,105 @@ export default function VisitorsPage() {
             {/* Register Modal */}
             <Modal visible={showModal} animationType="slide" transparent>
                 <View style={styles.modalOverlay}>
-                    <View style={[styles.modalContent, { backgroundColor: colors.card }]}>
-                        <View style={styles.modalHeader}>
-                            <Text style={[styles.modalTitle, { color: colors.text }]}>Register Visitor</Text>
-                            <Pressable onPress={() => setShowModal(false)}>
-                                <Ionicons name="close" size={24} color={colors.textSecondary} />
-                            </Pressable>
-                        </View>
-
-                        <View style={styles.row}>
-                            <View style={[styles.inputGroup, { flex: 1 }]}>
-                                <Text style={[styles.label, { color: colors.text }]}>Name *</Text>
-                                <TextInput
-                                    style={[styles.input, { borderColor: colors.inputBorder, backgroundColor: colors.inputBackground, color: colors.text }]}
-                                    placeholder="Visitor name"
-                                    placeholderTextColor={colors.textTertiary}
-                                    value={name}
-                                    onChangeText={setName}
-                                />
-                            </View>
-                            <View style={[styles.inputGroup, { flex: 1, marginLeft: 12 }]}>
-                                <Text style={[styles.label, { color: colors.text }]}>Relation *</Text>
-                                <TextInput
-                                    style={[styles.input, { borderColor: colors.inputBorder, backgroundColor: colors.inputBackground, color: colors.text }]}
-                                    placeholder="e.g., Parent"
-                                    placeholderTextColor={colors.textTertiary}
-                                    value={relation}
-                                    onChangeText={setRelation}
-                                />
-                            </View>
-                        </View>
-
-                        <View style={styles.inputGroup}>
-                            <Text style={[styles.label, { color: colors.text }]}>Phone *</Text>
-                            <TextInput
-                                style={[styles.input, { borderColor: colors.inputBorder, backgroundColor: colors.inputBackground, color: colors.text }]}
-                                placeholder="+91 98765 43210"
-                                placeholderTextColor={colors.textTertiary}
-                                value={phone}
-                                onChangeText={setPhone}
-                                keyboardType="phone-pad"
-                            />
-                        </View>
-
-                        <View style={styles.inputGroup}>
-                            <Text style={[styles.label, { color: colors.text }]}>Purpose</Text>
-                            <TextInput
-                                style={[styles.input, { borderColor: colors.inputBorder, backgroundColor: colors.inputBackground, color: colors.text }]}
-                                placeholder="e.g., Family visit"
-                                placeholderTextColor={colors.textTertiary}
-                                value={purpose}
-                                onChangeText={setPurpose}
-                            />
-                        </View>
-
-                        <View style={styles.row}>
-                            <View style={[styles.inputGroup, { flex: 1 }]}>
-                                <Text style={[styles.label, { color: colors.text }]}>Expected Date *</Text>
-                                <TextInput
-                                    style={[styles.input, { borderColor: colors.inputBorder, backgroundColor: colors.inputBackground, color: colors.text }]}
-                                    placeholder="YYYY-MM-DD"
-                                    placeholderTextColor={colors.textTertiary}
-                                    value={expectedDate}
-                                    onChangeText={setExpectedDate}
-                                />
-                            </View>
-                            <View style={[styles.inputGroup, { flex: 1, marginLeft: 12 }]}>
-                                <Text style={[styles.label, { color: colors.text }]}>Expected Time *</Text>
-                                <TextInput
-                                    style={[styles.input, { borderColor: colors.inputBorder, backgroundColor: colors.inputBackground, color: colors.text }]}
-                                    placeholder="10:00 AM"
-                                    placeholderTextColor={colors.textTertiary}
-                                    value={expectedTime}
-                                    onChangeText={setExpectedTime}
-                                />
-                            </View>
-                        </View>
-
-                        <Pressable
-                            style={[styles.submitBtn, registerMutation.isPending && styles.btnDisabled]}
-                            onPress={handleRegister}
-                            disabled={registerMutation.isPending}
+                    <KeyboardAvoidingView
+                        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                        style={{ flex: 1 }}
+                    >
+                        <ScrollView
+                            keyboardShouldPersistTaps="handled"
+                            contentContainerStyle={{ flexGrow: 1, justifyContent: 'flex-end' }}
                         >
-                            {registerMutation.isPending ? (
-                                <ActivityIndicator color="white" />
-                            ) : (
-                                <Text style={styles.submitBtnText}>Register Visitor</Text>
-                            )}
-                        </Pressable>
-                    </View>
+                            <View style={[styles.modalContent, { backgroundColor: colors.card }]}>
+                                <View style={styles.modalHeader}>
+                                    <Text style={[styles.modalTitle, { color: colors.text }]}>Register Visitor</Text>
+                                    <Pressable onPress={() => setShowModal(false)}>
+                                        <Ionicons name="close" size={24} color={colors.textSecondary} />
+                                    </Pressable>
+                                </View>
+
+                                <View style={styles.row}>
+                                    <View style={[styles.inputGroup, { flex: 1 }]}>
+                                        <Text style={[styles.label, { color: colors.text }]}>Name *</Text>
+                                        <TextInput
+                                            style={[styles.input, { borderColor: colors.inputBorder, backgroundColor: colors.inputBackground, color: colors.text }]}
+                                            placeholder="Visitor name"
+                                            placeholderTextColor={colors.textTertiary}
+                                            value={name}
+                                            onChangeText={setName}
+                                        />
+                                    </View>
+                                    <View style={[styles.inputGroup, { flex: 1, marginLeft: 12 }]}>
+                                        <Text style={[styles.label, { color: colors.text }]}>Relation *</Text>
+                                        <TextInput
+                                            style={[styles.input, { borderColor: colors.inputBorder, backgroundColor: colors.inputBackground, color: colors.text }]}
+                                            placeholder="e.g., Parent"
+                                            placeholderTextColor={colors.textTertiary}
+                                            value={relation}
+                                            onChangeText={setRelation}
+                                        />
+                                    </View>
+                                </View>
+
+                                <View style={styles.inputGroup}>
+                                    <Text style={[styles.label, { color: colors.text }]}>Phone *</Text>
+                                    <TextInput
+                                        style={[styles.input, { borderColor: colors.inputBorder, backgroundColor: colors.inputBackground, color: colors.text }]}
+                                        placeholder="+91 98765 43210"
+                                        placeholderTextColor={colors.textTertiary}
+                                        value={phone}
+                                        onChangeText={setPhone}
+                                        keyboardType="phone-pad"
+                                    />
+                                </View>
+
+                                <View style={styles.inputGroup}>
+                                    <Text style={[styles.label, { color: colors.text }]}>Purpose</Text>
+                                    <TextInput
+                                        style={[styles.input, { borderColor: colors.inputBorder, backgroundColor: colors.inputBackground, color: colors.text }]}
+                                        placeholder="e.g., Family visit"
+                                        placeholderTextColor={colors.textTertiary}
+                                        value={purpose}
+                                        onChangeText={setPurpose}
+                                    />
+                                </View>
+
+                                <View style={styles.row}>
+                                    <View style={[styles.inputGroup, { flex: 1 }]}>
+                                        <Text style={[styles.label, { color: colors.text }]}>Expected Date *</Text>
+                                        <TextInput
+                                            style={[styles.input, { borderColor: colors.inputBorder, backgroundColor: colors.inputBackground, color: colors.text }]}
+                                            placeholder="YYYY-MM-DD"
+                                            placeholderTextColor={colors.textTertiary}
+                                            value={expectedDate}
+                                            onChangeText={setExpectedDate}
+                                        />
+                                    </View>
+                                    <View style={[styles.inputGroup, { flex: 1, marginLeft: 12 }]}>
+                                        <Text style={[styles.label, { color: colors.text }]}>Expected Time *</Text>
+                                        <TextInput
+                                            style={[styles.input, { borderColor: colors.inputBorder, backgroundColor: colors.inputBackground, color: colors.text }]}
+                                            placeholder="10:00 AM"
+                                            placeholderTextColor={colors.textTertiary}
+                                            value={expectedTime}
+                                            onChangeText={setExpectedTime}
+                                        />
+                                    </View>
+                                </View>
+
+                                <Pressable
+                                    style={[styles.submitBtn, registerMutation.isPending && styles.btnDisabled]}
+                                    onPress={handleRegister}
+                                    disabled={registerMutation.isPending}
+                                >
+                                    {registerMutation.isPending ? (
+                                        <ActivityIndicator color="white" />
+                                    ) : (
+                                        <Text style={styles.submitBtnText}>Register Visitor</Text>
+                                    )}
+                                </Pressable>
+                            </View>
+                        </ScrollView>
+                    </KeyboardAvoidingView>
                 </View>
             </Modal>
 

@@ -195,7 +195,7 @@ npm install
 cp .env.example .env
 
 # Update .env with your backend URL
-# API_URL=https://your-backend-url.com/api
+# API_URL=http://your_backend_url_here/api
 ```
 
 ### Development
@@ -238,7 +238,7 @@ npx eas build --platform android --profile production --clear-cache
 
 Create `.env` file:
 ```env
-API_URL=https://your-backend.com/api
+API_URL=http://your_backend_url_here/api
 ```
 
 ### Firebase Setup (Push Notifications)

@@ -30,8 +30,7 @@
         "android.permission.CAMERA",
         "android.permission.POST_NOTIFICATIONS",
         "android.permission.VIBRATE"
-      ],
-      "googleServicesFile": "./google-services.json"
+      ]
     },
     "plugins": [
       "expo-router",

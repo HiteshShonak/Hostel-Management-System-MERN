@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, ScrollView, Pressable, StyleSheet, ActivityIndicator, Modal, TextInput, Platform, RefreshControl, Alert } from 'react-native';
+import { View, Text, ScrollView, Pressable, StyleSheet, ActivityIndicator, Modal, TextInput, Platform, RefreshControl, Alert, KeyboardAvoidingView } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
@@ -300,6 +300,16 @@ export default function GatePassPage() {
                                                 </View>
                                             </View>
                                         )}
+
+                                        {/* Show Rejection Reason if Rejected */}
+                                        {pass.status === 'REJECTED' && (pass.parentRejectionReason || pass.rejectionReason) && (
+                                            <View style={[styles.rejectionBox, { backgroundColor: isDark ? '#450a0a' : '#fef2f2', borderColor: isDark ? '#7f1d1d' : '#fecaca' }]}>
+                                                <Ionicons name="alert-circle" size={16} color={isDark ? '#fca5a5' : '#dc2626'} />
+                                                <Text style={[styles.rejectionText, { color: isDark ? '#fca5a5' : '#dc2626' }]}>
+                                                    Reason: {pass.parentRejectionReason || pass.rejectionReason}
+                                                </Text>
+                                            </View>
+                                        )}
                                     </View>
                                 );
                             })}
@@ -334,70 +344,80 @@ export default function GatePassPage() {
             {/* Apply Modal (Student only) */}
             <Modal visible={showModal} animationType="slide" transparent>
                 <View style={styles.modalOverlay}>
-                    <View style={[styles.modalContent, { backgroundColor: colors.card }]}>
-                        <View style={styles.modalHeader}>
-                            <Text style={[styles.modalTitle, { color: colors.text }]}>Apply Gate Pass</Text>
-                            <Pressable onPress={() => setShowModal(false)}>
-                                <Ionicons name="close" size={24} color={colors.textSecondary} />
-                            </Pressable>
-                        </View>
-
-                        <View style={styles.inputGroup}>
-                            <Text style={[styles.label, { color: colors.text }]}>Reason</Text>
-                            <TextInput
-                                style={[styles.input, { minHeight: 60, borderColor: colors.inputBorder, backgroundColor: colors.inputBackground, color: colors.text }]}
-                                placeholder="e.g., Going home for weekend"
-                                placeholderTextColor={colors.textTertiary}
-                                value={reason}
-                                onChangeText={setReason}
-                                multiline
-                            />
-                            <Text style={[styles.helperText, { color: colors.textSecondary }]}>Minimum 5 characters required</Text>
-                        </View>
-
-                        <View style={styles.row}>
-                            <View style={{ flex: 1 }}>
-                                <Text style={[styles.label, { color: colors.text }]}>From</Text>
-                                <Pressable style={[styles.input, { borderColor: colors.inputBorder, backgroundColor: colors.inputBackground }]} onPress={() => showMode('date', 'from')}>
-                                    <Text style={{ color: colors.text }}>{fromDate.toLocaleDateString()}</Text>
-                                </Pressable>
-                                <Pressable style={[styles.input, { marginTop: 8, borderColor: colors.inputBorder, backgroundColor: colors.inputBackground }]} onPress={() => showMode('time', 'from')}>
-                                    <Text style={{ color: colors.text }}>{fromDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</Text>
-                                </Pressable>
-                            </View>
-                            <View style={{ flex: 1, marginLeft: 12 }}>
-                                <Text style={[styles.label, { color: colors.text }]}>To</Text>
-                                <Pressable style={[styles.input, { borderColor: colors.inputBorder, backgroundColor: colors.inputBackground }]} onPress={() => showMode('date', 'to')}>
-                                    <Text style={{ color: colors.text }}>{toDate.toLocaleDateString()}</Text>
-                                </Pressable>
-                                <Pressable style={[styles.input, { marginTop: 8, borderColor: colors.inputBorder, backgroundColor: colors.inputBackground }]} onPress={() => showMode('time', 'to')}>
-                                    <Text style={{ color: colors.text }}>{toDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</Text>
-                                </Pressable>
-                            </View>
-                        </View>
-
-                        {show && (
-                            <DateTimePicker
-                                testID="dateTimePicker"
-                                value={activeField === 'from' ? fromDate : toDate}
-                                mode={mode}
-                                is24Hour={false}
-                                onChange={onChange}
-                            />
-                        )}
-
-                        <Pressable
-                            style={[styles.submitBtn, { backgroundColor: colors.primary }, requestMutation.isPending && styles.btnDisabled]}
-                            onPress={handleRequest}
-                            disabled={requestMutation.isPending}
+                    <KeyboardAvoidingView
+                        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                        style={{ flex: 1 }}
+                    >
+                        <ScrollView
+                            keyboardShouldPersistTaps="handled"
+                            contentContainerStyle={{ flexGrow: 1, justifyContent: 'flex-end' }}
                         >
-                            {requestMutation.isPending ? (
-                                <ActivityIndicator color="white" />
-                            ) : (
-                                <Text style={styles.submitBtnText}>Submit Request</Text>
-                            )}
-                        </Pressable>
-                    </View>
+                            <View style={[styles.modalContent, { backgroundColor: colors.card }]}>
+                                <View style={styles.modalHeader}>
+                                    <Text style={[styles.modalTitle, { color: colors.text }]}>Apply Gate Pass</Text>
+                                    <Pressable onPress={() => setShowModal(false)}>
+                                        <Ionicons name="close" size={24} color={colors.textSecondary} />
+                                    </Pressable>
+                                </View>
+
+                                <View style={styles.inputGroup}>
+                                    <Text style={[styles.label, { color: colors.text }]}>Reason</Text>
+                                    <TextInput
+                                        style={[styles.input, { minHeight: 60, borderColor: colors.inputBorder, backgroundColor: colors.inputBackground, color: colors.text }]}
+                                        placeholder="e.g., Going home for weekend"
+                                        placeholderTextColor={colors.textTertiary}
+                                        value={reason}
+                                        onChangeText={setReason}
+                                        multiline
+                                    />
+                                    <Text style={[styles.helperText, { color: colors.textSecondary }]}>Minimum 5 characters required</Text>
+                                </View>
+
+                                <View style={styles.row}>
+                                    <View style={{ flex: 1 }}>
+                                        <Text style={[styles.label, { color: colors.text }]}>From</Text>
+                                        <Pressable style={[styles.input, { borderColor: colors.inputBorder, backgroundColor: colors.inputBackground }]} onPress={() => showMode('date', 'from')}>
+                                            <Text style={{ color: colors.text }}>{fromDate.toLocaleDateString()}</Text>
+                                        </Pressable>
+                                        <Pressable style={[styles.input, { marginTop: 8, borderColor: colors.inputBorder, backgroundColor: colors.inputBackground }]} onPress={() => showMode('time', 'from')}>
+                                            <Text style={{ color: colors.text }}>{fromDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</Text>
+                                        </Pressable>
+                                    </View>
+                                    <View style={{ flex: 1, marginLeft: 12 }}>
+                                        <Text style={[styles.label, { color: colors.text }]}>To</Text>
+                                        <Pressable style={[styles.input, { borderColor: colors.inputBorder, backgroundColor: colors.inputBackground }]} onPress={() => showMode('date', 'to')}>
+                                            <Text style={{ color: colors.text }}>{toDate.toLocaleDateString()}</Text>
+                                        </Pressable>
+                                        <Pressable style={[styles.input, { marginTop: 8, borderColor: colors.inputBorder, backgroundColor: colors.inputBackground }]} onPress={() => showMode('time', 'to')}>
+                                            <Text style={{ color: colors.text }}>{toDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</Text>
+                                        </Pressable>
+                                    </View>
+                                </View>
+
+                                {show && (
+                                    <DateTimePicker
+                                        testID="dateTimePicker"
+                                        value={activeField === 'from' ? fromDate : toDate}
+                                        mode={mode}
+                                        is24Hour={false}
+                                        onChange={onChange}
+                                    />
+                                )}
+
+                                <Pressable
+                                    style={[styles.submitBtn, { backgroundColor: colors.primary }, requestMutation.isPending && styles.btnDisabled]}
+                                    onPress={handleRequest}
+                                    disabled={requestMutation.isPending}
+                                >
+                                    {requestMutation.isPending ? (
+                                        <ActivityIndicator color="white" />
+                                    ) : (
+                                        <Text style={styles.submitBtnText}>Submit Request</Text>
+                                    )}
+                                </Pressable>
+                            </View>
+                        </ScrollView>
+                    </KeyboardAvoidingView>
                 </View>
             </Modal>
 
@@ -468,4 +488,6 @@ const styles = StyleSheet.create({
     scanBtnContent: { flex: 1 },
     scanBtnTitle: { fontSize: 18, fontWeight: '700', color: '#16a34a' },
     scanBtnSubtitle: { fontSize: 13, color: '#15803d', marginTop: 2 },
+    rejectionBox: { flexDirection: 'row', alignItems: 'center', gap: 8, padding: 12, borderRadius: 8, marginTop: 12, borderWidth: 1 },
+    rejectionText: { fontSize: 13, fontWeight: '500', flex: 1 },
 });

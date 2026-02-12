@@ -248,14 +248,14 @@ NODE_ENV=development
 # Database
 MONGODB_URI=mongodb://localhost:27017/hms
 # Or use MongoDB Atlas:
-# MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/hms
+# MONGODB_URI=your_mongodb_connection_string_here
 
 # Authentication
-JWT_SECRET=your-super-secret-key-min-32-characters
+JWT_SECRET=your_jwt_secret_key_here
 JWT_EXPIRES_IN=7d
 
 # Firebase (Push Notifications)
-FCM_SERVER_KEY=your-fcm-server-key
+FCM_SERVER_KEY=your_fcm_server_key_here
 
 # Redis (Optional - for caching)
 REDIS_URL=redis://localhost:6379
@@ -622,7 +622,7 @@ curl -X POST http://localhost:5000/api/auth/login \
 
 # Get gate passes (with token)
 curl http://localhost:5000/api/gatepass \
-  -H "Authorization: Bearer YOUR_JWT_TOKEN"
+  -H "Authorization: Bearer your_jwt_token_here"
 ```
 
 ## 📄 License

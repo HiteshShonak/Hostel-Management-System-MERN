@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, ScrollView, Pressable, StyleSheet, ActivityIndicator, Modal, TextInput, Switch, RefreshControl } from 'react-native';
+import { View, Text, ScrollView, Pressable, StyleSheet, ActivityIndicator, Modal, TextInput, Switch, RefreshControl, KeyboardAvoidingView, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { BottomNav } from '@/components/ui/BottomNav';
@@ -219,62 +219,72 @@ export default function NoticesPage() {
             {/* Create Notice Modal */}
             <Modal visible={showModal} animationType="slide" transparent>
                 <View style={styles.modalOverlay}>
-                    <View style={[styles.modalContent, { backgroundColor: colors.card }]}>
-                        <View style={styles.modalHeader}>
-                            <Text style={[styles.modalTitle, { color: colors.text }]}>Issue Notice</Text>
-                            <Pressable onPress={() => setShowModal(false)}>
-                                <Ionicons name="close" size={24} color={colors.textSecondary} />
-                            </Pressable>
-                        </View>
-
-                        <View style={styles.inputGroup}>
-                            <Text style={[styles.label, { color: colors.text }]}>Title</Text>
-                            <TextInput
-                                style={[styles.input, { borderColor: colors.inputBorder, backgroundColor: colors.inputBackground, color: colors.text }]}
-                                placeholder="Notice title"
-                                placeholderTextColor={colors.textTertiary}
-                                value={title}
-                                onChangeText={setTitle}
-                            />
-                            <Text style={{ fontSize: 12, color: colors.textSecondary, marginTop: 4 }}>Min 5 characters</Text>
-                        </View>
-
-                        <View style={styles.inputGroup}>
-                            <Text style={[styles.label, { color: colors.text }]}>Description</Text>
-                            <TextInput
-                                style={[styles.input, styles.textArea, { borderColor: colors.inputBorder, backgroundColor: colors.inputBackground, color: colors.text }]}
-                                placeholder="Notice details..."
-                                placeholderTextColor={colors.textTertiary}
-                                value={description}
-                                onChangeText={setDescription}
-                                multiline
-                                numberOfLines={4}
-                            />
-                            <Text style={{ fontSize: 12, color: colors.textSecondary, marginTop: 4 }}>Min 10 characters</Text>
-                        </View>
-
-                        <View style={styles.switchRow}>
-                            <Text style={[styles.switchLabel, { color: colors.text }]}>Mark as Urgent</Text>
-                            <Switch
-                                value={urgent}
-                                onValueChange={setUrgent}
-                                trackColor={{ false: colors.cardBorder, true: isDark ? '#be123c' : '#fecaca' }}
-                                thumbColor={urgent ? (isDark ? '#fb7185' : '#dc2626') : (isDark ? '#737373' : '#f4f4f4')}
-                            />
-                        </View>
-
-                        <Pressable
-                            style={[styles.submitBtn, { backgroundColor: colors.primary }, createNoticeMutation.isPending && styles.btnDisabled]}
-                            onPress={handleCreateNotice}
-                            disabled={createNoticeMutation.isPending}
+                    <KeyboardAvoidingView
+                        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                        style={{ flex: 1 }}
+                    >
+                        <ScrollView
+                            keyboardShouldPersistTaps="handled"
+                            contentContainerStyle={{ flexGrow: 1, justifyContent: 'flex-end' }}
                         >
-                            {createNoticeMutation.isPending ? (
-                                <ActivityIndicator color="white" />
-                            ) : (
-                                <Text style={styles.submitBtnText}>Publish Notice</Text>
-                            )}
-                        </Pressable>
-                    </View>
+                            <View style={[styles.modalContent, { backgroundColor: colors.card }]}>
+                                <View style={styles.modalHeader}>
+                                    <Text style={[styles.modalTitle, { color: colors.text }]}>Issue Notice</Text>
+                                    <Pressable onPress={() => setShowModal(false)}>
+                                        <Ionicons name="close" size={24} color={colors.textSecondary} />
+                                    </Pressable>
+                                </View>
+
+                                <View style={styles.inputGroup}>
+                                    <Text style={[styles.label, { color: colors.text }]}>Title</Text>
+                                    <TextInput
+                                        style={[styles.input, { borderColor: colors.inputBorder, backgroundColor: colors.inputBackground, color: colors.text }]}
+                                        placeholder="Notice title"
+                                        placeholderTextColor={colors.textTertiary}
+                                        value={title}
+                                        onChangeText={setTitle}
+                                    />
+                                    <Text style={{ fontSize: 12, color: colors.textSecondary, marginTop: 4 }}>Min 5 characters</Text>
+                                </View>
+
+                                <View style={styles.inputGroup}>
+                                    <Text style={[styles.label, { color: colors.text }]}>Description</Text>
+                                    <TextInput
+                                        style={[styles.input, styles.textArea, { borderColor: colors.inputBorder, backgroundColor: colors.inputBackground, color: colors.text }]}
+                                        placeholder="Notice details..."
+                                        placeholderTextColor={colors.textTertiary}
+                                        value={description}
+                                        onChangeText={setDescription}
+                                        multiline
+                                        numberOfLines={4}
+                                    />
+                                    <Text style={{ fontSize: 12, color: colors.textSecondary, marginTop: 4 }}>Min 10 characters</Text>
+                                </View>
+
+                                <View style={styles.switchRow}>
+                                    <Text style={[styles.switchLabel, { color: colors.text }]}>Mark as Urgent</Text>
+                                    <Switch
+                                        value={urgent}
+                                        onValueChange={setUrgent}
+                                        trackColor={{ false: colors.cardBorder, true: isDark ? '#be123c' : '#fecaca' }}
+                                        thumbColor={urgent ? (isDark ? '#fb7185' : '#dc2626') : (isDark ? '#737373' : '#f4f4f4')}
+                                    />
+                                </View>
+
+                                <Pressable
+                                    style={[styles.submitBtn, { backgroundColor: colors.primary }, createNoticeMutation.isPending && styles.btnDisabled]}
+                                    onPress={handleCreateNotice}
+                                    disabled={createNoticeMutation.isPending}
+                                >
+                                    {createNoticeMutation.isPending ? (
+                                        <ActivityIndicator color="white" />
+                                    ) : (
+                                        <Text style={styles.submitBtnText}>Publish Notice</Text>
+                                    )}
+                                </Pressable>
+                            </View>
+                        </ScrollView>
+                    </KeyboardAvoidingView>
                 </View>
             </Modal>
 

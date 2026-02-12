@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, StyleSheet, Pressable, RefreshControl, ActivityIndicator, Alert, TextInput, Modal } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, Pressable, RefreshControl, ActivityIndicator, Alert, TextInput, Modal, KeyboardAvoidingView, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { BottomNav } from '@/components/ui/BottomNav';
@@ -188,43 +188,53 @@ export default function ParentPendingPasses() {
                 onRequestClose={() => setRejectModalVisible(false)}
             >
                 <View style={styles.modalOverlay}>
-                    <View style={[styles.modalContent, { backgroundColor: colors.card }]}>
-                        <Text style={[styles.modalTitle, { color: colors.text }]}>Reject Gate Pass</Text>
-                        <Text style={[styles.modalSubtitle, { color: colors.textSecondary }]}>
-                            Please provide a reason (optional)
-                        </Text>
-                        <TextInput
-                            style={[styles.reasonInput, { backgroundColor: colors.background, color: colors.text }]}
-                            placeholder="Reason for rejection..."
-                            placeholderTextColor={colors.textTertiary}
-                            value={rejectReason}
-                            onChangeText={setRejectReason}
-                            multiline
-                            numberOfLines={3}
-                        />
-                        <View style={styles.modalButtons}>
-                            <Pressable
-                                style={[styles.cancelBtn, { backgroundColor: colors.background }]}
-                                onPress={() => {
-                                    setRejectModalVisible(false);
-                                    setRejectReason('');
-                                }}
-                            >
-                                <Text style={[styles.cancelBtnText, { color: colors.text }]}>Cancel</Text>
-                            </Pressable>
-                            <Pressable
-                                style={styles.confirmRejectBtn}
-                                onPress={confirmReject}
-                                disabled={rejectMutation.isPending}
-                            >
-                                {rejectMutation.isPending ? (
-                                    <ActivityIndicator size="small" color="white" />
-                                ) : (
-                                    <Text style={styles.confirmRejectText}>Reject</Text>
-                                )}
-                            </Pressable>
-                        </View>
-                    </View>
+                    <KeyboardAvoidingView
+                        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                        style={{ flex: 1 }}
+                    >
+                        <ScrollView
+                            keyboardShouldPersistTaps="handled"
+                            contentContainerStyle={{ flexGrow: 1, justifyContent: 'flex-end' }}
+                        >
+                            <View style={[styles.modalContent, { backgroundColor: colors.card }]}>
+                                <Text style={[styles.modalTitle, { color: colors.text }]}>Reject Gate Pass</Text>
+                                <Text style={[styles.modalSubtitle, { color: colors.textSecondary }]}>
+                                    Please provide a reason (optional)
+                                </Text>
+                                <TextInput
+                                    style={[styles.reasonInput, { backgroundColor: colors.background, color: colors.text }]}
+                                    placeholder="Reason for rejection..."
+                                    placeholderTextColor={colors.textTertiary}
+                                    value={rejectReason}
+                                    onChangeText={setRejectReason}
+                                    multiline
+                                    numberOfLines={3}
+                                />
+                                <View style={styles.modalButtons}>
+                                    <Pressable
+                                        style={[styles.cancelBtn, { backgroundColor: colors.background }]}
+                                        onPress={() => {
+                                            setRejectModalVisible(false);
+                                            setRejectReason('');
+                                        }}
+                                    >
+                                        <Text style={[styles.cancelBtnText, { color: colors.text }]}>Cancel</Text>
+                                    </Pressable>
+                                    <Pressable
+                                        style={styles.confirmRejectBtn}
+                                        onPress={confirmReject}
+                                        disabled={rejectMutation.isPending}
+                                    >
+                                        {rejectMutation.isPending ? (
+                                            <ActivityIndicator size="small" color="white" />
+                                        ) : (
+                                            <Text style={styles.confirmRejectText}>Reject</Text>
+                                        )}
+                                    </Pressable>
+                                </View>
+                            </View>
+                        </ScrollView>
+                    </KeyboardAvoidingView>
                 </View>
             </Modal>
 
