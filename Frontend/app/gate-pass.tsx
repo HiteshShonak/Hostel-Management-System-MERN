@@ -30,12 +30,12 @@ export default function GatePassPage() {
     const { data: myData, isLoading: loadingMy, isFetching: fetchingMy } = useGatePasses(page, LIMIT);
     const requestMutation = useRequestGatePass();
 
-    // Warden hooks (not paginated - usually smaller list of pending)
+    // warden hooks (list is usually short so no pagination needed)
     const { data: pendingPasses, isLoading: loadingPending } = usePendingGatePasses();
     const approveMutation = useApproveGatePass();
     const rejectMutation = useRejectGatePass();
 
-    // Accumulate passes when page changes (only for student view)
+    // add new passes to the list when scrolling
     useEffect(() => {
         if (!isWarden && myData?.data) {
             if (page === 1) {
@@ -247,7 +247,7 @@ export default function GatePassPage() {
                                             </View>
                                         </View>
 
-                                        {/* Show parent validation status for admin */}
+                                        {/* admin can see if parent approved */}
                                         {user?.role === 'admin' && pass.status === 'PENDING_PARENT' && (
                                             <View style={[styles.parentValidationBox, { backgroundColor: isDark ? '#78350f' : '#fef3c7' }]}>
                                                 <Ionicons name="alert-circle" size={16} color="#d97706" />
@@ -255,7 +255,7 @@ export default function GatePassPage() {
                                             </View>
                                         )}
 
-                                        {/* Warden/Admin: Approve/Reject Buttons */}
+                                        {/* buttons for warden to say yes or no */}
                                         {isWarden && (pass.status === 'PENDING_WARDEN' || (user?.role === 'admin' && pass.status === 'PENDING_PARENT')) && (
                                             <View style={[styles.actionRow, { borderTopColor: colors.cardBorder }]}>
                                                 <Pressable
@@ -301,7 +301,7 @@ export default function GatePassPage() {
                                             </View>
                                         )}
 
-                                        {/* Show Rejection Reason if Rejected */}
+                                        {/* why did they say no */}
                                         {pass.status === 'REJECTED' && (pass.parentRejectionReason || pass.rejectionReason) && (
                                             <View style={[styles.rejectionBox, { backgroundColor: isDark ? '#450a0a' : '#fef2f2', borderColor: isDark ? '#7f1d1d' : '#fecaca' }]}>
                                                 <Ionicons name="alert-circle" size={16} color={isDark ? '#fca5a5' : '#dc2626'} />
@@ -314,7 +314,7 @@ export default function GatePassPage() {
                                 );
                             })}
 
-                            {/* Load More Button - only for student view */}
+                            {/* button to load more stuff */}
                             {!isWarden && (
                                 <LoadMore
                                     onLoadMore={handleLoadMore}

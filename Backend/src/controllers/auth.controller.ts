@@ -1,5 +1,6 @@
 // src/controllers/auth.controller.ts
-// Auth controller for login, register, and password management
+// src/controllers/auth.controller.ts
+// handles login, signup, and password stuff
 
 import { Request, Response } from 'express';
 import User from '../models/User';
@@ -11,25 +12,25 @@ import { ApiResponse } from '../utils/ApiResponse';
 import { generateToken } from '../services/jwt.service';
 import { logger } from '../utils/logger';
 
-// @desc    Register new user
-// @route   POST /api/auth/register
+// register a new user
+// POST /api/auth/register
 export const register = asyncHandler(async (req: Request, res: Response) => {
     const { name, email, password, rollNo, room, hostel, phone, role, parentEmail } = req.body;
 
     logger.debug('Register request', { name, email, rollNo, role, hasParentEmail: !!parentEmail });
 
-    // Validate required fields
+    // check if everything is there
     if (!name || !email || !password || !rollNo || !room || !hostel || !phone) {
         throw new ApiError(400, 'Please provide all required fields');
     }
 
-    // Check if user exists
+    // check if user already exists
     const existingUser = await User.findOne({ $or: [{ email }, { rollNo }] });
     if (existingUser) {
         throw new ApiError(409, 'User with this email or roll number already exists');
     }
 
-    // Validate role (including parent)
+    // validate role (mostly for parents)
     const validRoles = ['student', 'warden', 'mess_staff', 'guard', 'admin', 'parent'];
     const userRole = validRoles.includes(role) ? role : 'student';
 
@@ -51,11 +52,11 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
 
     logger.info('User created', { userId: user._id, role: userRole });
 
-    // Auto-link logic (Bidirectional)
+    // auto-linking logic (bidirectional)
     let linkedData = null;
 
     try {
-        // Case 1: Student registering - link to existing Parent
+        // case 1: student signing up - link to parent
         if (parentEmail && userRole === 'student') {
             logger.debug('Checking for parent', { parentEmail });
             const parentUser = await User.findOne({ email: parentEmail, role: 'parent' });
@@ -74,7 +75,7 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
             }
         }
 
-        // Case 2: Parent registering - link to existing Students who claimed this parent
+        // case 2: parent signing up - link to waiting students
         if (userRole === 'parent') {
             logger.debug('Checking for students waiting for parent', { parentEmail: email });
             const students = await User.find({ parentEmail: email, role: 'student' }).exec();
@@ -125,8 +126,8 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
     return res.status(201).json(new ApiResponse(201, userData, message));
 });
 
-// @desc    Login user
-// @route   POST /api/auth/login
+// login user
+// POST /api/auth/login
 export const login = asyncHandler(async (req: Request, res: Response) => {
     const { email, password } = req.body;
 
@@ -134,13 +135,13 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
         throw new ApiError(400, 'Please provide email and password');
     }
 
-    // Find user with password
+    // find user and get password
     const user = await User.findOne({ email }).select('+password');
     if (!user) {
         throw new ApiError(401, 'Invalid credentials');
     }
 
-    // Check password
+    // check if password matches
     const isMatch = await user.matchPassword(password);
     if (!isMatch) {
         throw new ApiError(401, 'Invalid credentials');
@@ -162,8 +163,8 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
     return res.status(200).json(new ApiResponse(200, userData, 'Login successful'));
 });
 
-// @desc    Get current user profile
-// @route   GET /api/auth/me
+// get current user profile
+// GET /api/auth/me
 export const getMe = asyncHandler(async (req: AuthRequest, res: Response) => {
     const user = await User.findById(req.user?._id);
 
@@ -174,8 +175,8 @@ export const getMe = asyncHandler(async (req: AuthRequest, res: Response) => {
     return res.status(200).json(new ApiResponse(200, user, 'User profile retrieved'));
 });
 
-// @desc    Update user profile
-// @route   PUT /api/auth/profile
+// update profile details
+// PUT /api/auth/profile
 export const updateProfile = asyncHandler(async (req: AuthRequest, res: Response) => {
     const { name, phone, room } = req.body;
 
@@ -192,8 +193,8 @@ export const updateProfile = asyncHandler(async (req: AuthRequest, res: Response
     return res.status(200).json(new ApiResponse(200, user, 'Profile updated successfully'));
 });
 
-// @desc    Change password
-// @route   PUT /api/auth/password
+// change password
+// PUT /api/auth/password
 export const changePassword = asyncHandler(async (req: AuthRequest, res: Response) => {
     const { currentPassword, newPassword } = req.body;
 
@@ -205,27 +206,27 @@ export const changePassword = asyncHandler(async (req: AuthRequest, res: Respons
         throw new ApiError(400, 'New password must be at least 6 characters');
     }
 
-    // Get user with password
+    // get user with password to verify
     const user = await User.findById(req.user?._id).select('+password');
     if (!user) {
         throw new ApiError(404, 'User not found');
     }
 
-    // Verify current password
+    // verify old password
     const isMatch = await user.matchPassword(currentPassword);
     if (!isMatch) {
         throw new ApiError(401, 'Current password is incorrect');
     }
 
-    // Update password (will be hashed by pre-save hook)
+    // update to new password (hashed automatically)
     user.password = newPassword;
     await user.save();
 
     return res.status(200).json(new ApiResponse(200, null, 'Password changed successfully'));
 });
 
-// @desc    Update push notification token
-// @route   PUT /api/auth/push-token
+// update push token for notifications
+// PUT /api/auth/push-token
 export const updatePushToken = asyncHandler(async (req: AuthRequest, res: Response) => {
     const { pushToken } = req.body;
 
@@ -233,7 +234,7 @@ export const updatePushToken = asyncHandler(async (req: AuthRequest, res: Respon
         throw new ApiError(400, 'Push token is required');
     }
 
-    // Validate Expo push token format
+    // check expo token format
     if (!pushToken.startsWith('ExponentPushToken[')) {
         throw new ApiError(400, 'Invalid push token format');
     }

@@ -6,24 +6,24 @@ const gatePassSchema = new Schema<IGatePass>({
     reason: { type: String, required: true },
     fromDate: { type: Date, required: true },
     toDate: { type: Date, required: true },
-    // Updated status flow: PENDING_PARENT → PENDING_WARDEN → APPROVED/REJECTED
+    // how status changes: PENDING_PARENT -> PENDING_WARDEN -> APPROVED/REJECTED
     status: {
         type: String,
         enum: ['PENDING_PARENT', 'PENDING_WARDEN', 'APPROVED', 'REJECTED'],
         default: 'PENDING_PARENT'
     },
     qrValue: { type: String, unique: true, sparse: true },
-    // Parent approval tracking
+    // parent stuff
     parentApprovedBy: { type: Schema.Types.ObjectId, ref: 'User' },
     parentApprovedAt: { type: Date },
     parentRejectionReason: { type: String },
-    // Warden approval tracking
+    // warden stuff
     approvedBy: { type: Schema.Types.ObjectId, ref: 'User' },
     rejectionReason: { type: String },
-    // Validation tracking
+    // who checked it
     validatedBy: { type: Schema.Types.ObjectId, ref: 'User' },
     validatedAt: { type: Date },
-    // Entry/Exit tracking (guard marks when student goes out and comes in)
+    // when they left/returned
     exitTime: { type: Date },         // When student exited
     exitMarkedBy: { type: Schema.Types.ObjectId, ref: 'User' },
     entryTime: { type: Date },        // When student returned

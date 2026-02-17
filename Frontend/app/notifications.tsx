@@ -36,14 +36,14 @@ export default function NotificationsPage() {
     const markAllAsReadMutation = useMarkAllNotificationsAsRead();
     const deleteMutation = useDeleteNotification();
 
-    // Pagination state
+    // keep track of pages
     const [page, setPage] = useState(1);
     const [allNotifications, setAllNotifications] = useState<AppNotification[]>([]);
     const LIMIT = 15;
 
     const { data, isLoading, isFetching } = useNotifications(page, LIMIT);
 
-    // Accumulate notifications when page changes
+    // add new notifications to the list when scrolling
     useEffect(() => {
         if (data?.data) {
             if (page === 1) {
@@ -54,7 +54,7 @@ export default function NotificationsPage() {
         }
     }, [data, page]);
 
-    // Reset on refresh
+    // start fresh on refresh
     const handleRefresh = async () => {
         setPage(1);
         setAllNotifications([]);
@@ -68,11 +68,11 @@ export default function NotificationsPage() {
     };
 
     const handleNotificationPress = (notification: AppNotification) => {
-        // Mark as read
+        // mark it as read
         if (!notification.read) {
             markAsReadMutation.mutate(notification._id);
         }
-        // Navigate to the link if available
+        // go to the linked page
         if (notification.link) {
             router.push(notification.link as any);
         }
@@ -105,7 +105,7 @@ export default function NotificationsPage() {
                     <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[colors.primary]} tintColor={colors.primary} />
                 }
             >
-                {/* Mark all as read button */}
+                {/* button to mark all as read */}
                 {unreadCount > 0 && (
                     <Pressable
                         style={[styles.markAllBtn, { backgroundColor: isDark ? '#172554' : '#eff6ff' }]}
@@ -155,7 +155,7 @@ export default function NotificationsPage() {
                             </Pressable>
                         ))}
 
-                        {/* Load More Button */}
+                        {/* button to load more stuff */}
                         <LoadMore
                             onLoadMore={handleLoadMore}
                             isLoading={isFetching && page > 1}

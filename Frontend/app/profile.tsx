@@ -61,7 +61,7 @@ export default function ProfilePage() {
         );
     }
 
-    // If not logged in, show login prompt
+    // not logged in? show sign in screen
     if (!user) {
         return (
             <View style={[styles.container, { backgroundColor: colors.background }]}>
@@ -82,21 +82,21 @@ export default function ProfilePage() {
         );
     }
 
-    // Build profile items based on user role
+    // what to show depends on the role
     const isStudent = user.role === 'student';
     const isParent = user.role === 'parent';
     const isStaff = ['warden', 'admin', 'guard', 'mess_staff'].includes(user.role);
 
     const profileItems: Array<{ icon: string; label: string; value: string }> = [];
 
-    // Show Employee ID for staff, Roll Number for students
+    // staff get employee id, students get roll number
     if (isStudent) {
         profileItems.push({ icon: 'keypad', label: 'Roll Number', value: user.rollNo || 'N/A' });
     } else if (isStaff) {
         profileItems.push({ icon: 'id-card', label: 'Employee ID', value: user.rollNo || 'N/A' });
     }
 
-    // Room and Hostel only for students
+    // only students have rooms
     if (isStudent) {
         profileItems.push({ icon: 'bed', label: 'Room Number', value: user.room || 'N/A' });
         profileItems.push({ icon: 'business', label: 'Hostel', value: user.hostel || 'N/A' });

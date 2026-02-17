@@ -1,40 +1,29 @@
 // src/constants.ts
-// Application-wide constants including geofencing configuration
+// global app settings and geofencing stuff
 
-/**
- * Hostel/Campus coordinates for geofencing.
- * To get your coordinates: Go to Google Maps, right-click on your location, 
- * and copy the coordinates.
- */
+// where the hostel is located
+// grab these from google maps by right clicking your location
 export const HOSTEL_COORDS = {
-    latitude: 28.986701,  // Your hostel location
-    longitude: 77.152050, // Your hostel location
+    latitude: 28.986701,  // hostel lat
+    longitude: 77.152050, // hostel long
     name: 'Main Hostel Building',
 };
 
-/**
- * Geofence radius in meters.
- * 50m is recommended for campus buildings.
- * Don't make this too small (<20m) as GPS can drift indoors.
- */
+// how big the geofence circle should be (in meters)
+// 50m is a good size, dont go too small or gps might glitch indoors
 export const GEOFENCE_RADIUS_METERS = 50;
 
-/**
- * Attendance time window configuration.
- * Students can only mark attendance during these hours.
- */
+// when students can mark their attendance
 export const ATTENDANCE_WINDOW = {
-    enabled: true,       // Set to false to allow marking anytime
-    startHour: 19,       // 8 PM (24-hour format)
-    endHour: 20,         // 10 PM
+    enabled: true,       // if false, they can mark anytime
+    startHour: 19,       // 8 pm
+    endHour: 20,         // 10 pm
     timezone: 'Asia/Kolkata',
 };
 
-/**
- * Application configuration
- */
+// general app config settings
 export const APP_CONFIG = {
-    maxGatePassDays: 14,         // Maximum days for a gate pass
-    maxPendingPasses: 3,         // Max pending passes per student
-    attendanceGracePeriod: 5,    // Minutes after window closes
+    maxGatePassDays: 14,         // max length for a pass
+    maxPendingPasses: 3,         // can't have too many pending requests
+    attendanceGracePeriod: 5,    // extra minutes allowed after deadline
 };

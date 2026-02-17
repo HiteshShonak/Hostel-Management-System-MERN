@@ -1,5 +1,5 @@
 // src/services/notification.service.ts
-// Service for creating notifications automatically
+// handles automatic notifications
 
 import Notification from '../models/Notification';
 import User from '../models/User';
@@ -18,7 +18,7 @@ interface CreateNotificationParams {
     relatedId?: string | mongoose.Types.ObjectId;
 }
 
-// Create a notification for a single user
+// notify one person
 export const createNotification = async (params: CreateNotificationParams) => {
     try {
         await Notification.create({
@@ -30,13 +30,13 @@ export const createNotification = async (params: CreateNotificationParams) => {
             relatedId: params.relatedId,
         });
 
-        // Send push notification
+        // send push
         sendPushToUser(params.userId, params.title, params.message, {
             type: params.type,
             link: params.link,
             relatedId: params.relatedId?.toString(),
         }).catch(err => {
-            // Don't fail if push fails, just log it
+            // ignore push errors
             logger.debug('Push notification failed for user', { userId: params.userId, error: err });
         });
     } catch (error: any) {
@@ -44,7 +44,7 @@ export const createNotification = async (params: CreateNotificationParams) => {
     }
 };
 
-// Create notifications for multiple users
+// notify a bunch of people
 export const createNotificationsForUsers = async (
     userIds: (string | mongoose.Types.ObjectId)[],
     type: NotificationType,
@@ -64,7 +64,7 @@ export const createNotificationsForUsers = async (
         }));
         await Notification.insertMany(notifications);
 
-        // Send push notifications to all users
+        // blast push notifications
         const { sendPushToMultipleUsers } = await import('./push-notification.service');
         sendPushToMultipleUsers(userIds, title, message, {
             type,
@@ -78,7 +78,7 @@ export const createNotificationsForUsers = async (
     }
 };
 
-// Notify all students (for notices)
+// tell all students
 export const notifyAllStudents = async (
     type: NotificationType,
     title: string,
@@ -95,7 +95,7 @@ export const notifyAllStudents = async (
     }
 };
 
-// Notify all users except the creator
+// tell everyone else
 export const notifyAllUsersExcept = async (
     excludeUserId: string | mongoose.Types.ObjectId,
     type: NotificationType,

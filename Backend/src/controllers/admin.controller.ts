@@ -1,4 +1,4 @@
-// Admin controller for user management and parent-student linking
+// handles all the admin stuff like users and linking parents
 
 import { Response } from 'express';
 import { Types } from 'mongoose';
@@ -11,8 +11,7 @@ import { ApiResponse } from '../utils/ApiResponse';
 import { getPaginationParams, getPaginationMeta } from '../utils/pagination';
 import { getISTDate, toISTDate, getISTTime } from '../utils/timezone';
 
-// @desc    Link a parent to a student
-// @route   POST /api/admin/link-parent
+// links a parent to their kid
 export const linkParentToStudent = asyncHandler(async (req: AuthRequest, res: Response) => {
     const { parentId, studentId, relationship } = req.body;
 
@@ -58,8 +57,7 @@ export const linkParentToStudent = asyncHandler(async (req: AuthRequest, res: Re
     return res.status(201).json(new ApiResponse(201, populatedLink, 'Parent-student link created successfully'));
 });
 
-// @desc    Remove a parent-student link (set to inactive)
-// @route   DELETE /api/admin/link-parent/:id
+// unlink parent and student
 export const unlinkParentFromStudent = asyncHandler(async (req: AuthRequest, res: Response) => {
     const link = await ParentStudent.findById(req.params.id);
 
@@ -74,8 +72,7 @@ export const unlinkParentFromStudent = asyncHandler(async (req: AuthRequest, res
     return res.status(200).json(new ApiResponse(200, null, 'Parent-student link removed successfully'));
 });
 
-// @desc    Get all parent-student links (paginated)
-// @route   GET /api/admin/parent-links?page=1&limit=20
+// get all the connections
 export const getAllParentLinks = asyncHandler(async (req: AuthRequest, res: Response) => {
     const { page, limit, skip } = getPaginationParams(req, 20);
 
@@ -94,8 +91,7 @@ export const getAllParentLinks = asyncHandler(async (req: AuthRequest, res: Resp
     return res.status(200).json(new ApiResponse(200, { links, pagination }, 'Parent-student links retrieved'));
 });
 
-// @desc    Get all relations for a specific user
-// @route   GET /api/admin/user/:id/relations
+// who is related to who
 export const getUserRelations = asyncHandler(async (req: AuthRequest, res: Response) => {
     const userId = req.params.id;
 
@@ -163,8 +159,7 @@ export const getUserRelations = asyncHandler(async (req: AuthRequest, res: Respo
     return res.status(200).json(new ApiResponse(200, { user, relations }, 'User relations retrieved'));
 });
 
-// @desc    Get all users (for admin to select when linking)
-// @route   GET /api/admin/users?role=student&search=john&page=1&limit=20
+// get everyone so admin can pick
 export const getAllUsers = asyncHandler(async (req: AuthRequest, res: Response) => {
     const { page, limit, skip } = getPaginationParams(req, 20);
     const { role, search } = req.query;
@@ -195,8 +190,7 @@ export const getAllUsers = asyncHandler(async (req: AuthRequest, res: Response) 
     return res.status(200).json(new ApiResponse(200, { users, pagination }, 'Users retrieved'));
 });
 
-// @desc    Update user role (for admin)
-// @route   PUT /api/admin/users/:id/role
+// change someone's role
 export const updateUserRole = asyncHandler(async (req: AuthRequest, res: Response) => {
     const { role } = req.body;
     const validRoles = ['student', 'admin', 'warden', 'mess_staff', 'guard', 'parent'];
@@ -221,8 +215,7 @@ export const updateUserRole = asyncHandler(async (req: AuthRequest, res: Respons
     }, 'User role updated successfully'));
 });
 
-// @desc    Delete a user (admin only)
-// @route   DELETE /api/admin/users/:id
+// delete a user (admin power)
 export const deleteUser = asyncHandler(async (req: AuthRequest, res: Response) => {
     const user = await User.findById(req.params.id);
     if (!user) {
@@ -244,8 +237,7 @@ export const deleteUser = asyncHandler(async (req: AuthRequest, res: Response) =
     return res.status(200).json(new ApiResponse(200, null, 'User deleted successfully'));
 });
 
-// @desc    Get all gate passes (admin view)
-// @route   GET /api/admin/gate-passes?status=PENDING_WARDEN&page=1&limit=20
+// see all the gate passes
 export const getAllGatePasses = asyncHandler(async (req: AuthRequest, res: Response) => {
     const { page, limit, skip } = getPaginationParams(req, 20);
     const { status, studentId, fromDate, toDate } = req.query;
@@ -282,8 +274,7 @@ export const getAllGatePasses = asyncHandler(async (req: AuthRequest, res: Respo
     return res.status(200).json(new ApiResponse(200, { passes, pagination, stats }, 'All gate passes retrieved'));
 });
 
-// @desc    Get all attendance records (admin view)
-// @route   GET /api/admin/attendance?date=2024-01-15&page=1&limit=50
+// check attendance for everyone
 export const getAllAttendance = asyncHandler(async (req: AuthRequest, res: Response) => {
     const { page, limit, skip } = getPaginationParams(req, 50);
     const { date, studentId, hostel } = req.query;
@@ -340,8 +331,7 @@ export const getAllAttendance = asyncHandler(async (req: AuthRequest, res: Respo
     return res.status(200).json(new ApiResponse(200, { attendance, pagination }, 'All attendance records retrieved'));
 });
 
-// @desc    Get system statistics for admin dashboard
-// @route   GET /api/admin/stats
+// get all the stats for the dashboard
 export const getSystemStats = asyncHandler(async (req: AuthRequest, res: Response) => {
     // Use IST for today
     const today = getISTDate();
@@ -425,8 +415,7 @@ export const getSystemStats = asyncHandler(async (req: AuthRequest, res: Respons
     }, 'System statistics retrieved'));
 });
 
-// @desc    Admin: Cancel any gate pass
-// @route   DELETE /api/admin/gate-passes/:id
+// admin can cancel any pass
 export const adminCancelGatePass = asyncHandler(async (req: AuthRequest, res: Response) => {
     const GatePass = (await import('../models/GatePass')).default;
 
@@ -443,8 +432,7 @@ export const adminCancelGatePass = asyncHandler(async (req: AuthRequest, res: Re
     return res.status(200).json(new ApiResponse(200, pass, 'Gate pass cancelled by admin'));
 });
 
-// @desc    Admin: Force approve any gate pass (bypasses parent/warden flow)
-// @route   PUT /api/admin/gate-passes/:id/approve
+// admin override to approve a pass
 export const adminForceApproveGatePass = asyncHandler(async (req: AuthRequest, res: Response) => {
     const GatePass = (await import('../models/GatePass')).default;
     const { v4: uuidv4 } = await import('uuid');
@@ -467,8 +455,7 @@ export const adminForceApproveGatePass = asyncHandler(async (req: AuthRequest, r
     return res.status(200).json(new ApiResponse(200, pass, 'Gate pass force-approved by admin'));
 });
 
-// @desc    Admin: Get all notices (with filters)
-// @route   GET /api/admin/notices?source=warden&page=1&limit=20
+// see every notice
 export const getAllNotices = asyncHandler(async (req: AuthRequest, res: Response) => {
     const { page, limit, skip } = getPaginationParams(req, 20);
     const { source, urgent, search } = req.query;
@@ -498,8 +485,7 @@ export const getAllNotices = asyncHandler(async (req: AuthRequest, res: Response
     return res.status(200).json(new ApiResponse(200, { notices, pagination }, 'All notices retrieved'));
 });
 
-// @desc    Admin: Delete any notice
-// @route   DELETE /api/admin/notices/:id  
+// nuke a notice  
 export const adminDeleteNotice = asyncHandler(async (req: AuthRequest, res: Response) => {
     const Notice = (await import('../models/Notice')).default;
 
@@ -513,8 +499,7 @@ export const adminDeleteNotice = asyncHandler(async (req: AuthRequest, res: Resp
     return res.status(200).json(new ApiResponse(200, null, 'Notice deleted by admin'));
 });
 
-// @desc    Admin: Get all complaints
-// @route   GET /api/admin/complaints?status=Pending&page=1
+// see what people are complaining about
 export const getAllComplaints = asyncHandler(async (req: AuthRequest, res: Response) => {
     const { page, limit, skip } = getPaginationParams(req, 20);
     const { status, category } = req.query;
@@ -538,10 +523,9 @@ export const getAllComplaints = asyncHandler(async (req: AuthRequest, res: Respo
     return res.status(200).json(new ApiResponse(200, { complaints, pagination }, 'All complaints retrieved'));
 });
 
-// ==================== WARDEN DASHBOARD ENDPOINTS ====================
+// ==================== WARDEN STUFF ====================
 
-// @desc    Get warden dashboard statistics
-// @route   GET /api/admin/warden/dashboard-stats
+// stats for the warden dashboard
 export const getWardenDashboardStats = asyncHandler(async (req: AuthRequest, res: Response) => {
     // Use IST for today
     const today = getISTDate();
@@ -590,8 +574,7 @@ export const getWardenDashboardStats = asyncHandler(async (req: AuthRequest, res
     }, 'Warden dashboard stats retrieved'));
 });
 
-// @desc    Get all students with their current status
-// @route   GET /api/admin/warden/students?search=john&page=1
+// student list with status
 export const getWardenStudentList = asyncHandler(async (req: AuthRequest, res: Response) => {
     const { page, limit, skip } = getPaginationParams(req, 20);
     const { search } = req.query;
@@ -651,8 +634,7 @@ export const getWardenStudentList = asyncHandler(async (req: AuthRequest, res: R
     return res.status(200).json(new ApiResponse(200, { students: enrichedStudents, pagination }, 'Students retrieved'));
 });
 
-// @desc    Get detailed student info with attendance and pass history
-// @route   GET /api/admin/warden/students/:id
+// detailed look at a student
 export const getStudentDetail = asyncHandler(async (req: AuthRequest, res: Response) => {
     const studentId = req.params.id;
 
@@ -710,8 +692,7 @@ export const getStudentDetail = asyncHandler(async (req: AuthRequest, res: Respo
     }, 'Student detail retrieved'));
 });
 
-// @desc    Warden marks attendance for a student manually
-// @route   POST /api/admin/warden/mark-attendance/:studentId
+// warden marking attendance manually
 export const wardenMarkAttendance = asyncHandler(async (req: AuthRequest, res: Response) => {
     const studentId = req.params.studentId;
 
@@ -749,10 +730,9 @@ export const wardenMarkAttendance = asyncHandler(async (req: AuthRequest, res: R
     return res.status(201).json(new ApiResponse(201, attendance, `Attendance marked for ${student.name}`));
 });
 
-// ==================== ADMIN SYSTEM CONFIGURATION ====================
+// ==================== CONFIG STUFF ====================
 
-// @desc    Get current system configuration
-// @route   GET /api/admin/config
+// get the system config
 export const getSystemConfig = asyncHandler(async (req: AuthRequest, res: Response) => {
     const SystemConfig = (await import('../models/SystemConfig')).default;
 
@@ -765,8 +745,7 @@ export const getSystemConfig = asyncHandler(async (req: AuthRequest, res: Respon
     return res.status(200).json(new ApiResponse(200, config, 'System configuration retrieved'));
 });
 
-// @desc    Update system configuration
-// @route   PUT /api/admin/config
+// change the settings
 export const updateSystemConfig = asyncHandler(async (req: AuthRequest, res: Response) => {
     const { hostelCoords, geofenceRadiusMeters, attendanceWindow, appConfig } = req.body;
 

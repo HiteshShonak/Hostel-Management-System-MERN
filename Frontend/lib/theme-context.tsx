@@ -27,6 +27,9 @@ interface ThemeColors {
     // Input colors
     inputBackground: string;
     inputBorder: string;
+
+    // Generic border color
+    border: string;
 }
 
 interface ThemeContextType {
@@ -55,6 +58,8 @@ const lightColors: ThemeColors = {
 
     inputBackground: '#ffffff',
     inputBorder: '#e5e5e5',
+
+    border: '#e5e5e5',
 };
 
 const darkColors: ThemeColors = {
@@ -76,6 +81,8 @@ const darkColors: ThemeColors = {
 
     inputBackground: '#1a1a1a',
     inputBorder: '#2a2a2a',
+
+    border: '#2a2a2a',
 };
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);

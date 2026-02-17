@@ -62,7 +62,7 @@ export default function RegisterPage() {
                     router.replace('/');
                 },
                 onError: (error: any) => {
-                    console.log('Register error:', error);
+                    console.error('Registration failed:', error);
                 },
             }
         );

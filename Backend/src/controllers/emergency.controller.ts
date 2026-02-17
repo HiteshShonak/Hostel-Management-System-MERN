@@ -1,4 +1,4 @@
-// Emergency controller for SOS alerts and emergency contacts
+// handles sos alerts and emergency numbers
 
 import { Response } from 'express';
 import Emergency from '../models/Emergency';
@@ -7,7 +7,7 @@ import { asyncHandler } from '../utils/asyncHandler';
 import { ApiError } from '../utils/ApiError';
 import { ApiResponse } from '../utils/ApiResponse';
 
-// Emergency contacts (static for now, could be moved to config/DB)
+// emergency numbers (static for now)
 const EMERGENCY_CONTACTS = [
     { name: 'Warden Office', phone: '+91 1234567890', type: 'warden' },
     { name: 'Campus Security', phone: '+91 9876543210', type: 'security' },
@@ -15,8 +15,7 @@ const EMERGENCY_CONTACTS = [
     { name: 'Emergency Helpline', phone: '112', type: 'police' },
 ];
 
-// @desc    Send SOS alert (also handles /emergency/sos)
-// @route   POST /api/emergency or POST /api/emergency/sos
+// send an sos
 export const sendSOS = asyncHandler(async (req: AuthRequest, res: Response) => {
     const { type, message, location } = req.body;
 
@@ -40,21 +39,18 @@ export const sendSOS = asyncHandler(async (req: AuthRequest, res: Response) => {
     }, 'SOS alert sent'));
 });
 
-// @desc    Get user's emergency history
-// @route   GET /api/emergency or GET /api/emergency/history
+// what emergencies did i send before
 export const getEmergencyHistory = asyncHandler(async (req: AuthRequest, res: Response) => {
     const emergencies = await Emergency.find({ user: req.user?._id }).sort({ createdAt: -1 });
     return res.status(200).json(new ApiResponse(200, emergencies, 'Emergency history retrieved'));
 });
 
-// @desc    Get emergency contacts
-// @route   GET /api/emergency/contacts
+// get the emergency contact list
 export const getEmergencyContacts = asyncHandler(async (req: AuthRequest, res: Response) => {
     return res.status(200).json(new ApiResponse(200, EMERGENCY_CONTACTS, 'Emergency contacts retrieved'));
 });
 
-// @desc    Get active alerts (Warden)
-// @route   GET /api/emergency/active
+// see active sos alerts (warden)
 export const getActiveAlerts = asyncHandler(async (req: AuthRequest, res: Response) => {
     const alerts = await Emergency.find({ status: 'active' })
         .populate('user', 'name rollNo room hostel phone')
@@ -63,8 +59,7 @@ export const getActiveAlerts = asyncHandler(async (req: AuthRequest, res: Respon
     return res.status(200).json(new ApiResponse(200, alerts, 'Active alerts retrieved'));
 });
 
-// @desc    Acknowledge alert (Warden)
-// @route   PUT /api/emergency/:id/acknowledge
+// warden says I got it
 export const acknowledgeAlert = asyncHandler(async (req: AuthRequest, res: Response) => {
     const alert = await Emergency.findByIdAndUpdate(
         req.params.id,
@@ -83,8 +78,7 @@ export const acknowledgeAlert = asyncHandler(async (req: AuthRequest, res: Respo
     return res.status(200).json(new ApiResponse(200, alert, 'Alert acknowledged'));
 });
 
-// @desc    Resolve alert (Warden)
-// @route   PUT /api/emergency/:id/resolve
+// warden marks it as solved
 export const resolveAlert = asyncHandler(async (req: AuthRequest, res: Response) => {
     const alert = await Emergency.findByIdAndUpdate(
         req.params.id,

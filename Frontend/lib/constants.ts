@@ -1,31 +1,22 @@
-// Frontend Constants Configuration
-// =================================
-// All configurable values should be placed here for easy management.
-// For sensitive values like API URLs, consider using .env files.
+// frontend constants
+// put all configurable stuff here
 
-// API Configuration
-// -----------------
-// Uses environment variable for production, falls back to localhost for development
-// Set EXPO_PUBLIC_API_URL in your .env file or use expo-constants
+// api configuration
+// uses env var for prod, localhost for dev
 import Constants from 'expo-constants';
 
 export const API_BASE_URL =
     process.env.EXPO_PUBLIC_API_URL ||
-    'https://hostel-management-system-backend-jde3.onrender.com/api'; // Production fallback
+    'https://hostel-management-system-backend-jde3.onrender.com/api'; // fallback link
 
-
-
-
-// Request timeout in milliseconds
+// request timeout (in ms)
 export const API_TIMEOUT = 15000;
 
-// Notification Configuration
-// --------------------------
-// How often to refresh unread notification count (milliseconds)
-export const NOTIFICATION_REFRESH_INTERVAL = 30000; // 30 seconds
+// notification settings
+// check for new notifications every 30 secs
+export const NOTIFICATION_REFRESH_INTERVAL = 30000;
 
-// UI Configuration
-// ----------------
+// ui colors
 export const PRIMARY_COLOR = '#1d4ed8';
 export const DANGER_COLOR = '#ef4444';
 export const SUCCESS_COLOR = '#22c55e';

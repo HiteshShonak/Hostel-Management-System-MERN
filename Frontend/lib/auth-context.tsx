@@ -48,12 +48,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 .then(pushToken => {
                     if (pushToken) {
                         authService.updatePushToken(pushToken).catch(err => {
-                            console.log('Failed to update push token:', err);
+                            console.error('Failed to update push token:', err);
                         });
                     }
                 })
                 .catch(err => {
-                    console.log('Failed to register push notifications:', err);
+                    console.error('Failed to register push notifications:', err);
                 });
         }
     }, [user, hasToken]);

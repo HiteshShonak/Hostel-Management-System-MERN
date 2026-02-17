@@ -12,15 +12,15 @@ const userSchema = new Schema<IUser>({
     phone: { type: String, required: true },
     avatar: { type: String, default: '' },
     role: { type: String, enum: ['student', 'admin', 'warden', 'mess_staff', 'guard', 'parent'], default: 'student' },
-    // Optional parent email for auto-linking during student registration
+    // link to parent if needed
     parentEmail: { type: String, lowercase: true },
-    // Push notification token
+    // for sending push notifs
     pushToken: { type: String },
     pushTokenUpdatedAt: { type: Date },
     createdAt: { type: Date, default: Date.now },
 });
 
-// Hash password before saving
+// hash password automatically
 userSchema.pre('save', async function (next) {
     if (!this.isModified('password')) return next();
     const salt = await bcrypt.genSalt(10);
@@ -28,7 +28,7 @@ userSchema.pre('save', async function (next) {
     next();
 });
 
-// Match password method
+// check if password is right
 userSchema.methods.matchPassword = async function (enteredPassword: string): Promise<boolean> {
     return await bcrypt.compare(enteredPassword, this.password);
 };

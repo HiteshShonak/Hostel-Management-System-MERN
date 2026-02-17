@@ -1,5 +1,5 @@
 // src/controllers/parent.controller.ts
-// Parent controller for managing children and approving gate passes
+// parent stuff - checking on kids and approving passes
 
 import { Response } from 'express';
 import { Types } from 'mongoose';
@@ -14,8 +14,7 @@ import { getPaginationParams, getPaginationMeta } from '../utils/pagination';
 import { getISTDate } from '../utils/timezone';
 import { createNotification } from '../services/notification.service';
 
-// @desc    Get all children linked to current parent
-// @route   GET /api/parent/children
+// see all my kids
 export const getChildren = asyncHandler(async (req: AuthRequest, res: Response) => {
     const parentId = req.user?._id;
 
@@ -48,8 +47,7 @@ export const getChildren = asyncHandler(async (req: AuthRequest, res: Response) 
     return res.status(200).json(new ApiResponse(200, children, 'Children retrieved successfully'));
 });
 
-// @desc    Get pending gate passes awaiting parent approval
-// @route   GET /api/parent/pending-passes
+// passes waiting for me to say yes
 export const getPendingPasses = asyncHandler(async (req: AuthRequest, res: Response) => {
     const parentId = req.user?._id;
 
@@ -110,8 +108,7 @@ export const getPendingPasses = asyncHandler(async (req: AuthRequest, res: Respo
     return res.status(200).json(new ApiResponse(200, pendingPasses, 'Pending passes retrieved'));
 });
 
-// @desc    Get all gate passes for linked children (full history with pagination)
-// @route   GET /api/parent/passes?page=1&limit=20&studentId=optional
+// full history of passes for my kids
 export const getAllChildrenPasses = asyncHandler(async (req: AuthRequest, res: Response) => {
     const parentId = req.user?._id;
     const { page, limit, skip } = getPaginationParams(req, 20);
@@ -183,8 +180,7 @@ export const getAllChildrenPasses = asyncHandler(async (req: AuthRequest, res: R
     return res.status(200).json(new ApiResponse(200, { passes, pagination }, 'Gate passes retrieved'));
 });
 
-// @desc    Parent approves a gate pass
-// @route   PUT /api/parent/passes/:id/approve
+// say yes to a pass
 export const approvePass = asyncHandler(async (req: AuthRequest, res: Response) => {
     const parentId = req.user?._id;
     const passId = req.params.id;
@@ -241,8 +237,7 @@ export const approvePass = asyncHandler(async (req: AuthRequest, res: Response) 
     return res.status(200).json(new ApiResponse(200, pass, 'Gate pass approved by parent'));
 });
 
-// @desc    Parent rejects a gate pass
-// @route   PUT /api/parent/passes/:id/reject
+// say no to a pass
 export const rejectPass = asyncHandler(async (req: AuthRequest, res: Response) => {
     const parentId = req.user?._id;
     const passId = req.params.id;
@@ -287,8 +282,7 @@ export const rejectPass = asyncHandler(async (req: AuthRequest, res: Response) =
     return res.status(200).json(new ApiResponse(200, pass, 'Gate pass rejected'));
 });
 
-// @desc    Get attendance history for child
-// @route   GET /api/parent/children/:studentId/attendance?page=1&limit=30
+// check if they went to class or not
 export const getChildAttendance = asyncHandler(async (req: AuthRequest, res: Response) => {
     const parentId = req.user?._id;
     const { studentId } = req.params;
@@ -329,8 +323,7 @@ export const getChildAttendance = asyncHandler(async (req: AuthRequest, res: Res
     }, 'Attendance retrieved'));
 });
 
-// @desc    Get today's attendance status for all children
-// @route   GET /api/parent/today-attendance
+// did they go today?
 export const getTodayAttendance = asyncHandler(async (req: AuthRequest, res: Response) => {
     const parentId = req.user?._id;
 

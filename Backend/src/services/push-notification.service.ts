@@ -1,5 +1,5 @@
 // src/services/push-notification.service.ts
-// Expo-only push notification service
+// helper for expo push notifications
 
 import { logger } from '../utils/logger';
 import User from '../models/User';
@@ -22,9 +22,7 @@ interface PushTicket {
     details?: any;
 }
 
-/**
- * Send push notification to a single device using Expo Push API
- */
+// send one push notification
 export const sendPushNotification = async (
     pushToken: string,
     title: string,
@@ -80,9 +78,7 @@ export const sendPushNotification = async (
     }
 };
 
-/**
- * Send push notification to a user by their userId
- */
+// send push to a user id
 export const sendPushToUser = async (
     userId: Types.ObjectId | string,
     title: string,
@@ -107,9 +103,7 @@ export const sendPushToUser = async (
     }
 };
 
-/**
- * Send push notifications to multiple users (batched, 100 per request)
- */
+// send push to many users (batches of 100)
 export const sendPushToMultipleUsers = async (
     userIds: (Types.ObjectId | string)[],
     title: string,
@@ -136,7 +130,7 @@ export const sendPushToMultipleUsers = async (
             priority: 'high',
         }));
 
-        // Send in batches of 100 (Expo limit)
+        // expo limit is 100
         const batchSize = 100;
         let totalSent = 0;
         let totalFailed = 0;
@@ -190,9 +184,7 @@ export const sendPushToMultipleUsers = async (
     }
 };
 
-/**
- * Send push notification to all users with a specific role
- */
+// notify everyone with a role
 export const sendPushToRole = async (
     role: string,
     title: string,

@@ -15,9 +15,10 @@ import { getCurrentISTHour, isWithinTimeWindow } from '@/lib/utils/date';
 function StudentDashboard() {
     const { data: config } = useSystemConfig();
     const currentHour = getCurrentISTHour();
+    // is it attendance time? default to 7-10pm
     const isAttendanceTime = config?.attendanceWindow?.enabled
         ? isWithinTimeWindow(config.attendanceWindow.startHour, config.attendanceWindow.endHour)
-        : currentHour >= 19 && currentHour < 22; // Fallback while config loads
+        : currentHour >= 19 && currentHour < 22;
 
     return (
         <>
@@ -28,7 +29,7 @@ function StudentDashboard() {
     );
 }
 
-// Warden Dashboard
+// stuff for wardens
 function WardenDashboard() {
     const { colors, isDark } = useTheme();
     const { data: pendingPasses } = usePendingGatePasses();
@@ -38,7 +39,7 @@ function WardenDashboard() {
 
     return (
         <View style={styles.wardenContent}>
-            {/* Quick Stats - 2x2 Grid */}
+            {/* quick stats - 2x2 grid */}
             <View style={styles.statsGrid}>
                 <View style={[styles.statCard, { backgroundColor: isDark ? '#052e16' : '#f0fdf4' }]}>
                     <View style={styles.statIcon}>
@@ -168,7 +169,7 @@ function WardenDashboard() {
     );
 }
 
-// Mess Staff Dashboard
+// mess staff dashboard
 function MessStaffDashboard() {
     const { colors, isDark } = useTheme();
     return (
@@ -199,12 +200,12 @@ function MessStaffDashboard() {
     );
 }
 
-// Guard Dashboard - QR Scanner focused
+// guard dashboard with scanner
 function GuardDashboard() {
     const { colors, isDark } = useTheme();
     return (
         <View style={styles.guardContent}>
-            {/* Main Action - Scan QR */}
+            {/* big scan button */}
             <Pressable style={[styles.scanQRButton, {
                 backgroundColor: isDark ? '#052e16' : '#dcfce7',
                 borderColor: isDark ? '#14532d' : '#bbf7d0'
@@ -253,7 +254,7 @@ function GuardDashboard() {
     );
 }
 
-// Parent Dashboard - Gold themed
+// parent dashboard (gold theme)
 function ParentDashboard() {
     const { colors, isDark } = useTheme();
     return (
@@ -298,7 +299,7 @@ function ParentDashboard() {
                         <Ionicons name="checkmark-done" size={24} color="#16a34a" />
                     </View>
                     <Text style={[styles.parentGridLabel, { color: colors.text }]}>History</Text>
-                    <Text style={[styles.parentGridSubtext, { color: colors.textSecondary }]}>All gate passes</Text>
+                    <Text style={[styles.parentGridSubtext, { color: colors.textSecondary }]}>all gate passes</Text>
                 </Pressable>
             </View>
 
@@ -335,7 +336,7 @@ function ParentDashboard() {
     );
 }
 
-// Admin Dashboard - Full access with purple/gold accent
+// admin dashboard (God mode)
 function AdminDashboard() {
     const { colors, isDark } = useTheme();
     const { data: pendingPasses } = usePendingGatePasses();
@@ -547,7 +548,7 @@ export default function Dashboard() {
         return null;
     }
 
-    // Determine which dashboard to show based on role
+    // pick the right dashboard based on role
     const renderDashboard = () => {
         switch (user?.role) {
             case 'admin':

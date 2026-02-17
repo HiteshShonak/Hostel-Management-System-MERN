@@ -39,7 +39,7 @@ export default function MessMenuPage() {
     const [editItems, setEditItems] = useState('');
     const [ratingMeal, setRatingMeal] = useState<MealType | null>(null);
 
-    // Calculate the actual date for the selected day in the current week
+    // figure out the real date for this day
     const getDateForDay = (day: DayType): string => {
         const dayIndex = DAYS.indexOf(day);
         const now = nowIST();
@@ -66,7 +66,7 @@ export default function MessMenuPage() {
         Dinner: { start: '19:00', end: '21:00' },
     });
 
-    // Extract menu and timings from new API response
+    // get menu and timing data
     const menu = menuData?.menu;
     const timings = menuData?.timings;
 
@@ -151,12 +151,12 @@ export default function MessMenuPage() {
         const timing = timings[mealType];
         const [startHour, startMinute] = timing.start.split(':').map(Number);
 
-        // Check if this is a different day
+        // is this today or another day?
         if (dayToCheck !== currentDayName) {
             const currentDayIndex = DAYS.indexOf(currentDayName);
             const checkDayIndex = DAYS.indexOf(dayToCheck);
 
-            // Allow yesterday only (for overnight windows like dinner)
+            // let them rate yesterday's dinner if it was late
             const isYesterday = checkDayIndex === (currentDayIndex - 1 + 7) % 7;
 
             if (!isYesterday) {
@@ -166,7 +166,7 @@ export default function MessMenuPage() {
                 };
             }
 
-            // For yesterday, check if within 12h window
+            // make sure it's not too late to rate
             const yesterdayMealStart = new Date(currentISTTime);
             yesterdayMealStart.setUTCDate(yesterdayMealStart.getUTCDate() - 1);
             yesterdayMealStart.setUTCHours(startHour, startMinute, 0, 0);
@@ -437,7 +437,7 @@ export default function MessMenuPage() {
                         const currentDayName = now.toLocaleDateString('en-IN', { weekday: 'long' }) as DayType;
                         const [startHour, startMinute] = timing?.start.split(':').map(Number) || [0, 0];
 
-                        // Calculate meal start for the SELECTED day, not current day
+                        // when did this meal actually start?
                         let mealStart: Date;
                         if (selectedDay !== currentDayName) {
                             // Yesterday's meal
@@ -713,7 +713,7 @@ const styles = StyleSheet.create({
     ratingStarNum: { fontSize: 12, color: '#737373', marginTop: 4 },
     cancelBtn: { marginTop: 24 },
     cancelBtnText: { color: '#737373', fontSize: 16 },
-    // Rating disabled/blocked state - Premium card design
+    // fancy card for when they can't rate
     ratingBlockedCard: {
         borderRadius: 16,
         borderWidth: 1,

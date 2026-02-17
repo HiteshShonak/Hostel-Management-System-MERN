@@ -86,6 +86,7 @@ Security:
 ├── Rate limiting (express-rate-limit)
 ├── Input sanitization
 ├── bcrypt (Password hashing)
+├── Expo Push Notifications
 └── Zod (Schema validation)
 ```
 

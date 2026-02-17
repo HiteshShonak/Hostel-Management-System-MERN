@@ -1,4 +1,5 @@
-// Attendance controller with geofenced location validation
+// src/controllers/attendance.controller.ts
+// logic for marking attendance and checking location
 
 import { Response } from 'express';
 import Attendance from '../models/Attendance';
@@ -11,8 +12,8 @@ import { getPaginationParams, getPaginationMeta } from '../utils/pagination';
 import { isInsideGeofence, isValidCoordinates } from '../utils/geometry';
 import { getISTTime, getISTDate } from '../utils/timezone';
 
-// @desc    Get user's attendance history with pagination
-// @route   GET /api/attendance?page=1&limit=20
+// get attendance history
+// GET /api/attendance
 export const getAttendance = asyncHandler(async (req: AuthRequest, res: Response) => {
     const { page, limit, skip } = getPaginationParams(req, 20);
 
@@ -29,14 +30,14 @@ export const getAttendance = asyncHandler(async (req: AuthRequest, res: Response
     return res.status(200).json(new ApiResponse(200, { attendance, pagination }, 'Attendance retrieved'));
 });
 
-// @desc    Mark attendance for today with geofence validation
-// @route   POST /api/attendance/mark
+// mark attendance for today
+// POST /api/attendance/mark
 export const markAttendance = asyncHandler(async (req: AuthRequest, res: Response) => {
     const { latitude, longitude } = req.body;
 
     const config = await SystemConfig.getConfig();
 
-    // Validate location
+    // check if we have coords
     if (latitude === undefined || longitude === undefined) {
         throw new ApiError(400, 'Location access is required to mark attendance. Please enable GPS.');
     }
@@ -45,7 +46,7 @@ export const markAttendance = asyncHandler(async (req: AuthRequest, res: Respons
         throw new ApiError(400, 'Invalid GPS coordinates provided.');
     }
 
-    // Check if within geofence
+    // check if they are inside the geofence
     const { isInside, distance } = isInsideGeofence(
         latitude,
         longitude,
@@ -61,7 +62,7 @@ export const markAttendance = asyncHandler(async (req: AuthRequest, res: Respons
         );
     }
 
-    // Check time window if enabled
+    // check if it's the right time
     if (config.attendanceWindow.enabled) {
         const istTime = getISTTime();
         const hour = istTime.getUTCHours();
@@ -87,7 +88,7 @@ export const markAttendance = asyncHandler(async (req: AuthRequest, res: Respons
         }
     }
 
-    // Create attendance record
+    // save the attendance record
     const today = getISTDate();
 
     try {
@@ -106,7 +107,7 @@ export const markAttendance = asyncHandler(async (req: AuthRequest, res: Respons
             new ApiResponse(201, attendance, `Attendance marked successfully! You were ${distance}m from the hostel.`)
         );
     } catch (error: any) {
-        // Handle duplicate key error (11000) from unique index
+        // handle double marking
         if (error.code === 11000) {
             throw new ApiError(409, 'Attendance already marked for today.');
         }
@@ -114,18 +115,18 @@ export const markAttendance = asyncHandler(async (req: AuthRequest, res: Respons
     }
 });
 
-// @desc    Get today's attendance status
-// @route   GET /api/attendance/today
+// check if i marked attendance today
+// GET /api/attendance/today
 export const getTodayAttendance = asyncHandler(async (req: AuthRequest, res: Response) => {
-    // Use IST for today's date
+    // use ist date to be accurate
     const today = getISTDate();
 
     const attendance = await Attendance.findOne({ user: req.user?._id, date: today });
 
-    // Get dynamic config for geofence info
+    // grab config for frontend
     const config = await SystemConfig.getConfig();
 
-    // Also return geofence info for frontend (dynamic from config)
+    // send back status and geofence details
     return res.status(200).json(new ApiResponse(200, {
         marked: !!attendance,
         attendance,
@@ -139,8 +140,8 @@ export const getTodayAttendance = asyncHandler(async (req: AuthRequest, res: Res
     }, 'Today attendance status'));
 });
 
-// @desc    Get attendance stats for current month
-// @route   GET /api/attendance/stats
+// get stats for current month
+// GET /api/attendance/stats
 export const getAttendanceStats = asyncHandler(async (req: AuthRequest, res: Response) => {
     const now = getISTTime();
     const firstDay = new Date(now.getUTCFullYear(), now.getUTCMonth(), 1);

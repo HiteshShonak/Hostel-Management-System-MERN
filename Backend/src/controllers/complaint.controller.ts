@@ -1,5 +1,5 @@
 // src/controllers/complaint.controller.ts
-// Complaint controller for student maintenance issues
+// handles student complaints about maintenance and stuff
 
 import { Response } from 'express';
 import Complaint from '../models/Complaint';
@@ -9,8 +9,8 @@ import { ApiError } from '../utils/ApiError';
 import { ApiResponse } from '../utils/ApiResponse';
 import { getPaginationParams, getPaginationMeta } from '../utils/pagination';
 
-// @desc    Get user's complaints (paginated)
-// @route   GET /api/complaints?page=1&limit=10
+// get my complaints
+// GET /api/complaints
 export const getComplaints = asyncHandler(async (req: AuthRequest, res: Response) => {
     const { page, limit, skip } = getPaginationParams(req, 10);
 
@@ -23,8 +23,8 @@ export const getComplaints = asyncHandler(async (req: AuthRequest, res: Response
     return res.status(200).json(new ApiResponse(200, { complaints, pagination }, 'Complaints retrieved'));
 });
 
-// @desc    Submit new complaint
-// @route   POST /api/complaints
+// file a new complaint
+// POST /api/complaints
 export const createComplaint = asyncHandler(async (req: AuthRequest, res: Response) => {
     const { category, title, description } = req.body;
 
@@ -42,8 +42,8 @@ export const createComplaint = asyncHandler(async (req: AuthRequest, res: Respon
     return res.status(201).json(new ApiResponse(201, complaint, 'Complaint submitted successfully'));
 });
 
-// @desc    Get all complaints (Warden, paginated)
-// @route   GET /api/complaints/all?page=1&limit=20
+// get all complaints (for warden)
+// GET /api/complaints/all
 export const getAllComplaints = asyncHandler(async (req: AuthRequest, res: Response) => {
     const { page, limit, skip } = getPaginationParams(req, 20);
 
@@ -60,8 +60,8 @@ export const getAllComplaints = asyncHandler(async (req: AuthRequest, res: Respo
     return res.status(200).json(new ApiResponse(200, { complaints, pagination }, 'All complaints retrieved'));
 });
 
-// @desc    Resolve complaint (Warden)
-// @route   PUT /api/complaints/:id/resolve
+// mark complaint as resolved
+// PUT /api/complaints/:id/resolve
 export const resolveComplaint = asyncHandler(async (req: AuthRequest, res: Response) => {
     const complaint = await Complaint.findByIdAndUpdate(
         req.params.id,
@@ -73,7 +73,7 @@ export const resolveComplaint = asyncHandler(async (req: AuthRequest, res: Respo
         throw new ApiError(404, 'Complaint not found');
     }
 
-    // Notify the student
+    // let the student know it's fixed
     const { createNotification } = await import('../services/notification.service');
     createNotification({
         userId: complaint.user,
@@ -87,8 +87,8 @@ export const resolveComplaint = asyncHandler(async (req: AuthRequest, res: Respo
     return res.status(200).json(new ApiResponse(200, complaint, 'Complaint resolved'));
 });
 
-// @desc    Update complaint status (Warden)
-// @route   PUT /api/complaints/:id/status
+// update status manually
+// PUT /api/complaints/:id/status
 export const updateComplaintStatus = asyncHandler(async (req: AuthRequest, res: Response) => {
     const { status } = req.body;
     const updateData: any = { status };

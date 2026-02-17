@@ -23,7 +23,7 @@ A comprehensive **mobile-first** hostel management system built with React Nativ
 
 ### Device Features
 - **expo-camera** - QR code scanning, attendance verification
-- **expo-notifications** - Push notifications with FCM
+- **expo-notifications** - Push notifications (Expo Push API)
 - **expo-location** - Emergency location services
 - **expo-secure-store** - Secure token storage
 - **@react-native-community/datetimepicker** - Date/time pickers
@@ -32,7 +32,7 @@ A comprehensive **mobile-first** hostel management system built with React Nativ
 ### Build & Deployment
 - **EAS Build** - Production APK builds
 - **EAS Updates** - OTA updates
-- **Firebase Cloud Messaging** - Push notifications
+- **Expo Push Notifications** - Native push notification service
 
 ## 📱 Supported Platforms
 
@@ -169,7 +169,6 @@ Frontend/
 │
 ├── app.json                     # Expo configuration
 ├── eas.json                     # EAS build configuration
-├── google-services.json         # Firebase FCM config
 ├── package.json                 # Dependencies
 └── tsconfig.json               # TypeScript config
 ```
@@ -241,22 +240,26 @@ Create `.env` file:
 API_URL=http://your_backend_url_here/api
 ```
 
-### Firebase Setup (Push Notifications)
+### Expo Push Notifications Setup
 
-1. Download `google-services.json` from Firebase Console
-2. Place in `Frontend/` directory (next to app.json)
-3. Upload FCM Server Key to EAS:
-   ```bash
-   npx eas credentials
-   # Select: Android → preview → Push Notifications
-   ```
+Push notifications are automatically configured via Expo's native push service. No additional setup required for development!
+
+**For Production:**
+1. Build with EAS: `eas build --platform android`
+2. Expo handles push notification credentials automatically
+3. Test notifications via backend API
+
+**How it works:**
+- Uses Expo Push Token (not FCM)
+- Backend sends to `https://exp.host/--/api/v2/push/send`
+- No Firebase configuration needed
 
 ### App Configuration
 
 **app.json:**
 - Package: `com.hostelhub.app`
 - Version: `1.0.0`
-- Firebase: `googleServicesFile` configured
+- Expo Project ID: `d0ca44c9-b72a-424f-88e5-ff0c4a1938b1`
 
 **eas.json:**
 - Preview build: APK
@@ -290,20 +293,21 @@ API_URL=http://your_backend_url_here/api
 - Historical records
 
 ### Notification System
-- Firebase Cloud Messaging
+- Expo Push Notifications (native service)
 - Push notifications for:
   - Gate pass approvals/rejections
   - Parent gate pass requests
   - Important announcements
   - Complaint updates
 - Notification center in-app
+- Works on both Android and iOS
 
 ## 🔐 Security Features
 
 - JWT token authentication
 - Secure token storage (expo-secure-store)
 - Role-based access control
-- FCM server key stored in EAS
+- Expo Push Token management
 - Environment variables for sensitive data
 
 ## 🌐 API Integration

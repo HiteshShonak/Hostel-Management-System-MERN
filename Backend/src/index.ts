@@ -13,19 +13,22 @@ let server: any;
 
 const startServer = async () => {
     try {
-        // Connect to MongoDB
+        // connect to mongo
         await connectDB();
 
-        // Sync indexes to fix unique constraint issues
+        // fix unique indexes if they're messed up
         await GatePass.syncIndexes();
         logger.info('GatePass indexes synced');
 
-        // Start Express Server
+        // fire up the express server
         server = app.listen(PORT, () => {
-            logger.info('Server started', { port: PORT, url: `http://localhost:${PORT}` });
-            logger.info('API available', { endpoint: `http://localhost:${PORT}/api` });
+            // in dev we want the link, in prod just the port is fine
+            const env = process.env.NODE_ENV || 'development';
+            const logUrl = env === 'development' ? `http://localhost:${PORT}` : `Port ${PORT}`;
 
-            // Signal PM2 that app is ready
+            logger.info('Server is live 🚀', { port: PORT, env, url: logUrl });
+
+            // tell pm2 we're good to go
             if (process.send) {
                 process.send('ready');
             }

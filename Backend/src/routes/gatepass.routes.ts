@@ -1,5 +1,5 @@
 // src/routes/gatepass.routes.ts
-// Gate Pass routes with entry/exit tracking
+// standard gate pass stuff
 
 import { Router } from 'express';
 import {
@@ -25,7 +25,7 @@ import { requestGatePassSchema, validateGatePassSchema, gatePassIdSchema } from 
 
 const router = Router();
 
-// Apply general rate limiting to all routes
+// general rate limit
 router.use(generalLimiter);
 
 // Student routes
@@ -39,12 +39,12 @@ router.get('/all', protect, wardenOnly, getAllPasses);
 router.put('/:id/approve', protect, wardenOnly, validate(gatePassIdSchema), approveGatePass);
 router.put('/:id/reject', protect, wardenOnly, validate(gatePassIdSchema), rejectGatePass);
 
-// Guard/Warden routes (QR validation and entry/exit tracking)
+// guard stuff for scanning and tracking
 router.post('/validate', protect, guardOrWarden, validate(validateGatePassSchema), validateGatePass);
 router.put('/:id/exit', protect, guardOrWarden, markExit);   // Mark student going out
 router.put('/:id/entry', protect, guardOrWarden, markEntry); // Mark student coming in
 
-// Entry/Exit tracking lists (Guard, Warden, Admin)
+// who is inside/outside
 router.get('/students-out', protect, guardOrWarden, getStudentsOut);
 router.get('/recent-entries', protect, guardOrWarden, getRecentEntries);
 router.get('/logs', protect, guardOrWarden, getActivityLogs);

@@ -7,30 +7,29 @@ import { AuthProvider } from '@/lib/auth-context';
 import { ThemeProvider, useTheme } from '@/lib/theme-context';
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
 
-// Create a client with gold-level configuration
+// setting up the query client
 const queryClient = new QueryClient({
     defaultOptions: {
         queries: {
-            // Default stale time - 5 minutes for most data
+            // keep data fresh for 5 mins
             staleTime: 1000 * 60 * 5,
-            // Garbage collection time - 30 minutes
+            // cleanup garbage after 30 mins
             gcTime: 1000 * 60 * 30,
-            // Retry failed queries once with exponential backoff
+            // try one more time if it fails
             retry: 1,
             retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
-            // Refetch on window focus for fresh data
+            // refresh when user comes back to app
             refetchOnWindowFocus: true,
-            // Don't refetch on reconnect by default (let staleTime handle it)
+            // always try to reconnect
             refetchOnReconnect: 'always',
-            // Keep previous data while refetching for smooth UX
+            // keep old data showing while loading new stuff
             placeholderData: (previousData: unknown) => previousData,
-            // Network mode - always try to fetch unless offline
+            // stay online
             networkMode: 'online',
         },
         mutations: {
-            // Retry mutations once
+            // retry once for actions too
             retry: 1,
-            // Network mode for mutations
             networkMode: 'online',
         },
     },

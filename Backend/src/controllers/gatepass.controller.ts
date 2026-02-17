@@ -1,4 +1,5 @@
-// Gate pass controller for handling student leave requests
+// src/controllers/gatepass.controller.ts
+// handles all the gate pass requests and approvals
 
 import { Response } from 'express';
 import { v4 as uuidv4 } from 'uuid';
@@ -15,11 +16,12 @@ import { getISTTime, getISTDate, toISTDate } from '../utils/timezone';
 import SystemConfig from '../models/SystemConfig';
 import { createNotification } from '../services/notification.service';
 
-// @desc    Get user's gate passes (paginated)
-// @route   GET /api/gatepass?page=1&limit=10
+// get my gate passes
+// GET /api/gatepass
 export const getGatePasses = asyncHandler(async (req: AuthRequest, res: Response) => {
     const { page, limit, skip } = getPaginationParams(req, 10);
 
+    // normal students just see their own passes
     let query: any = { user: req.user?._id };
 
     if (req.user?.role === 'parent') {
@@ -41,8 +43,8 @@ export const getGatePasses = asyncHandler(async (req: AuthRequest, res: Response
     return res.status(200).json(new ApiResponse(200, { passes, pagination }, 'Gate passes retrieved'));
 });
 
-// @desc    Get current active gate pass
-// @route   GET /api/gatepass/current
+// check if i have an active pass right now
+// GET /api/gatepass/current
 export const getCurrentPass = asyncHandler(async (req: AuthRequest, res: Response) => {
     const now = new Date();
     const currentPass = await GatePass.findOne({
@@ -55,8 +57,8 @@ export const getCurrentPass = asyncHandler(async (req: AuthRequest, res: Respons
     return res.status(200).json(new ApiResponse(200, currentPass, 'Current pass retrieved'));
 });
 
-// @desc    Request new gate pass
-// @route   POST /api/gatepass
+// request a new gate pass
+// POST /api/gatepass
 export const requestGatePass = asyncHandler(async (req: AuthRequest, res: Response) => {
     const { reason, fromDate, toDate } = req.body;
 
@@ -75,7 +77,7 @@ export const requestGatePass = asyncHandler(async (req: AuthRequest, res: Respon
         throw new ApiError(400, 'From date must be before to date');
     }
 
-    // Validate date is not in the past (use IST)
+    // make sure date isn't in the past
     const today = getISTDate();
     const fromDateOnly = toISTDate(new Date(from));
 
@@ -83,16 +85,16 @@ export const requestGatePass = asyncHandler(async (req: AuthRequest, res: Respon
         throw new ApiError(400, 'From date cannot be in the past');
     }
 
-    // Get dynamic config for validation
+    // check app rules from config
     const config = await SystemConfig.getConfig();
 
-    // Validate gate pass duration against dynamic limit
+    // check if pass is too long
     const diffDays = Math.ceil((to.getTime() - from.getTime()) / (1000 * 60 * 60 * 24));
     if (diffDays > config.appConfig.maxGatePassDays) {
         throw new ApiError(400, `Gate pass cannot exceed ${config.appConfig.maxGatePassDays} days`);
     }
 
-    // Check max pending passes (dynamic from config)
+    // check if student has too many pending passes
     const pendingCount = await GatePass.countDocuments({
         user: req.user?._id,
         status: { $in: ['PENDING_PARENT', 'PENDING_WARDEN'] },
@@ -101,7 +103,7 @@ export const requestGatePass = asyncHandler(async (req: AuthRequest, res: Respon
         throw new ApiError(400, `You can only have ${config.appConfig.maxPendingPasses} pending passes at a time`);
     }
 
-    // Check for overlapping pending/approved passes
+    // prevent overlapping passes
     const existingPass = await GatePass.findOne({
         user: req.user?._id,
         status: { $in: ['PENDING_PARENT', 'PENDING_WARDEN', 'APPROVED'] },
@@ -118,9 +120,8 @@ export const requestGatePass = asyncHandler(async (req: AuthRequest, res: Respon
         status: 'active'
     });
 
-    // Set initial status based on parent linkage
-    // If student has a parent, request goes to parent first
-    // If no parent, request goes directly to warden
+    // decide who approves first: parent or warden?
+    // if parent linked, they approve first. otherwise straight to warden.
     const initialStatus = hasParentLink ? 'PENDING_PARENT' : 'PENDING_WARDEN';
 
     const pass = await GatePass.create({
@@ -131,7 +132,7 @@ export const requestGatePass = asyncHandler(async (req: AuthRequest, res: Respon
         status: initialStatus
     });
 
-    // Notify appropriate parties based on initial status
+    // send notifications to right people
     if (initialStatus === 'PENDING_WARDEN') {
         const wardens = await User.find({ role: 'warden' }).select('_id');
         for (const warden of wardens) {
@@ -171,11 +172,11 @@ export const requestGatePass = asyncHandler(async (req: AuthRequest, res: Respon
     return res.status(201).json(new ApiResponse(201, pass, 'Gate pass requested successfully'));
 });
 
-// @desc    Get all pending passes (Warden)
-// @route   GET /api/gatepass/pending
+// get passes waiting for warden approval
+// GET /api/gatepass/pending
 export const getPendingPasses = asyncHandler(async (req: AuthRequest, res: Response) => {
-    // Wardens should only see passes pending their approval (PENDING_WARDEN)
-    // Passes pending parent approval (PENDING_PARENT) should not be visible to wardens
+    // wardens only see stuff waiting for THEM
+    // if it's waiting for parent, warden doesn't see it yet
     const passes = await GatePass.find({ status: 'PENDING_WARDEN' })
         .populate('user', 'name rollNo room hostel phone')
         .sort({ createdAt: -1 });
@@ -183,8 +184,8 @@ export const getPendingPasses = asyncHandler(async (req: AuthRequest, res: Respo
     return res.status(200).json(new ApiResponse(200, passes, 'Pending passes retrieved'));
 });
 
-// @desc    Get all passes (Warden) - paginated
-// @route   GET /api/gatepass/all?page=1&limit=20
+// get every single pass ever (for warden history)
+// GET /api/gatepass/all
 export const getAllPasses = asyncHandler(async (req: AuthRequest, res: Response) => {
     const { page, limit, skip } = getPaginationParams(req, 20);
 
@@ -201,8 +202,8 @@ export const getAllPasses = asyncHandler(async (req: AuthRequest, res: Response)
     return res.status(200).json(new ApiResponse(200, { passes, pagination }, 'All passes retrieved'));
 });
 
-// @desc    Approve gate pass (Warden)
-// @route   PUT /api/gatepass/:id/approve
+// approve a pass (warden action)
+// PUT /api/gatepass/:id/approve
 export const approveGatePass = asyncHandler(async (req: AuthRequest, res: Response) => {
     const pass = await GatePass.findById(req.params.id);
 
@@ -231,8 +232,8 @@ export const approveGatePass = asyncHandler(async (req: AuthRequest, res: Respon
     return res.status(200).json(new ApiResponse(200, pass, 'Gate pass approved'));
 });
 
-// @desc    Reject gate pass (Warden)
-// @route   PUT /api/gatepass/:id/reject
+// reject a pass (warden action)
+// PUT /api/gatepass/:id/reject
 export const rejectGatePass = asyncHandler(async (req: AuthRequest, res: Response) => {
     const pass = await GatePass.findById(req.params.id);
 
@@ -259,8 +260,8 @@ export const rejectGatePass = asyncHandler(async (req: AuthRequest, res: Respons
     return res.status(200).json(new ApiResponse(200, pass, 'Gate pass rejected'));
 });
 
-// @desc    Validate gate pass QR (Staff)
-// @route   POST /api/gatepass/validate
+// check if qr code is valid (guard action)
+// POST /api/gatepass/validate
 export const validateGatePass = asyncHandler(async (req: AuthRequest, res: Response) => {
     const { qrValue } = req.body;
 
@@ -279,7 +280,7 @@ export const validateGatePass = asyncHandler(async (req: AuthRequest, res: Respo
 
     // Check if pass is expired (toDate already passed)
     if (now > new Date(pass.toDate)) {
-        // Check if student is outside (exitTime but no entryTime)
+        // if expired, check if they are stuck outside
         const isStudentOutside = pass.exitTime && !pass.entryTime;
 
         return res.status(200).json(new ApiResponse(200, {
@@ -292,7 +293,7 @@ export const validateGatePass = asyncHandler(async (req: AuthRequest, res: Respo
         }, 'Pass expired'));
     }
 
-    // Check if pass not yet started (before fromDate)
+    // check if pass hasn't started yet
     if (now < new Date(pass.fromDate)) {
         return res.status(200).json(new ApiResponse(200, {
             valid: false,
@@ -309,8 +310,8 @@ export const validateGatePass = asyncHandler(async (req: AuthRequest, res: Respo
     return res.status(200).json(new ApiResponse(200, { valid: true, pass }, 'Gate pass validated'));
 });
 
-// @desc    Mark student exit (Guard scans and lets student out)
-// @route   PUT /api/gatepass/:id/exit
+// mark student leaving the campus
+// PUT /api/gatepass/:id/exit
 export const markExit = asyncHandler(async (req: AuthRequest, res: Response) => {
     const pass = await GatePass.findById(req.params.id)
         .populate('user', 'name rollNo room hostel phone');
@@ -358,8 +359,8 @@ export const markExit = asyncHandler(async (req: AuthRequest, res: Response) => 
     return res.status(200).json(new ApiResponse(200, pass, 'Student exit marked successfully'));
 });
 
-// @desc    Mark student entry (Guard scans when student returns)
-// @route   PUT /api/gatepass/:id/entry
+// mark student entering the campus
+// PUT /api/gatepass/:id/entry
 export const markEntry = asyncHandler(async (req: AuthRequest, res: Response) => {
     const pass = await GatePass.findById(req.params.id)
         .populate('user', 'name rollNo room hostel phone');
@@ -379,7 +380,7 @@ export const markEntry = asyncHandler(async (req: AuthRequest, res: Response) =>
     const now = new Date();
     const toDate = new Date(pass.toDate);
 
-    // Check if student is returning late
+    // check if they are late
     const isLate = now > toDate;
     let lateNote = '';
 
@@ -400,7 +401,7 @@ export const markEntry = asyncHandler(async (req: AuthRequest, res: Response) =>
     pass.entryMarkedBy = req.user?._id;
     await pass.save();
 
-    // Create log entry with late flag and note
+    // log the entry, noting if late
     await GatePassLog.create({
         gatePass: pass._id,
         user: pass.user._id || pass.user,
@@ -430,8 +431,8 @@ export const markEntry = asyncHandler(async (req: AuthRequest, res: Response) =>
     return res.status(200).json(new ApiResponse(200, response, isLate ? 'Late entry marked successfully' : 'Student entry marked successfully'));
 });
 
-// @desc    Get students currently outside (have exitTime but no entryTime)
-// @route   GET /api/gatepass/students-out
+// get list of students currently away
+// GET /api/gatepass/students-out
 export const getStudentsOut = asyncHandler(async (req: AuthRequest, res: Response) => {
     const passes = await GatePass.find({
         exitTime: { $exists: true, $ne: null },
@@ -454,8 +455,8 @@ export const getStudentsOut = asyncHandler(async (req: AuthRequest, res: Respons
     return res.status(200).json(new ApiResponse(200, passesWithStatus, 'Students currently outside'));
 });
 
-// @desc    Get recent entries (students who returned today)
-// @route   GET /api/gatepass/recent-entries
+// get list of students who came back today
+// GET /api/gatepass/recent-entries
 export const getRecentEntries = asyncHandler(async (req: AuthRequest, res: Response) => {
     // Get today's date in IST
     const today = getISTDate();
@@ -489,8 +490,8 @@ export const getRecentEntries = asyncHandler(async (req: AuthRequest, res: Respo
     return res.status(200).json(new ApiResponse(200, passesWithStatus, 'Recent entries retrieved'));
 });
 
-// @desc    Get activity logs (all entry/exit events)
-// @route   GET /api/gatepass/logs?page=1&limit=50
+// get full activity history (entry/exit logs)
+// GET /api/gatepass/logs
 export const getActivityLogs = asyncHandler(async (req: AuthRequest, res: Response) => {
     const { page, limit, skip } = getPaginationParams(req, 50);
 

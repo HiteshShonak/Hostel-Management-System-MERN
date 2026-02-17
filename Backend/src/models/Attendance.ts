@@ -5,16 +5,16 @@ const attendanceSchema = new Schema<IAttendance>({
     user: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     date: { type: Date, required: true },
     markedAt: { type: Date, default: Date.now },
-    markedByWarden: { type: Schema.Types.ObjectId, ref: 'User' }, // If marked manually by warden
+    markedByWarden: { type: Schema.Types.ObjectId, ref: 'User' }, // if warden did it
     location: {
         latitude: { type: Number },
         longitude: { type: Number },
-        distanceFromHostel: { type: Number }, // Distance in meters for audit
-        manualEntry: { type: Boolean, default: false }, // True if marked by warden
+        distanceFromHostel: { type: Number }, // how far they were
+        manualEntry: { type: Boolean, default: false }, // true if marked by warden
     },
 });
 
-// Compound index to ensure one attendance per user per day
+// only one attendance per day per user
 attendanceSchema.index({ user: 1, date: 1 }, { unique: true });
 
 export default mongoose.model<IAttendance>('Attendance', attendanceSchema);

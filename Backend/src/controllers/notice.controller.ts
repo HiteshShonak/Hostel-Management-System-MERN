@@ -1,5 +1,5 @@
 // src/controllers/notice.controller.ts
-// Notice controller for hostel announcements
+// handles hostel notices and announcements
 
 import { Response } from 'express';
 import Notice from '../models/Notice';
@@ -10,13 +10,12 @@ import { ApiResponse } from '../utils/ApiResponse';
 import { getPaginationParams, getPaginationMeta } from '../utils/pagination';
 import cache, { CACHE_KEYS, CACHE_TTL } from '../utils/cache';
 
-// @desc    Get all notices with pagination
-// @route   GET /api/notices?page=1&limit=20
+// get all notices
 export const getNotices = asyncHandler(async (req: AuthRequest, res: Response) => {
     const { page, limit, skip } = getPaginationParams(req, 20);
     const cacheKey = `${CACHE_KEYS.NOTICES}:${page}:${limit}`;
 
-    // Try cache first (only for page 1)
+    // try cache first
     if (page === 1) {
         const cached = await cache.get(cacheKey);
         if (cached) {
@@ -36,7 +35,7 @@ export const getNotices = asyncHandler(async (req: AuthRequest, res: Response) =
     const pagination = getPaginationMeta(total, page, limit);
     const data = { notices, pagination };
 
-    // Cache page 1 results
+    // save to cache
     if (page === 1) {
         await cache.set(cacheKey, data, CACHE_TTL.NOTICES);
     }
@@ -44,8 +43,7 @@ export const getNotices = asyncHandler(async (req: AuthRequest, res: Response) =
     return res.status(200).json(new ApiResponse(200, data, 'Notices retrieved'));
 });
 
-// @desc    Create notice (Warden or Mess Staff)
-// @route   POST /api/notices
+// post a notice
 export const createNotice = asyncHandler(async (req: AuthRequest, res: Response) => {
     const { title, description, urgent } = req.body;
 
@@ -53,7 +51,7 @@ export const createNotice = asyncHandler(async (req: AuthRequest, res: Response)
         throw new ApiError(400, 'Title and description are required');
     }
 
-    // Determine source based on user role
+    // who posted it?
     let source: 'warden' | 'mess_staff' | 'system' = 'warden';
     if (req.user?.role === 'mess_staff') {
         source = 'mess_staff';
@@ -67,7 +65,7 @@ export const createNotice = asyncHandler(async (req: AuthRequest, res: Response)
         createdBy: req.user?._id,
     });
 
-    // Auto-notify all students about the new notice
+    // tell everyone about the notice
     const { notifyAllStudents } = await import('../services/notification.service');
     notifyAllStudents(
         'notice',
@@ -77,14 +75,13 @@ export const createNotice = asyncHandler(async (req: AuthRequest, res: Response)
         notice._id
     );
 
-    // Invalidate notices cache
+    // clear cache
     await cache.deletePattern('notices:*');
 
     return res.status(201).json(new ApiResponse(201, notice, 'Notice created successfully'));
 });
 
-// @desc    Update notice (Owner or Admin)
-// @route   PUT /api/notices/:id
+// edit a notice
 export const updateNotice = asyncHandler(async (req: AuthRequest, res: Response) => {
     const { title, description, urgent } = req.body;
 
@@ -94,7 +91,7 @@ export const updateNotice = asyncHandler(async (req: AuthRequest, res: Response)
         throw new ApiError(404, 'Notice not found');
     }
 
-    // Check ownership: only creator or admin can update
+    // only owner or admin can edit
     const isOwner = notice.createdBy.toString() === req.user?._id?.toString();
     const isAdmin = req.user?.role === 'admin';
 
@@ -110,8 +107,7 @@ export const updateNotice = asyncHandler(async (req: AuthRequest, res: Response)
     return res.status(200).json(new ApiResponse(200, notice, 'Notice updated successfully'));
 });
 
-// @desc    Delete notice (Owner or Admin)
-// @route   DELETE /api/notices/:id
+// delete a notice
 export const deleteNotice = asyncHandler(async (req: AuthRequest, res: Response) => {
     const notice = await Notice.findById(req.params.id);
 
@@ -119,7 +115,7 @@ export const deleteNotice = asyncHandler(async (req: AuthRequest, res: Response)
         throw new ApiError(404, 'Notice not found');
     }
 
-    // Check ownership: only creator or admin can delete
+    // only owner or admin can delete
     const isOwner = notice.createdBy.toString() === req.user?._id?.toString();
     const isAdmin = req.user?.role === 'admin';
 

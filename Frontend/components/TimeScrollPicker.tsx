@@ -31,7 +31,7 @@ export function TimeScrollPicker({ value, onChange }: TimeScrollPickerProps) {
     const hours = createInfiniteData(24);
     const minutes = createInfiniteData(60);
 
-    // Initialize scroll position to middle set
+    // start in the middle so they can scroll up/down
     useEffect(() => {
         setTimeout(() => {
             hourScrollRef.current?.scrollTo({
@@ -63,7 +63,7 @@ export function TimeScrollPicker({ value, onChange }: TimeScrollPickerProps) {
             : `${selectedHour.toString().padStart(2, '0')}:${value.toString().padStart(2, '0')}`;
         onChange(formatted);
 
-        // Infinite scroll repositioning
+        // keep it infinite by jumping back to middle
         if (index < max * 0.5 || index > max * 2.5) {
             setTimeout(() => {
                 scrollRef.current?.scrollTo({
@@ -83,7 +83,7 @@ export function TimeScrollPicker({ value, onChange }: TimeScrollPickerProps) {
     ) => {
         return (
             <View style={styles.pickerContainer}>
-                {/* Subtle gradient fade */}
+                {/* nice fade effect */}
                 <LinearGradient
                     colors={isDark
                         ? ['rgba(17,24,39,0.98)', 'rgba(17,24,39,0.5)', 'rgba(17,24,39,0)', 'rgba(17,24,39,0.5)', 'rgba(17,24,39,0.98)'] as const
@@ -94,7 +94,7 @@ export function TimeScrollPicker({ value, onChange }: TimeScrollPickerProps) {
                     pointerEvents="none"
                 />
 
-                {/* Minimalist selection indicator */}
+                {/* selection box */}
                 <View
                     style={[
                         styles.selectionBox,
@@ -113,7 +113,7 @@ export function TimeScrollPicker({ value, onChange }: TimeScrollPickerProps) {
                     onMomentumScrollEnd={(e) => handleScroll(e, max, isHour ? setSelectedHour : setSelectedMin, scrollRef, isHour)}
                     contentContainerStyle={styles.scrollContent}
                 >
-                    {/* Padding to center first item */}
+                    {/* padding to center first item */}
                     <View style={{ height: ITEM_HEIGHT }} />
 
                     {data.map((item, idx) => {
@@ -149,7 +149,7 @@ export function TimeScrollPicker({ value, onChange }: TimeScrollPickerProps) {
                         );
                     })}
 
-                    {/* Bottom padding */}
+                    {/* bottom padding */}
                     <View style={{ height: ITEM_HEIGHT }} />
                 </ScrollView>
             </View>

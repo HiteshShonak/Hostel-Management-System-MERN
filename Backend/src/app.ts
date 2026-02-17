@@ -1,5 +1,5 @@
 // src/app.ts
-// Main Express app setup with middleware and routes
+// main express app setup
 
 import express from 'express';
 import cors from 'cors';
@@ -7,34 +7,34 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import compression from 'compression';
 
-// Middleware
+// keeping things clean
 import { errorHandler } from './middleware/error.middleware';
 import { sanitizeInput } from './middleware/sanitize.middleware';
 
-// Routes
+// all our api routes
 import routes from './routes';
 
 const app = express();
 
 app.set('trust proxy', 1);
 
-// Gzip compression for all responses (25-40% size reduction)
+// gzip to make responses faster
 app.use(compression());
 
-// Security headers
+// basic security headers
 app.use(helmet());
 
-// Enable CORS
+// handling cors for frontend access
 const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',').map(o => o.trim()) || [];
 app.use(cors({
     origin: (origin, callback) => {
-        // Allow requests with no origin (mobile apps, Postman, etc.)
+        // allow apps/postman with no origin
         if (!origin) return callback(null, true);
 
-        // Allow all localhost variations (localhost, 127.0.0.1, any port)
+        // allow localhost for dev work
         const isLocalhost = origin.includes('localhost') || origin.includes('127.0.0.1');
 
-        // Allow if origin is in whitelist OR is localhost (for development)
+        // check against whitelist
         if (allowedOrigins.includes(origin) || isLocalhost) {
             callback(null, true);
         } else {
@@ -44,21 +44,21 @@ app.use(cors({
     credentials: true,
 }));
 
-// Request logging (dev mode only)
+// log requests in dev mode so we can see what's happening
 if (process.env.NODE_ENV === 'development') {
     app.use(morgan('dev'));
 }
 
-// Parse JSON bodies (reduced from 10mb to 1mb for security)
+// parsing json bodies (limited to 1mb for safety)
 app.use(express.json({ limit: '1mb' }));
 
-// Parse URL-encoded bodies (reduced from 10mb to 1mb for security)
+// parsing url-encoded data
 app.use(express.urlencoded({ extended: true, limit: '1mb' }));
 
-// Sanitize all user input to prevent XSS
+// clean up input to prevent nasty xss attacks
 app.use(sanitizeInput);
 
-// Health check endpoint (for monitoring and load balancers)
+// simple health check to see if server is alive
 app.get('/health', (req, res) => {
     const memoryUsage = process.memoryUsage();
     res.status(200).json({
@@ -75,10 +75,10 @@ app.get('/health', (req, res) => {
     });
 });
 
-// API Routes
+// where all the api magic happens
 app.use('/api', routes);
 
-// 404 handler for unknown routes
+// 404 handler for lost requests
 app.use((req, res) => {
     res.status(404).json({
         success: false,
@@ -86,7 +86,7 @@ app.use((req, res) => {
     });
 });
 
-// Global Error Handler (MUST BE LAST)
+// global error handler (keep this at the bottom!)
 app.use(errorHandler);
 
 export default app;

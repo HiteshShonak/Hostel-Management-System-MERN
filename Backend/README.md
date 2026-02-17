@@ -58,8 +58,8 @@ A comprehensive RESTful API for hostel management built with Node.js, Express, T
 - Duplicate rating prevention
 
 ### Notification System
-- Firebase Cloud Messaging integration
-- Push notification delivery
+- Expo Push API integration
+- Push notification delivery via HTTP
 - In-app notification center
 - Badge count management
 - Notification preferences
@@ -173,7 +173,7 @@ Backend/
 │   ├── services/                   # Business services (4 files)
 │   │   ├── jwt.service.ts          # Token generation/verification
 │   │   ├── notification.service.ts # In-app notifications (3KB)
-│   │   ├── push-notification.service.ts # FCM push (7KB)
+│   │   ├── push-notification.service.ts # Expo Push API (7KB)
 │   │   └── index.ts
 │   │
 │   ├── utils/                      # Utility functions (9 files)
@@ -254,8 +254,8 @@ MONGODB_URI=mongodb://localhost:27017/hms
 JWT_SECRET=your_jwt_secret_key_here
 JWT_EXPIRES_IN=7d
 
-# Firebase (Push Notifications)
-FCM_SERVER_KEY=your_fcm_server_key_here
+# Expo Push Notifications (No additional config needed)
+# Push tokens are handled automatically by expo-notifications
 
 # Redis (Optional - for caching)
 REDIS_URL=redis://localhost:6379
@@ -378,7 +378,7 @@ GET    /api/notifications               # Get user notifications
 PUT    /api/notifications/:id/read      # Mark as read
 PUT    /api/notifications/read-all      # Mark all as read
 GET    /api/notifications/unread-count  # Get unread count
-POST   /api/notifications/token         # Save FCM token
+POST   /api/notifications/token         # Save Expo push token
 ```
 
 ### Emergency
@@ -483,10 +483,11 @@ Caches frequently accessed data:
 - Bypassed for trusted IPs (configurable)
 
 ### Push Notifications
-- Firebase Cloud Messaging integration
-- Automatic FCM token management
+- Expo Push API integration (HTTP-based)
+- Automatic Expo push token management
 - Notification queuing for offline users
 - Badge count tracking
+- No Firebase/FCM setup required
 
 ## 🛡️ Security Features
 
@@ -536,7 +537,7 @@ npm run stop:prod
 - [ ] Strong `JWT_SECRET` (min 32 chars)
 - [ ] MongoDB Atlas connection string
 - [ ] Redis enabled and configured
-- [ ] FCM server key configured
+- [x] Expo Push API configured (no extra keys needed)
 - [ ] CORS origins set correctly
 - [ ] Rate limiting configured
 
@@ -588,9 +589,9 @@ npm run stop:prod
 
 ### Issue: Push Notifications Not Working
 **Solution:** 
-1. Check FCM server key
-2. Verify device token registration
-3. Check Firebase Console for errors
+1. Verify Expo push token is being registered
+2. Check backend logs for Expo API errors
+3. Test with backend `/api/test/notification` endpoint
 
 ### Issue: Redis Connection Failed
 **Solution:** Set `REDIS_ENABLED=false` to disable caching
