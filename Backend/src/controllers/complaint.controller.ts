@@ -91,6 +91,13 @@ export const resolveComplaint = asyncHandler(async (req: AuthRequest, res: Respo
 // PUT /api/complaints/:id/status
 export const updateComplaintStatus = asyncHandler(async (req: AuthRequest, res: Response) => {
     const { status } = req.body;
+
+    // validate status against allowed values
+    const validStatuses = ['Pending', 'In Progress', 'Resolved'];
+    if (!status || !validStatuses.includes(status)) {
+        throw new ApiError(400, `Invalid status. Must be one of: ${validStatuses.join(', ')}`);
+    }
+
     const updateData: any = { status };
 
     if (status === 'Resolved') {

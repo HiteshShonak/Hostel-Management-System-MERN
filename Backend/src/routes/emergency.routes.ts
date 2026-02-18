@@ -12,8 +12,12 @@ import {
 } from '../controllers/emergency.controller';
 import { protect } from '../middleware/auth.middleware';
 import { wardenOnly } from '../middleware/role.middleware';
+import { generalLimiter } from '../middleware/rateLimit.middleware';
 
 const router = Router();
+
+// rate limit SOS to prevent abuse
+router.use(generalLimiter);
 
 // Student routes
 router.post('/', protect, sendSOS);

@@ -30,7 +30,22 @@ export const sendSOS = asyncHandler(async (req: AuthRequest, res: Response) => {
         location: location || '',
     });
 
-    // Push notifications to wardens would be nice to add here
+    // notify all wardens immediately
+    const { sendPushToRole } = await import('../services/push-notification.service');
+    sendPushToRole(
+        'warden',
+        `🚨 Emergency Alert - ${type}`,
+        `${req.user?.name} (${req.user?.room}) sent SOS: ${message || 'No message'}`,
+        {
+            type: 'emergency',
+            emergencyId: emergency._id.toString(),
+            studentId: req.user?._id.toString(),
+            location: location || '',
+        }
+    ).catch(err => {
+        // don't fail request if push doesn't work
+        console.error('Failed to send emergency push:', err);
+    });
 
     return res.status(201).json(new ApiResponse(201, {
         success: true,
