@@ -9,12 +9,16 @@ import {
     getAttendanceStats,
 } from '../controllers/attendance.controller';
 import { protect } from '../middleware/auth.middleware';
+import { generalLimiter } from '../middleware/rateLimit.middleware';
+import { validate } from '../middleware/validate.middleware';
+import { markAttendanceSchema } from '../schemas/attendance.schema';
 
 const router = Router();
+router.use(generalLimiter);
 
 // Student routes
 router.get('/', protect, getAttendance);
-router.post('/mark', protect, markAttendance);
+router.post('/mark', protect, validate(markAttendanceSchema), markAttendance);
 router.get('/today', protect, getTodayAttendance);
 router.get('/stats', protect, getAttendanceStats);
 
