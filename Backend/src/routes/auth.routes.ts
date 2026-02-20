@@ -6,7 +6,7 @@ import { register, login, getMe, updateProfile, changePassword, updatePushToken 
 import { protect } from '../middleware/auth.middleware';
 import { authLimiter, sensitiveLimiter } from '../middleware/rateLimit.middleware';
 import { validate } from '../middleware/validate.middleware';
-import { registerSchema, loginSchema, updateProfileSchema, changePasswordSchema } from '../schemas/auth.schema';
+import { registerSchema, loginSchema, updateProfileSchema, changePasswordSchema, updatePushTokenSchema } from '../schemas/auth.schema';
 
 const router = Router();
 
@@ -18,7 +18,7 @@ router.post('/login', authLimiter, validate(loginSchema), login);
 router.get('/me', protect, getMe);
 router.put('/profile', protect, validate(updateProfileSchema), updateProfile);
 router.put('/password', protect, sensitiveLimiter, validate(changePasswordSchema), changePassword);
-router.put('/push-token', protect, updatePushToken);
+router.put('/push-token', protect, validate(updatePushTokenSchema), updatePushToken);
 
 export default router;
 

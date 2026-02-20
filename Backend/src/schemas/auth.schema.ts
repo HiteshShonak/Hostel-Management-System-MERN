@@ -47,3 +47,9 @@ export const changePasswordSchema = z.object({
         newPassword: passwordSchema,
     }),
 });
+
+export const updatePushTokenSchema = z.object({
+    body: z.object({
+        pushToken: z.string().min(1, 'Push token is required'),
+    }),
+});

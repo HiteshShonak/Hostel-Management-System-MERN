@@ -21,7 +21,7 @@ import { protect } from '../middleware/auth.middleware';
 import { wardenOnly, guardOrWarden } from '../middleware/role.middleware';
 import { generalLimiter } from '../middleware/rateLimit.middleware';
 import { validate } from '../middleware/validate.middleware';
-import { requestGatePassSchema, validateGatePassSchema, gatePassIdSchema } from '../schemas/gatepass.schema';
+import { requestGatePassSchema, validateGatePassSchema, gatePassIdSchema, markExitEntrySchema } from '../schemas/gatepass.schema';
 
 const router = Router();
 
@@ -41,8 +41,8 @@ router.put('/:id/reject', protect, wardenOnly, validate(gatePassIdSchema), rejec
 
 // guard stuff for scanning and tracking
 router.post('/validate', protect, guardOrWarden, validate(validateGatePassSchema), validateGatePass);
-router.put('/:id/exit', protect, guardOrWarden, markExit);   // Mark student going out
-router.put('/:id/entry', protect, guardOrWarden, markEntry); // Mark student coming in
+router.put('/:id/exit', protect, guardOrWarden, validate(markExitEntrySchema), markExit);   // Mark student going out
+router.put('/:id/entry', protect, guardOrWarden, validate(markExitEntrySchema), markEntry); // Mark student coming in
 
 // who is inside/outside
 router.get('/students-out', protect, guardOrWarden, getStudentsOut);
