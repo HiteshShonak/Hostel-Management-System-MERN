@@ -27,7 +27,8 @@ import {
     getSystemConfig,
     updateSystemConfig,
 } from '../controllers/admin.controller';
-import { protect, adminOnly, wardenOrAdmin } from '../middleware/auth.middleware';
+import { protect, adminOnly } from '../middleware/auth.middleware';
+import { wardenOnly } from '../middleware/role.middleware';
 import { generalLimiter } from '../middleware/rateLimit.middleware';
 import { validate } from '../middleware/validate.middleware';
 import { linkParentSchema } from '../schemas/admin.schema';
@@ -39,7 +40,7 @@ router.use(generalLimiter);
 router.use(protect);
 
 // ==================== WARDEN ROUTES (warden or admin) ====================
-router.use('/warden', wardenOrAdmin); // Apply role check to all /warden/* routes
+router.use('/warden', wardenOnly); // Apply role check to all /warden/* routes
 
 // Warden dashboard stats
 router.get('/warden/dashboard-stats', getWardenDashboardStats);

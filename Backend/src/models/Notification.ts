@@ -1,18 +1,8 @@
 // src/models/Notification.ts
 // In-app notification model
 
-import mongoose, { Schema, Document } from 'mongoose';
-
-export interface INotification extends Document {
-    user: mongoose.Types.ObjectId;
-    type: 'notice' | 'gatepass' | 'complaint' | 'system';
-    title: string;
-    message: string;
-    link?: string;
-    read: boolean;
-    relatedId?: mongoose.Types.ObjectId;
-    createdAt: Date;
-}
+import mongoose, { Schema } from 'mongoose';
+import { INotification } from '../types';
 
 const NotificationSchema = new Schema<INotification>(
     {

@@ -31,11 +31,3 @@ export const adminOnly = asyncHandler(async (req: AuthRequest, res: Response, ne
     next();
 });
 
-// Warden or Admin middleware
-export const wardenOrAdmin = asyncHandler(async (req: AuthRequest, res: Response, next: NextFunction) => {
-    if (req.user?.role !== 'warden' && req.user?.role !== 'admin') {
-        throw new ApiError(403, 'Forbidden - Warden or Admin access required');
-    }
-    next();
-});
-

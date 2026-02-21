@@ -1,5 +1,4 @@
 // src/controllers/auth.controller.ts
-// src/controllers/auth.controller.ts
 // handles login, signup, and password stuff
 
 import { Request, Response } from 'express';

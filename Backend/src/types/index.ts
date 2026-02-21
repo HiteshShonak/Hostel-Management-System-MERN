@@ -160,6 +160,28 @@ export interface IEmergency extends Document {
     createdAt: Date;
 }
 
+// Food Rating Types
+export interface IFoodRating extends Document {
+    user: Types.ObjectId;
+    date: Date;
+    mealType: 'Breakfast' | 'Lunch' | 'Dinner';
+    rating: number;
+    comment?: string;
+    createdAt: Date;
+}
+
+// Notification Types
+export interface INotification extends Document {
+    user: Types.ObjectId;
+    type: 'notice' | 'gatepass' | 'complaint' | 'system';
+    title: string;
+    message: string;
+    link?: string;
+    read: boolean;
+    relatedId?: Types.ObjectId;
+    createdAt: Date;
+}
+
 // Auth Request with User
 export interface AuthRequest extends Request {
     user?: IUser;

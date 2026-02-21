@@ -1,13 +1,5 @@
-import mongoose, { Schema, Document, Types } from 'mongoose';
-
-export interface IFoodRating extends Document {
-    user: Types.ObjectId;
-    date: Date;
-    mealType: 'Breakfast' | 'Lunch' | 'Dinner';
-    rating: number;
-    comment?: string;
-    createdAt: Date;
-}
+import mongoose, { Schema } from 'mongoose';
+import { IFoodRating } from '../types';
 
 const foodRatingSchema = new Schema<IFoodRating>({
     user: { type: Schema.Types.ObjectId, ref: 'User', required: true },

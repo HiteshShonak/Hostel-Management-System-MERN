@@ -2,18 +2,11 @@
 
 import { Response } from 'express';
 import Emergency from '../models/Emergency';
+import SystemConfig from '../models/SystemConfig';
 import { AuthRequest } from '../types';
 import { asyncHandler } from '../utils/asyncHandler';
 import { ApiError } from '../utils/ApiError';
 import { ApiResponse } from '../utils/ApiResponse';
-
-// emergency numbers (static for now)
-const EMERGENCY_CONTACTS = [
-    { name: 'Warden Office', phone: '+91 1234567890', type: 'warden' },
-    { name: 'Campus Security', phone: '+91 9876543210', type: 'security' },
-    { name: 'Medical Center', phone: '+91 1122334455', type: 'medical' },
-    { name: 'Emergency Helpline', phone: '112', type: 'police' },
-];
 
 // send an sos
 export const sendSOS = asyncHandler(async (req: AuthRequest, res: Response) => {
@@ -62,7 +55,8 @@ export const getEmergencyHistory = asyncHandler(async (req: AuthRequest, res: Re
 
 // get the emergency contact list
 export const getEmergencyContacts = asyncHandler(async (req: AuthRequest, res: Response) => {
-    return res.status(200).json(new ApiResponse(200, EMERGENCY_CONTACTS, 'Emergency contacts retrieved'));
+    const config = await SystemConfig.getConfig();
+    return res.status(200).json(new ApiResponse(200, config.emergencyContacts, 'Emergency contacts retrieved'));
 });
 
 // see active sos alerts (warden)
