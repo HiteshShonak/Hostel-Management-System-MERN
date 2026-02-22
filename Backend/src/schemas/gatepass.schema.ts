@@ -2,6 +2,7 @@
 // Validation schemas for gate pass endpoints
 
 import { z } from 'zod';
+import { objectId } from './common.schema';
 
 export const requestGatePassSchema = z.object({
     body: z.object({
@@ -23,12 +24,12 @@ export const validateGatePassSchema = z.object({
 
 export const gatePassIdSchema = z.object({
     params: z.object({
-        id: z.string().regex(/^[0-9a-fA-F]{24}$/, 'Invalid gate pass ID'),
+        id: objectId('gate pass ID'),
     }),
 });
 
 export const markExitEntrySchema = z.object({
     params: z.object({
-        id: z.string().regex(/^[0-9a-fA-F]{24}$/, 'Invalid gate pass ID'),
+        id: objectId('gate pass ID'),
     }),
 });

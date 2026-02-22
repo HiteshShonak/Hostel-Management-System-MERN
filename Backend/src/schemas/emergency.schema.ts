@@ -2,6 +2,7 @@
 // Validation schemas for emergency endpoints
 
 import { z } from 'zod';
+import { objectId } from './common.schema';
 
 export const sendSOSSchema = z.object({
     body: z.object({
@@ -15,6 +16,6 @@ export const sendSOSSchema = z.object({
 
 export const emergencyIdSchema = z.object({
     params: z.object({
-        id: z.string().regex(/^[0-9a-fA-F]{24}$/, 'Invalid emergency ID'),
+        id: objectId('emergency ID'),
     }),
 });

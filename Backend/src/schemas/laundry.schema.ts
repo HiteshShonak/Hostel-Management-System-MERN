@@ -2,6 +2,7 @@
 // Validation schemas for laundry endpoints
 
 import { z } from 'zod';
+import { objectId } from './common.schema';
 
 export const scheduleLaundrySchema = z.object({
     body: z.object({
@@ -14,6 +15,6 @@ export const scheduleLaundrySchema = z.object({
 
 export const laundryIdSchema = z.object({
     params: z.object({
-        id: z.string().regex(/^[0-9a-fA-F]{24}$/, 'Invalid laundry ID'),
+        id: objectId('laundry ID'),
     }),
 });

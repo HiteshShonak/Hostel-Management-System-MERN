@@ -2,6 +2,7 @@
 // Validation schemas for complaint endpoints
 
 import { z } from 'zod';
+import { objectId } from './common.schema';
 
 export const createComplaintSchema = z.object({
     body: z.object({
@@ -20,13 +21,13 @@ export const updateComplaintStatusSchema = z.object({
         }),
     }),
     params: z.object({
-        id: z.string().regex(/^[0-9a-fA-F]{24}$/, 'Invalid complaint ID'),
+        id: objectId('complaint ID'),
     }),
 });
 
 export const complaintIdSchema = z.object({
     params: z.object({
-        id: z.string().regex(/^[0-9a-fA-F]{24}$/, 'Invalid complaint ID'),
+        id: objectId('complaint ID'),
     }),
 });
 

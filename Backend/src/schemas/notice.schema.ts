@@ -2,6 +2,7 @@
 // Validation schemas for notice endpoints
 
 import { z } from 'zod';
+import { objectId } from './common.schema';
 
 export const createNoticeSchema = z.object({
     body: z.object({
@@ -19,12 +20,12 @@ export const updateNoticeSchema = z.object({
         urgent: z.boolean().optional(),
     }),
     params: z.object({
-        id: z.string().regex(/^[0-9a-fA-F]{24}$/, 'Invalid notice ID'),
+        id: objectId('notice ID'),
     }),
 });
 
 export const noticeIdSchema = z.object({
     params: z.object({
-        id: z.string().regex(/^[0-9a-fA-F]{24}$/, 'Invalid notice ID'),
+        id: objectId('notice ID'),
     }),
 });

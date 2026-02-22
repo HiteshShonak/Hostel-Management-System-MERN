@@ -747,7 +747,7 @@ export const getSystemConfig = asyncHandler(async (req: AuthRequest, res: Respon
 
 // change the settings
 export const updateSystemConfig = asyncHandler(async (req: AuthRequest, res: Response) => {
-    const { hostelCoords, geofenceRadiusMeters, attendanceWindow, appConfig } = req.body;
+    const { hostelCoords, geofenceRadiusMeters, attendanceWindow, appConfig, emergencyContacts } = req.body;
 
     const SystemConfig = (await import('../models/SystemConfig')).default;
     const { logger } = await import('../utils/logger');
@@ -814,6 +814,12 @@ export const updateSystemConfig = asyncHandler(async (req: AuthRequest, res: Res
             changes.push(`appConfig.attendanceGracePeriod: ${config.appConfig.attendanceGracePeriod} → ${appConfig.attendanceGracePeriod}`);
             config.appConfig.attendanceGracePeriod = appConfig.attendanceGracePeriod;
         }
+    }
+
+    if (emergencyContacts) {
+        // Replace entire array if provided
+        config.emergencyContacts = emergencyContacts;
+        changes.push(`emergencyContacts: Updated with ${emergencyContacts.length} contact(s)`);
     }
 
     config.updatedAt = new Date();
