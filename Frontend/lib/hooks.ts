@@ -8,11 +8,8 @@ import {
     foodRatingService,
     complaintService,
     attendanceService,
-    visitorService,
-    paymentService,
-    laundryService,
-    emergencyService,
     notificationService,
+    emergencyService,
 } from './services';
 import {
     LoginData,
@@ -22,8 +19,7 @@ import {
     MessMenuUpdate,
     FoodRatingRequest,
     ComplaintRequest,
-    VisitorRequest,
-    LaundryRequest,
+
     EmergencyRequest,
 } from './types';
 
@@ -334,77 +330,6 @@ export const useMarkAttendance = () => {
             attendanceService.mark(location),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['attendance'] });
-        },
-    });
-};
-
-// ==================== VISITORS HOOKS ====================
-export const useVisitors = () => {
-    return useQuery({
-        queryKey: ['visitors'],
-        queryFn: visitorService.getAll,
-    });
-};
-
-export const useRegisterVisitor = () => {
-    const queryClient = useQueryClient();
-    return useMutation({
-        mutationFn: (data: VisitorRequest) => visitorService.register(data),
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['visitors'] });
-        },
-    });
-};
-
-// ==================== PAYMENTS HOOKS ====================
-export const usePayments = () => {
-    return useQuery({
-        queryKey: ['payments'],
-        queryFn: paymentService.getAll,
-    });
-};
-
-export const usePaymentDues = () => {
-    return useQuery({
-        queryKey: ['payments', 'dues'],
-        queryFn: paymentService.getDues,
-    });
-};
-
-export const usePayPayment = () => {
-    const queryClient = useQueryClient();
-    return useMutation({
-        mutationFn: (id: string) => paymentService.pay(id),
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['payments'] });
-        },
-    });
-};
-
-// ==================== LAUNDRY HOOKS ====================
-export const useLaundry = () => {
-    return useQuery({
-        queryKey: ['laundry'],
-        queryFn: laundryService.getAll,
-    });
-};
-
-export const useScheduleLaundry = () => {
-    const queryClient = useQueryClient();
-    return useMutation({
-        mutationFn: (data: LaundryRequest) => laundryService.schedule(data),
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['laundry'] });
-        },
-    });
-};
-
-export const useCollectLaundry = () => {
-    const queryClient = useQueryClient();
-    return useMutation({
-        mutationFn: (id: string) => laundryService.markCollected(id),
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['laundry'] });
         },
     });
 };

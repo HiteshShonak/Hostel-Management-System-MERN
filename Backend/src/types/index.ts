@@ -113,41 +113,6 @@ export interface IAttendance extends Document {
     };
 }
 
-// Visitor Types
-export interface IVisitor extends Document {
-    user: Types.ObjectId;
-    name: string;
-    relation: string;
-    phone: string;
-    expectedDate: Date;
-    expectedTime: string;
-    status: 'Expected' | 'Checked-In' | 'Visited';
-    checkInTime?: Date;
-    checkOutTime?: Date;
-    createdAt: Date;
-}
-
-// Payment Types
-export interface IPayment extends Document {
-    user: Types.ObjectId;
-    title: string;
-    amount: number;
-    type: 'Hostel Fee' | 'Mess Fee' | 'Laundry' | 'Other';
-    dueDate: Date;
-    status: 'Pending' | 'Paid';
-    paidAt?: Date;
-    createdAt: Date;
-}
-
-// Laundry Types
-export interface ILaundry extends Document {
-    user: Types.ObjectId;
-    items: string;
-    scheduledDate: Date;
-    status: 'Scheduled' | 'In Progress' | 'Ready' | 'Collected';
-    createdAt: Date;
-}
-
 // Emergency Types
 export interface IEmergency extends Document {
     user: Types.ObjectId;

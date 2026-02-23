@@ -11,6 +11,9 @@ import { ApiResponse } from '../utils/ApiResponse';
 import { getPaginationParams, getPaginationMeta } from '../utils/pagination';
 import { getISTDate, toISTDate, getISTTime } from '../utils/timezone';
 
+// escape special regex chars to prevent ReDoS
+const escapeRegex = (str: string) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
 // links a parent to their kid
 export const linkParentToStudent = asyncHandler(async (req: AuthRequest, res: Response) => {
     const { parentId, studentId, relationship } = req.body;
@@ -170,10 +173,11 @@ export const getAllUsers = asyncHandler(async (req: AuthRequest, res: Response) 
         filter.role = role;
     }
     if (search) {
+        const escaped = escapeRegex(search as string);
         filter.$or = [
-            { name: { $regex: search, $options: 'i' } },
-            { email: { $regex: search, $options: 'i' } },
-            { rollNo: { $regex: search, $options: 'i' } },
+            { name: { $regex: escaped, $options: 'i' } },
+            { email: { $regex: escaped, $options: 'i' } },
+            { rollNo: { $regex: escaped, $options: 'i' } },
         ];
     }
 
@@ -229,10 +233,18 @@ export const deleteUser = asyncHandler(async (req: AuthRequest, res: Response) =
 
     await User.findByIdAndDelete(req.params.id);
 
-    // Also clean up related parent-student links
-    await ParentStudent.deleteMany({
-        $or: [{ parent: req.params.id }, { student: req.params.id }]
-    });
+    // clean up all related records
+    const userId = req.params.id;
+    await Promise.all([
+        ParentStudent.deleteMany({ $or: [{ parent: userId }, { student: userId }] }),
+        (await import('../models/GatePass')).default.deleteMany({ user: userId }),
+        (await import('../models/GatePassLog')).default.deleteMany({ user: userId }),
+        (await import('../models/Complaint')).default.deleteMany({ user: userId }),
+        (await import('../models/Attendance')).default.deleteMany({ user: userId }),
+        (await import('../models/Notification')).default.deleteMany({ user: userId }),
+        (await import('../models/Emergency')).default.deleteMany({ user: userId }),
+        (await import('../models/FoodRating')).default.deleteMany({ user: userId }),
+    ]);
 
     return res.status(200).json(new ApiResponse(200, null, 'User deleted successfully'));
 });
@@ -466,9 +478,10 @@ export const getAllNotices = asyncHandler(async (req: AuthRequest, res: Response
     if (source) filter.source = source;
     if (urgent === 'true') filter.urgent = true;
     if (search) {
+        const escaped = escapeRegex(search as string);
         filter.$or = [
-            { title: { $regex: search, $options: 'i' } },
-            { description: { $regex: search, $options: 'i' } },
+            { title: { $regex: escaped, $options: 'i' } },
+            { description: { $regex: escaped, $options: 'i' } },
         ];
     }
 
@@ -585,10 +598,11 @@ export const getWardenStudentList = asyncHandler(async (req: AuthRequest, res: R
     // Build search filter
     const searchFilter: Record<string, unknown> = { role: 'student' };
     if (search && typeof search === 'string') {
+        const escaped = escapeRegex(search);
         searchFilter.$or = [
-            { name: { $regex: search, $options: 'i' } },
-            { rollNo: { $regex: search, $options: 'i' } },
-            { room: { $regex: search, $options: 'i' } },
+            { name: { $regex: escaped, $options: 'i' } },
+            { rollNo: { $regex: escaped, $options: 'i' } },
+            { room: { $regex: escaped, $options: 'i' } },
         ];
     }
 

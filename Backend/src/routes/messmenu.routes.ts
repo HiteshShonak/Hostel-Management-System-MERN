@@ -6,6 +6,8 @@ import { getMessMenu, updateDayMenu, updateTimings } from '../controllers/messme
 import { protect } from '../middleware/auth.middleware';
 import { messStaffOnly } from '../middleware/role.middleware';
 import { generalLimiter } from '../middleware/rateLimit.middleware';
+import { validate } from '../middleware/validate.middleware';
+import { updateDayMenuSchema, updateTimingsSchema } from '../schemas/messmenu.schema';
 
 const router = Router();
 router.use(generalLimiter);
@@ -13,9 +15,9 @@ router.use(generalLimiter);
 // Public route (all authenticated users can view)
 router.get('/', protect, getMessMenu);
 
-// Mess staff only
-router.put('/timings', protect, messStaffOnly, updateTimings);
-router.put('/:day', protect, messStaffOnly, updateDayMenu);
+// Mess staff only (with validation)
+router.put('/timings', protect, messStaffOnly, validate(updateTimingsSchema), updateTimings);
+router.put('/:day', protect, messStaffOnly, validate(updateDayMenuSchema), updateDayMenu);
 
 export default router;
 

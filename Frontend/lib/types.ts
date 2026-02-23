@@ -186,64 +186,6 @@ export interface AttendanceStats {
     month: string;
 }
 
-// Visitor Types
-export interface Visitor {
-    _id: string;
-    name: string;
-    relation: string;
-    phone: string;
-    purpose?: string;
-    expectedDate: string;
-    expectedTime: string;
-    status: 'Expected' | 'Checked-In' | 'Visited';
-    checkInTime?: string;
-    checkOutTime?: string;
-    createdAt: string;
-}
-
-export interface VisitorRequest {
-    name: string;
-    relation: string;
-    phone: string;
-    purpose?: string;
-    expectedDate: string;
-    expectedTime: string;
-}
-
-// Payment Types
-export interface Payment {
-    _id: string;
-    title: string;
-    amount: number;
-    type: string;
-    dueDate: string;
-    status: 'Pending' | 'Paid';
-    paidAt?: string;
-    createdAt: string;
-}
-
-export interface PaymentDues {
-    totalDue: number;
-    payments: Payment[];
-}
-
-// Laundry Types
-export interface Laundry {
-    _id: string;
-    items: string;
-    clothesCount?: number;
-    scheduledDate: string;
-    droppedAt?: string;
-    status: 'Scheduled' | 'In Progress' | 'Ready' | 'Collected';
-    createdAt: string;
-}
-
-export interface LaundryRequest {
-    items: string;
-    clothesCount?: number;
-    scheduledDate: string;
-}
-
 // Emergency Types
 export interface EmergencyContact {
     name: string;

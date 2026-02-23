@@ -7,6 +7,7 @@ import { AuthRequest } from '../types';
 import { asyncHandler } from '../utils/asyncHandler';
 import { ApiError } from '../utils/ApiError';
 import { ApiResponse } from '../utils/ApiResponse';
+import { getPaginationParams, getPaginationMeta } from '../utils/pagination';
 
 // send an sos
 export const sendSOS = asyncHandler(async (req: AuthRequest, res: Response) => {
@@ -49,8 +50,15 @@ export const sendSOS = asyncHandler(async (req: AuthRequest, res: Response) => {
 
 // what emergencies did i send before
 export const getEmergencyHistory = asyncHandler(async (req: AuthRequest, res: Response) => {
-    const emergencies = await Emergency.find({ user: req.user?._id }).sort({ createdAt: -1 });
-    return res.status(200).json(new ApiResponse(200, emergencies, 'Emergency history retrieved'));
+    const { page, limit, skip } = getPaginationParams(req, 20);
+
+    const [emergencies, total] = await Promise.all([
+        Emergency.find({ user: req.user?._id }).sort({ createdAt: -1 }).skip(skip).limit(limit),
+        Emergency.countDocuments({ user: req.user?._id }),
+    ]);
+
+    const pagination = getPaginationMeta(total, page, limit);
+    return res.status(200).json(new ApiResponse(200, { emergencies, pagination }, 'Emergency history retrieved'));
 });
 
 // get the emergency contact list
@@ -61,11 +69,19 @@ export const getEmergencyContacts = asyncHandler(async (req: AuthRequest, res: R
 
 // see active sos alerts (warden)
 export const getActiveAlerts = asyncHandler(async (req: AuthRequest, res: Response) => {
-    const alerts = await Emergency.find({ status: 'active' })
-        .populate('user', 'name rollNo room hostel phone')
-        .sort({ createdAt: -1 });
+    const { page, limit, skip } = getPaginationParams(req, 20);
 
-    return res.status(200).json(new ApiResponse(200, alerts, 'Active alerts retrieved'));
+    const [alerts, total] = await Promise.all([
+        Emergency.find({ status: 'active' })
+            .populate('user', 'name rollNo room hostel phone')
+            .sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(limit),
+        Emergency.countDocuments({ status: 'active' }),
+    ]);
+
+    const pagination = getPaginationMeta(total, page, limit);
+    return res.status(200).json(new ApiResponse(200, { alerts, pagination }, 'Active alerts retrieved'));
 });
 
 // warden says I got it

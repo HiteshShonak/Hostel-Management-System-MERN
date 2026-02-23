@@ -7,7 +7,7 @@ import mongoose from 'mongoose';
 import { logger } from '../utils/logger';
 import { sendPushToUser } from './push-notification.service';
 
-export type NotificationType = 'notice' | 'gatepass' | 'complaint' | 'system' | 'visitor';
+export type NotificationType = 'notice' | 'gatepass' | 'complaint' | 'system';
 
 interface CreateNotificationParams {
     userId: string | mongoose.Types.ObjectId;

@@ -19,12 +19,6 @@ import {
     ComplaintRequest,
     Attendance,
     AttendanceStats,
-    Visitor,
-    VisitorRequest,
-    Payment,
-    PaymentDues,
-    Laundry,
-    LaundryRequest,
     EmergencyContact,
     EmergencyRequest,
     Emergency,
@@ -303,55 +297,6 @@ export const attendanceService = {
 
     checkToday: async (): Promise<TodayAttendanceResponse> => {
         const response = await api.get('/attendance/today');
-        return response.data;
-    },
-};
-
-// ==================== VISITORS ====================
-export const visitorService = {
-    getAll: async (): Promise<Visitor[]> => {
-        const response = await api.get<Visitor[]>('/visitors');
-        return response.data;
-    },
-
-    register: async (data: VisitorRequest): Promise<Visitor> => {
-        const response = await api.post<Visitor>('/visitors', data);
-        return response.data;
-    },
-};
-
-// ==================== PAYMENTS ====================
-export const paymentService = {
-    getAll: async (): Promise<Payment[]> => {
-        const response = await api.get<Payment[]>('/payments');
-        return response.data;
-    },
-
-    getDues: async (): Promise<PaymentDues> => {
-        const response = await api.get<PaymentDues>('/payments/dues');
-        return response.data;
-    },
-
-    pay: async (id: string): Promise<Payment> => {
-        const response = await api.put<Payment>(`/payments/${id}/pay`);
-        return response.data;
-    },
-};
-
-// ==================== LAUNDRY ====================
-export const laundryService = {
-    getAll: async (): Promise<Laundry[]> => {
-        const response = await api.get<Laundry[]>('/laundry');
-        return response.data;
-    },
-
-    schedule: async (data: LaundryRequest): Promise<Laundry> => {
-        const response = await api.post<Laundry>('/laundry', data);
-        return response.data;
-    },
-
-    markCollected: async (id: string): Promise<Laundry> => {
-        const response = await api.put<Laundry>(`/laundry/${id}/collect`);
         return response.data;
     },
 };

@@ -8,7 +8,4 @@ export * from './complaint.controller';
 export * from './messmenu.controller';
 export * from './foodrating.controller';
 export * from './attendance.controller';
-export * from './laundry.controller';
-export * from './visitor.controller';
-export * from './payment.controller';
 export * from './emergency.controller';
