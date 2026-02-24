@@ -190,6 +190,7 @@ export interface AttendanceStats {
 export interface EmergencyContact {
     name: string;
     phone: string;
+    type?: 'warden' | 'security' | 'medical' | 'police' | 'other';
     role?: string;
 }
 
@@ -197,10 +198,10 @@ export interface Emergency {
     _id: string;
     user: string | User;
     type: 'Medical' | 'Ragging' | 'Fire' | 'Other';
-    message: string;
-    location: string;
+    message?: string;
+    location?: string;
     status: 'active' | 'acknowledged' | 'resolved';
-    acknowledgedBy?: string;
+    acknowledgedBy?: string | User;
     acknowledgedAt?: string;
     createdAt: string;
 }

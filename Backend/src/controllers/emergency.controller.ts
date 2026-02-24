@@ -44,7 +44,8 @@ export const sendSOS = asyncHandler(async (req: AuthRequest, res: Response) => {
     return res.status(201).json(new ApiResponse(201, {
         success: true,
         message: 'SOS alert sent successfully. Help is on the way.',
-        alertId: emergency._id,
+        emergency,
+        alertedContacts: [],
     }, 'SOS alert sent'));
 });
 
@@ -67,17 +68,18 @@ export const getEmergencyContacts = asyncHandler(async (req: AuthRequest, res: R
     return res.status(200).json(new ApiResponse(200, config.emergencyContacts, 'Emergency contacts retrieved'));
 });
 
-// see active sos alerts (warden)
+// see active sos alerts (warden) - includes acknowledged ones too
 export const getActiveAlerts = asyncHandler(async (req: AuthRequest, res: Response) => {
     const { page, limit, skip } = getPaginationParams(req, 20);
 
     const [alerts, total] = await Promise.all([
-        Emergency.find({ status: 'active' })
+        Emergency.find({ status: { $in: ['active', 'acknowledged'] } })
             .populate('user', 'name rollNo room hostel phone')
+            .populate('acknowledgedBy', 'name')
             .sort({ createdAt: -1 })
             .skip(skip)
             .limit(limit),
-        Emergency.countDocuments({ status: 'active' }),
+        Emergency.countDocuments({ status: { $in: ['active', 'acknowledged'] } }),
     ]);
 
     const pagination = getPaginationMeta(total, page, limit);

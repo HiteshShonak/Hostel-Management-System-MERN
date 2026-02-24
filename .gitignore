@@ -31,3 +31,6 @@ build/
 tmp/
 temp/
 *.tmp
+
+# Internal planning (not for version control)
+FUTURE_SCOPE.md

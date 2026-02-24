@@ -315,13 +315,13 @@ export const emergencyService = {
 
     // Warden endpoints
     getActive: async (): Promise<Emergency[]> => {
-        const response = await api.get<Emergency[]>('/emergency/active');
-        return response.data;
+        const response = await api.get<{ alerts: Emergency[]; pagination: any }>('/emergency/active');
+        return response.data?.alerts || [];
     },
 
     getHistory: async (): Promise<Emergency[]> => {
-        const response = await api.get<Emergency[]>('/emergency/history');
-        return response.data;
+        const response = await api.get<{ emergencies: Emergency[]; pagination: any }>('/emergency/history');
+        return response.data?.emergencies || [];
     },
 
     acknowledge: async (id: string): Promise<Emergency> => {
