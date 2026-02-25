@@ -78,7 +78,7 @@ export const resolveComplaint = asyncHandler(async (req: AuthRequest, res: Respo
     createNotification({
         userId: complaint.user,
         type: 'complaint',
-        title: '✅ Complaint Resolved',
+        title: 'Complaint Resolved',
         message: `Your complaint "${complaint.title}" has been resolved.`,
         link: '/complaints',
         relatedId: complaint._id,

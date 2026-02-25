@@ -45,7 +45,7 @@ export default function ParentTodayAttendance() {
 
     return (
         <View style={[styles.container, { backgroundColor: colors.background }]}>
-            <PageHeader title="📋 Today's Attendance" showBack />
+            <PageHeader title="Today's Attendance" showBack />
 
             <ScrollView
                 style={styles.scrollView}
@@ -192,7 +192,7 @@ const styles = StyleSheet.create({
     },
     avatarText: { fontSize: 20, fontWeight: '700' },
     studentName: { fontSize: 16, fontWeight: '600' },
-    studentDetails: { fontSize: 13, marginTop: 2 },
+    studentDetails: { fontSize: 14, marginTop: 2 },
     statusSection: {
         borderRadius: 12,
         padding: 16,
@@ -216,7 +216,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         gap: 6,
     },
-    locationText: { fontSize: 12 },
+    locationText: { fontSize: 13 },
     emptyState: { alignItems: 'center', paddingVertical: 60 },
     emptyIcon: {
         width: 120,

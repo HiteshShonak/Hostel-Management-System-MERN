@@ -107,7 +107,7 @@ const styles = StyleSheet.create({
     noticeDesc: { fontSize: 14, marginTop: 4 },
     noticeDate: { fontSize: 12, marginTop: 8 },
     urgentBadgeContainer: { paddingHorizontal: 8, paddingVertical: 2, borderRadius: 4 },
-    urgentBadgeText: { fontSize: 10, color: 'white', fontWeight: '600' },
+    urgentBadgeText: { fontSize: 12, color: 'white', fontWeight: '600' },
     emptyState: { alignItems: 'center', padding: 24, borderRadius: 12 },
     emptyText: { fontSize: 14, marginTop: 8 },
 });

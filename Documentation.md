@@ -1,8 +1,8 @@
-# Smart Hostel - Complete Project Documentation
+# HMS — Hostel Management System | IIIT Sonepat — Complete Project Documentation
 
 ## 📋 Project Overview
 
-Smart Hostel is a comprehensive **mobile-first** hostel management system built with React Native (Expo) for iOS and Android platforms, and Node.js (Express) for backend. The system supports multiple user roles including students, parents, guards, wardens, and administrators, providing a complete digital solution for hostel operations.
+Smart Hostel is a comprehensive **mobile-first** hostel management system built for **Indian Institute of Information Technology, Sonepat (IIIT Sonepat)** using React Native (Expo) for iOS and Android platforms, and Node.js (Express) for backend. The system supports multiple user roles including students, parents, guards, wardens, and administrators, providing a complete digital solution for hostel operations at the institute.
 
 **Platform:** Mobile-only (iOS & Android)  
 **Version:** 1.0.0  
@@ -758,11 +758,12 @@ npm run logs          # View PM2 logs
 
 ## 👨‍💻 Development Team
 
-Smart Hostel Management System  
-Developed with React Native + Node.js
+Hostel Management System — IIIT Sonepat  
+Built with React Native + Node.js
 
 ---
 
-**Documentation Version:** 2.0  
-**Last Updated:** February 11, 2026  
+**Documentation Version:** 2.1  
+**Last Updated:** February 24, 2026  
+**Institution:** Indian Institute of Information Technology, Sonepat  
 **Project Status:** Production Ready 🚀

@@ -121,7 +121,7 @@ export default function StudentDetailScreen() {
                 {/* Attendance Section */}
                 <View style={[styles.section, { backgroundColor: colors.card }]}>
                     <View style={styles.sectionHeader}>
-                        <Text style={[styles.sectionTitle, { color: colors.text }]}>📊 Attendance This Month</Text>
+                        <Text style={[styles.sectionTitle, { color: colors.text }]}>Attendance This Month</Text>
                         {!attendance.markedToday && (
                             <Pressable
                                 style={[styles.markBtn, { backgroundColor: colors.primary }]}
@@ -175,7 +175,7 @@ export default function StudentDetailScreen() {
 
                 {/* Gate Pass Section */}
                 <View style={[styles.section, { backgroundColor: colors.card }]}>
-                    <Text style={[styles.sectionTitle, { color: colors.text }]}>🎫 Recent Gate Passes</Text>
+                    <Text style={[styles.sectionTitle, { color: colors.text }]}>Recent Gate Passes</Text>
 
                     {passes.activePass && (
                         <View style={[styles.activePass, {
@@ -279,7 +279,7 @@ const styles = StyleSheet.create({
         padding: 14,
         alignItems: 'center',
     },
-    infoLabel: { fontSize: 12, marginTop: 6 },
+    infoLabel: { fontSize: 13, marginTop: 6 },
     infoValue: { fontSize: 15, fontWeight: '600', marginTop: 2 },
 
     // Section
@@ -313,7 +313,7 @@ const styles = StyleSheet.create({
     },
     attendanceStat: { alignItems: 'center' },
     attendanceNumber: { fontSize: 28, fontWeight: '700' },
-    attendanceLabel: { fontSize: 12, marginTop: 2 },
+    attendanceLabel: { fontSize: 13, marginTop: 2 },
     todayStatus: {
         flexDirection: 'row',
         alignItems: 'center',
@@ -346,8 +346,8 @@ const styles = StyleSheet.create({
     },
     passInfo: { flex: 1, marginRight: 12 },
     passReason: { fontSize: 14, fontWeight: '500' },
-    passDate: { fontSize: 12, marginTop: 2 },
+    passDate: { fontSize: 13, marginTop: 2 },
     statusBadge: { paddingHorizontal: 8, paddingVertical: 4, borderRadius: 6 },
-    statusText: { fontSize: 11, fontWeight: '600' },
+    statusText: { fontSize: 13, fontWeight: '600' },
     emptyText: { fontSize: 14, textAlign: 'center', paddingVertical: 16 },
 });

@@ -143,5 +143,5 @@ const styles = StyleSheet.create({
     statsGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 12 },
     statBox: { width: '47%', borderRadius: 12, padding: 14, alignItems: 'center' },
     statNumber: { fontSize: 28, fontWeight: '700' },
-    statLabel: { fontSize: 12, marginTop: 4, textAlign: 'center' },
+    statLabel: { fontSize: 13, marginTop: 4, textAlign: 'center' },
 });

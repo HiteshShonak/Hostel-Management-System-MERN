@@ -228,8 +228,8 @@ export default function GatePassPage() {
 
                                         {isWarden && passUser && (
                                             <View style={[styles.userInfo, { backgroundColor: colors.backgroundSecondary }]}>
-                                                <Text style={[styles.userDetail, { color: colors.textSecondary }]}>🏠 Room: {passUser.room}</Text>
-                                                <Text style={[styles.userDetail, { color: colors.textSecondary }]}>📞 {passUser.phone}</Text>
+                                                <Text style={[styles.userDetail, { color: colors.textSecondary }]}>Room: {passUser.room}</Text>
+                                                <Text style={[styles.userDetail, { color: colors.textSecondary }]}>{passUser.phone}</Text>
                                             </View>
                                         )}
 
@@ -251,7 +251,7 @@ export default function GatePassPage() {
                                         {user?.role === 'admin' && pass.status === 'PENDING_PARENT' && (
                                             <View style={[styles.parentValidationBox, { backgroundColor: isDark ? '#78350f' : '#fef3c7' }]}>
                                                 <Ionicons name="alert-circle" size={16} color="#d97706" />
-                                                <Text style={[styles.parentValidationText, { color: isDark ? '#fef3c7' : '#d97706' }]}>⏳ Awaiting Parent Approval</Text>
+                                                <Text style={[styles.parentValidationText, { color: isDark ? '#fef3c7' : '#d97706' }]}>Awaiting Parent Approval</Text>
                                             </View>
                                         )}
 
@@ -427,67 +427,67 @@ export default function GatePassPage() {
 }
 
 const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: '#ffffff' },
+    container: { flex: 1 },
     scrollView: { flex: 1 },
     scrollContent: { paddingBottom: 100 },
     content: { padding: 16 },
     loading: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-    loadingText: { marginTop: 12, color: '#737373' },
-    applyBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, backgroundColor: '#1d4ed8', padding: 16, borderRadius: 12, marginBottom: 16 },
+    loadingText: { marginTop: 12 },
+    applyBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, padding: 16, borderRadius: 12, marginBottom: 16 },
     applyBtnText: { color: 'white', fontWeight: '600', fontSize: 16 },
     list: { gap: 16 },
     card: {
         padding: 16,
-        backgroundColor: '#fff',
+        backgroundColor: 'transparent',
         borderWidth: 1,
-        borderColor: '#e5e5e5',
+        borderColor: 'transparent',
         borderRadius: 16,
     },
     cardHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12 },
-    userName: { fontSize: 16, fontWeight: '700', color: '#1d4ed8', marginBottom: 2 },
-    passReason: { fontSize: 16, fontWeight: '600', color: '#0a0a0a' },
-    passId: { fontSize: 12, color: '#a3a3a3', marginTop: 2 },
-    userInfo: { flexDirection: 'row', gap: 16, marginBottom: 12, padding: 12, backgroundColor: '#f9fafb', borderRadius: 8 },
-    userDetail: { fontSize: 13, color: '#737373' },
-    datesRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: '#f9fafb', padding: 12, borderRadius: 8 },
+    userName: { fontSize: 16, fontWeight: '700', marginBottom: 2 },
+    passReason: { fontSize: 16, fontWeight: '600' },
+    passId: { fontSize: 12, marginTop: 2 },
+    userInfo: { flexDirection: 'row', gap: 16, marginBottom: 12, padding: 12, borderRadius: 8 },
+    userDetail: { fontSize: 14 },
+    datesRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 12, borderRadius: 8 },
     dateBox: { alignItems: 'center' },
-    dateLabel: { fontSize: 10, fontWeight: '600', color: '#737373', marginBottom: 2 },
-    dateValue: { fontSize: 14, fontWeight: '600', color: '#0a0a0a' },
-    timeValue: { fontSize: 12, fontWeight: '500', color: '#1d4ed8', marginTop: 2 },
-    actionRow: { flexDirection: 'row', gap: 12, marginTop: 16, paddingTop: 16, borderTopWidth: 1, borderTopColor: '#f5f5f5' },
+    dateLabel: { fontSize: 12, fontWeight: '600', marginBottom: 2 },
+    dateValue: { fontSize: 14, fontWeight: '600' },
+    timeValue: { fontSize: 12, fontWeight: '500', marginTop: 2 },
+    actionRow: { flexDirection: 'row', gap: 12, marginTop: 16, paddingTop: 16, borderTopWidth: 1 },
     actionBtn: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, padding: 12, borderRadius: 12 },
-    rejectBtn: { backgroundColor: '#fef2f2', borderWidth: 1, borderColor: '#fecaca' },
-    approveBtn: { backgroundColor: '#16a34a' },
-    rejectText: { color: '#dc2626', fontWeight: '600' },
+    rejectBtn: { borderWidth: 1 },
+    approveBtn: {},
+    rejectText: { fontWeight: '600' },
     approveText: { color: 'white', fontWeight: '600' },
-    qrSection: { marginTop: 16, paddingTop: 16, borderTopWidth: 1, borderTopColor: '#f5f5f5', alignItems: 'center' },
-    qrContainer: { padding: 20, backgroundColor: 'white', borderRadius: 16, marginBottom: 12 },
-    qrCode: { fontSize: 14, fontWeight: '700', color: '#1d4ed8', letterSpacing: 2, marginTop: 8 },
-    qrHint: { fontSize: 12, color: '#737373', marginTop: 4 },
-    validityInfo: { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 12, paddingHorizontal: 16, paddingVertical: 8, backgroundColor: '#dcfce7', borderRadius: 20 },
-    validityText: { fontSize: 12, color: '#16a34a', fontWeight: '500' },
+    qrSection: { marginTop: 16, paddingTop: 16, borderTopWidth: 1, alignItems: 'center' },
+    qrContainer: { padding: 20, borderRadius: 16, marginBottom: 12 },
+    qrCode: { fontSize: 14, fontWeight: '700', letterSpacing: 2, marginTop: 8 },
+    qrHint: { fontSize: 12, marginTop: 4 },
+    validityInfo: { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 12, paddingHorizontal: 16, paddingVertical: 8, borderRadius: 20 },
+    validityText: { fontSize: 12, fontWeight: '500' },
     emptyState: { alignItems: 'center', paddingVertical: 60 },
-    emptyTitle: { fontSize: 20, fontWeight: '600', color: '#0a0a0a', marginTop: 16 },
-    emptySubtext: { fontSize: 14, color: '#737373', marginTop: 8, textAlign: 'center', paddingHorizontal: 32 },
+    emptyTitle: { fontSize: 20, fontWeight: '600', marginTop: 16 },
+    emptySubtext: { fontSize: 14, marginTop: 8, textAlign: 'center', paddingHorizontal: 32 },
     modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'flex-end' },
-    modalContent: { backgroundColor: 'white', borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 24 },
+    modalContent: { borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 24 },
     modalHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 },
-    modalTitle: { fontSize: 20, fontWeight: '600', color: '#0a0a0a' },
+    modalTitle: { fontSize: 20, fontWeight: '600' },
     inputGroup: { marginBottom: 16 },
-    label: { fontSize: 14, fontWeight: '500', color: '#0a0a0a', marginBottom: 8 },
-    input: { borderWidth: 1, borderColor: '#e5e5e5', borderRadius: 12, padding: 12, fontSize: 16, backgroundColor: '#fafafa' },
+    label: { fontSize: 14, fontWeight: '500', marginBottom: 8 },
+    input: { borderWidth: 1, borderRadius: 12, padding: 12, fontSize: 16 },
     row: { flexDirection: 'row' },
-    submitBtn: { backgroundColor: '#1d4ed8', padding: 16, borderRadius: 12, alignItems: 'center', marginTop: 8 },
+    submitBtn: { padding: 16, borderRadius: 12, alignItems: 'center', marginTop: 8 },
     btnDisabled: { opacity: 0.7 },
     submitBtnText: { color: 'white', fontSize: 16, fontWeight: '600' },
-    helperText: { fontSize: 12, color: '#737373', marginTop: 4 },
-    parentValidationBox: { flexDirection: 'row', alignItems: 'center', gap: 8, backgroundColor: '#fef3c7', padding: 12, borderRadius: 8, marginTop: 12 },
-    parentValidationText: { fontSize: 13, color: '#d97706', fontWeight: '500', flex: 1 },
-    scanBtn: { flexDirection: 'row', alignItems: 'center', gap: 16, backgroundColor: '#dcfce7', padding: 16, borderRadius: 16, marginBottom: 16, borderWidth: 2, borderColor: '#16a34a' },
-    scanBtnIcon: { width: 56, height: 56, borderRadius: 28, backgroundColor: 'white', alignItems: 'center', justifyContent: 'center' },
+    helperText: { fontSize: 12, marginTop: 4 },
+    parentValidationBox: { flexDirection: 'row', alignItems: 'center', gap: 8, padding: 12, borderRadius: 8, marginTop: 12 },
+    parentValidationText: { fontSize: 14, fontWeight: '500', flex: 1 },
+    scanBtn: { flexDirection: 'row', alignItems: 'center', gap: 16, padding: 16, borderRadius: 16, marginBottom: 16, borderWidth: 2 },
+    scanBtnIcon: { width: 56, height: 56, borderRadius: 28, alignItems: 'center', justifyContent: 'center' },
     scanBtnContent: { flex: 1 },
-    scanBtnTitle: { fontSize: 18, fontWeight: '700', color: '#16a34a' },
-    scanBtnSubtitle: { fontSize: 13, color: '#15803d', marginTop: 2 },
+    scanBtnTitle: { fontSize: 18, fontWeight: '700' },
+    scanBtnSubtitle: { fontSize: 14, marginTop: 2 },
     rejectionBox: { flexDirection: 'row', alignItems: 'center', gap: 8, padding: 12, borderRadius: 8, marginTop: 12, borderWidth: 1 },
-    rejectionText: { fontSize: 13, fontWeight: '500', flex: 1 },
+    rejectionText: { fontSize: 14, fontWeight: '500', flex: 1 },
 });

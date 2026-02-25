@@ -82,7 +82,7 @@ export default function RecentEntriesScreen() {
                                         <Text style={[styles.studentMeta, { color: colors.textSecondary }]}>
                                             {user?.rollNo || ''} • Room {user?.room || 'N/A'} • {user?.hostel || ''}
                                         </Text>
-                                        <Text style={styles.phoneText}>📞 {user?.phone || 'N/A'}</Text>
+                                        <Text style={styles.phoneText}>{user?.phone || 'N/A'}</Text>
                                     </View>
 
                                     {/* Duration or Late Badge */}
@@ -157,7 +157,7 @@ export default function RecentEntriesScreen() {
 }
 
 const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: '#f5f5f5' },
+    container: { flex: 1 },
     loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
     summaryBar: {
         flexDirection: 'row',
@@ -165,15 +165,12 @@ const styles = StyleSheet.create({
         gap: 10,
         paddingHorizontal: 16,
         paddingVertical: 12,
-        backgroundColor: '#f0fdf4',
         borderBottomWidth: 1,
-        borderBottomColor: '#bbf7d0',
     },
     summaryIcon: {
         width: 36,
         height: 36,
         borderRadius: 18,
-        backgroundColor: 'white',
         alignItems: 'center',
         justifyContent: 'center',
     },
@@ -181,12 +178,10 @@ const styles = StyleSheet.create({
     scrollView: { flex: 1 },
     scrollContent: { padding: 16, paddingBottom: 100 },
     card: {
-        backgroundColor: 'white',
         borderRadius: 14,
         padding: 16,
         marginBottom: 12,
         borderLeftWidth: 4,
-        borderLeftColor: '#16a34a',
     },
     cardHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: 12 },
     avatar: {
@@ -200,16 +195,16 @@ const styles = StyleSheet.create({
     },
     avatarText: { fontSize: 18, fontWeight: '600', color: 'white' },
     cardInfo: { flex: 1 },
-    studentName: { fontSize: 16, fontWeight: '600', color: '#0a0a0a' },
-    studentMeta: { fontSize: 13, color: '#737373', marginTop: 2 },
-    phoneText: { fontSize: 12, color: '#1d4ed8', marginTop: 4 },
+    studentName: { fontSize: 16, fontWeight: '600' },
+    studentMeta: { fontSize: 13, marginTop: 2 },
+    phoneText: { fontSize: 13, color: '#1d4ed8', marginTop: 4 },
     durationBadge: {
         backgroundColor: '#f0fdf4',
         paddingHorizontal: 10,
         paddingVertical: 4,
         borderRadius: 12,
     },
-    durationText: { fontSize: 12, fontWeight: '600', color: '#16a34a' },
+    durationText: { fontSize: 13, fontWeight: '600', color: '#16a34a' },
     detailsRow: { flexDirection: 'row', gap: 12, marginBottom: 12 },
     detailBox: {
         flex: 1,
@@ -218,12 +213,12 @@ const styles = StyleSheet.create({
         padding: 10,
         alignItems: 'center',
     },
-    detailLabel: { fontSize: 11, color: '#737373', marginTop: 4 },
-    detailValue: { fontSize: 16, fontWeight: '700', color: '#0a0a0a', marginTop: 2 },
-    reasonRow: { flexDirection: 'row', alignItems: 'center', gap: 6, paddingTop: 12, borderTopWidth: 1, borderTopColor: '#f5f5f5' },
-    reasonText: { flex: 1, fontSize: 13, color: '#525252' },
-    dateText: { fontSize: 12, color: '#a3a3a3' },
+    detailLabel: { fontSize: 13, marginTop: 4 },
+    detailValue: { fontSize: 16, fontWeight: '700', marginTop: 2 },
+    reasonRow: { flexDirection: 'row', alignItems: 'center', gap: 6, paddingTop: 12, borderTopWidth: 1 },
+    reasonText: { flex: 1, fontSize: 13 },
+    dateText: { fontSize: 13 },
     emptyContainer: { alignItems: 'center', paddingVertical: 60 },
-    emptyTitle: { fontSize: 18, fontWeight: '600', color: '#0a0a0a', marginTop: 12 },
-    emptyText: { fontSize: 14, color: '#a3a3a3', marginTop: 4 },
+    emptyTitle: { fontSize: 18, fontWeight: '600', marginTop: 12 },
+    emptyText: { fontSize: 14, marginTop: 4 },
 });

@@ -106,7 +106,7 @@ export default function QRScannerPage() {
                     setScanResult({
                         type: 'expired',
                         message: isOutside
-                            ? '⚠️ EXPIRED - Student is still outside and needs to return immediately!'
+                            ? 'EXPIRED - Student is still outside and needs to return immediately!'
                             : 'Pass has expired',
                         pass: result.pass,
                         status: 'EXPIRED',
@@ -166,9 +166,10 @@ export default function QRScannerPage() {
         markExitMutation.mutate(scanResult.pass._id, {
             onSuccess: () => {
                 Vibration.vibrate([0, 100]);
+                const now = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                 setScanResult({
                     ...scanResult,
-                    message: '✅ Student has been let OUT. Exit recorded successfully!',
+                    message: `Exit recorded at ${now}`,
                 });
             },
         });
@@ -180,16 +181,16 @@ export default function QRScannerPage() {
         markEntryMutation.mutate(scanResult.pass._id, {
             onSuccess: (data) => {
                 Vibration.vibrate([0, 100]);
+                const now = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
                 // Check if student returned late
                 const isLate = data?.isLate || false;
                 const lateNote = data?.lateNote || '';
 
                 if (isLate) {
-                    // Show LATE status
                     setScanResult({
                         type: 'late',
-                        message: `⏰ LATE RETURN: ${lateNote} `,
+                        message: `Late return at ${now} — ${lateNote}`,
                         pass: scanResult.pass,
                         isLate: true,
                         lateNote: lateNote,
@@ -197,7 +198,7 @@ export default function QRScannerPage() {
                 } else {
                     setScanResult({
                         ...scanResult,
-                        message: '🏠 Student has been let IN. Welcome back!',
+                        message: `Entry recorded at ${now}. Welcome back!`,
                     });
                 }
             },
@@ -254,7 +255,7 @@ export default function QRScannerPage() {
                 /* Result View */
                 <View style={[styles.resultContainer, { backgroundColor: colors.background }]}>
                     {/* Compact Status Header */}
-                    <View style={[styles.statusHeader, { backgroundColor: colors.card, shadowColor: isDark ? 'transparent' : '#000' }]}>
+                    <View style={[styles.statusHeader, { backgroundColor: colors.card }]}>
                         <View style={[
                             styles.statusIconCompact,
                             scanResult.type === 'success' && styles.statusSuccess,
@@ -284,7 +285,7 @@ export default function QRScannerPage() {
                                                 scanResult.type === 'pending' ? '#d97706' : '#dc2626'
                                 }
                             ]}>
-                                {scanResult.type === 'success' ? 'APPROVED' :
+                                {scanResult.type === 'success' ? 'VALID' :
                                     scanResult.type === 'late' ? 'LATE RETURN' :
                                         scanResult.type === 'expired' ? 'EXPIRED' :
                                             scanResult.type === 'pending' ? 'NOT YET' : 'REJECTED'}
@@ -295,7 +296,7 @@ export default function QRScannerPage() {
 
                     {/* Student Details Card */}
                     {scanResult.pass && (scanResult.type === 'success' || scanResult.type === 'late' || scanResult.type === 'expired') && studentInfo && (
-                        <View style={[styles.studentCard, { backgroundColor: colors.card, shadowColor: isDark ? 'transparent' : '#000' }]}>
+                        <View style={[styles.studentCard, { backgroundColor: colors.card }]}>
                             <View style={styles.studentHeader}>
                                 <Ionicons name="person-circle" size={24} color={colors.primary} />
                                 <Text style={[styles.studentName, { color: colors.text }]}>{studentInfo.name}</Text>
@@ -321,6 +322,24 @@ export default function QRScannerPage() {
                                 </View>
                             </View>
 
+                            <View style={styles.infoGrid}>
+                                <View style={styles.infoItem}>
+                                    <Ionicons name="business" size={18} color={colors.textSecondary} />
+                                    <View style={styles.infoTextContainer}>
+                                        <Text style={[styles.infoLabel, { color: colors.textSecondary }]}>Hostel</Text>
+                                        <Text style={[styles.infoValue, { color: colors.text }]}>{studentInfo.hostel || 'N/A'}</Text>
+                                    </View>
+                                </View>
+
+                                <View style={styles.infoItem}>
+                                    <Ionicons name="call" size={18} color={colors.textSecondary} />
+                                    <View style={styles.infoTextContainer}>
+                                        <Text style={[styles.infoLabel, { color: colors.textSecondary }]}>Phone</Text>
+                                        <Text style={[styles.infoValue, { color: colors.text }]}>{studentInfo.phone || 'N/A'}</Text>
+                                    </View>
+                                </View>
+                            </View>
+
                             <View style={[styles.divider, { backgroundColor: colors.cardBorder }]} />
 
                             <View style={styles.reasonContainer}>
@@ -332,11 +351,20 @@ export default function QRScannerPage() {
                             </View>
 
                             <View style={[styles.validityContainer, { backgroundColor: isDark ? '#14532d' : '#f0fdf4' }]}>
-                                <Ionicons name="calendar" size={16} color={colors.success} />
+                                <Ionicons name="calendar" size={16} color={isDark ? '#4ade80' : colors.success} />
                                 <Text style={[styles.validityText, { color: isDark ? '#4ade80' : colors.success }]}>
                                     Valid: {new Date(scanResult.pass.fromDate).toLocaleDateString()} - {new Date(scanResult.pass.toDate).toLocaleDateString()}
                                 </Text>
                             </View>
+
+                            {isPassExpired && hasExited && (
+                                <View style={[styles.validityContainer, { backgroundColor: isDark ? '#450a0a' : '#fef2f2', marginTop: 8 }]}>
+                                    <Ionicons name="warning" size={16} color={isDark ? '#fca5a5' : '#dc2626'} />
+                                    <Text style={[styles.validityText, { color: isDark ? '#fca5a5' : '#dc2626' }]}>
+                                        Student is still outside — pass expired
+                                    </Text>
+                                </View>
+                            )}
                         </View>
                     )}
 
@@ -364,7 +392,7 @@ export default function QRScannerPage() {
 
                             {/* Secondary Action: Scan Another - Icon only */}
                             <Pressable
-                                style={[styles.secondaryBtnCompact, { backgroundColor: isDark ? '#1e293b' : '#f8fafc' }]}
+                                style={[styles.secondaryBtnCompact, { backgroundColor: colors.card }]}
                                 onPress={resetScan}
                             >
                                 <Ionicons name="scan" size={20} color={colors.textSecondary} />
@@ -380,6 +408,15 @@ export default function QRScannerPage() {
                             <Text style={styles.scanAgainText}>Scan Another</Text>
                         </Pressable>
                     )}
+
+                    {/* Back to Dashboard */}
+                    <Pressable
+                        style={styles.backToDashboard}
+                        onPress={() => router.back()}
+                    >
+                        <Ionicons name="arrow-back" size={18} color={colors.textSecondary} />
+                        <Text style={[styles.backToDashboardText, { color: colors.textSecondary }]}>Back to Dashboard</Text>
+                    </Pressable>
                 </View>
             )}
         </View>
@@ -432,8 +469,7 @@ const styles = StyleSheet.create({
     // New Enhanced Result Styles
     resultContainer: {
         flex: 1,
-        padding: 24,
-        alignItems: 'center',
+        padding: 16,
     },
     statusIconContainer: {
         width: 120,
@@ -625,8 +661,8 @@ const styles = StyleSheet.create({
         marginBottom: 2,
     },
     statusMessageCompact: {
-        fontSize: 13,
-        lineHeight: 18,
+        fontSize: 14,
+        lineHeight: 20,
     },
 
     // Compact Student Card
@@ -643,7 +679,7 @@ const styles = StyleSheet.create({
         marginBottom: 14,
         paddingBottom: 12,
         borderBottomWidth: 1,
-        borderBottomColor: '#f1f5f9',
+        borderBottomColor: 'transparent',
     },
     studentNameCompact: {
         fontSize: 18,
@@ -657,12 +693,12 @@ const styles = StyleSheet.create({
     },
     compactInfoRow: {
         flex: 1,
-        backgroundColor: '#f8fafc',
+        backgroundColor: 'transparent',
         padding: 10,
         borderRadius: 8,
     },
     compactLabel: {
-        fontSize: 11,
+        fontSize: 13,
         marginBottom: 4,
         fontWeight: '500',
         textTransform: 'uppercase',
@@ -684,7 +720,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         gap: 6,
-        backgroundColor: '#f0fdf4',
+        backgroundColor: 'transparent',
         paddingVertical: 8,
         paddingHorizontal: 12,
         borderRadius: 8,
@@ -725,5 +761,17 @@ const styles = StyleSheet.create({
     secondaryBtnTextCompact: {
         fontSize: 14,
         fontWeight: '600',
+    },
+    backToDashboard: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 6,
+        paddingVertical: 14,
+        marginTop: 8,
+    },
+    backToDashboardText: {
+        fontSize: 14,
+        fontWeight: '500',
     },
 });

@@ -15,7 +15,7 @@ export default function AdminParentLinks() {
 
     React.useEffect(() => {
         if (unlinkMutation.isSuccess) {
-            Alert.alert('✅ Success', 'Link has been removed');
+            Alert.alert('Success', 'Link has been removed');
         }
     }, [unlinkMutation.isSuccess]);
 
@@ -142,7 +142,7 @@ const styles = StyleSheet.create({
     personSection: { flexDirection: 'row', alignItems: 'center', gap: 12 },
     personAvatar: { width: 48, height: 48, borderRadius: 24, alignItems: 'center', justifyContent: 'center' },
     personInfo: { flex: 1 },
-    personRole: { fontSize: 10, fontWeight: '600', letterSpacing: 1 },
+    personRole: { fontSize: 12, fontWeight: '600', letterSpacing: 1 },
     personName: { fontSize: 16, fontWeight: '600', marginTop: 2 },
     personDetails: { fontSize: 13, marginTop: 2 },
     connectionLine: { flexDirection: 'row', alignItems: 'center', paddingVertical: 12, paddingLeft: 24 },
@@ -151,7 +151,7 @@ const styles = StyleSheet.create({
     relationText: { fontSize: 12, fontWeight: '600' },
     cardFooter: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 16, paddingTop: 16, borderTopWidth: 1 },
     linkedInfo: { flexDirection: 'row', alignItems: 'center', gap: 6, flex: 1 },
-    linkedText: { fontSize: 11 },
+    linkedText: { fontSize: 13 },
     unlinkBtn: { flexDirection: 'row', alignItems: 'center', gap: 4, paddingHorizontal: 12, paddingVertical: 6, borderRadius: 8 },
     unlinkBtnText: { fontSize: 12, fontWeight: '500' },
     emptyState: { alignItems: 'center', paddingVertical: 60 },

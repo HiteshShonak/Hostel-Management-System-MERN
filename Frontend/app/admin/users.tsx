@@ -38,7 +38,7 @@ export default function AdminUsers() {
         if (updateRoleMutation.isSuccess) {
             setEditingUser(null);
             setNewRole('');
-            Alert.alert('✅ Success', 'User role updated successfully');
+            Alert.alert('Success', 'User role updated successfully');
         }
     }, [updateRoleMutation.isSuccess]);
 
@@ -288,7 +288,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     statNumber: { fontSize: 28, fontWeight: '700' },
-    statLabel: { fontSize: 12, marginTop: 4 },
+    statLabel: { fontSize: 13, marginTop: 4 },
     userCard: {
         borderRadius: 16,
         padding: 16,
@@ -305,13 +305,13 @@ const styles = StyleSheet.create({
     },
     userInfo: { flex: 1 },
     userName: { fontSize: 15, fontWeight: '600' },
-    userEmail: { fontSize: 12, marginTop: 2 },
+    userEmail: { fontSize: 13, marginTop: 2 },
     roleBadge: {
         paddingHorizontal: 10,
         paddingVertical: 4,
         borderRadius: 12,
     },
-    roleText: { fontSize: 11, fontWeight: '600', textTransform: 'capitalize' },
+    roleText: { fontSize: 13, fontWeight: '600', textTransform: 'capitalize' },
     userDetails: {
         flexDirection: 'row',
         gap: 16,
@@ -320,7 +320,7 @@ const styles = StyleSheet.create({
         borderTopWidth: 1,
     },
     detailItem: { flexDirection: 'row', alignItems: 'center', gap: 4 },
-    detailText: { fontSize: 12 },
+    detailText: { fontSize: 13 },
     changeRoleBtn: {
         flexDirection: 'row',
         alignItems: 'center',
@@ -370,7 +370,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         marginBottom: 8,
     },
-    roleOptionText: { fontSize: 11, fontWeight: '500', textTransform: 'capitalize' },
+    roleOptionText: { fontSize: 13, fontWeight: '500', textTransform: 'capitalize' },
     modalActions: { flexDirection: 'row', gap: 12 },
     cancelBtn: {
         flex: 1,

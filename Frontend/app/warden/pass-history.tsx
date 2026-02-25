@@ -171,9 +171,9 @@ const styles = StyleSheet.create({
     avatarText: { fontSize: 16, fontWeight: '600', color: 'white' },
     passInfo: { flex: 1 },
     studentName: { fontSize: 15, fontWeight: '600' },
-    studentMeta: { fontSize: 12, marginTop: 2 },
+    studentMeta: { fontSize: 13, marginTop: 2 },
     statusBadge: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 8 },
-    statusText: { fontSize: 11, fontWeight: '600' },
+    statusText: { fontSize: 13, fontWeight: '600' },
     passDetails: {
         paddingTop: 12,
         borderTopWidth: 1,

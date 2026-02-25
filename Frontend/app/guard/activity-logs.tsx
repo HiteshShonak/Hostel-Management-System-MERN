@@ -49,11 +49,11 @@ export default function ActivityLogsScreen() {
 
     if (isLoading && !refreshing) {
         return (
-            <View style={styles.container}>
+            <View style={[styles.container, { backgroundColor: colors.background }]}>
                 <PageHeader title="Activity Logs" showBack />
                 <View style={styles.loadingContainer}>
-                    <ActivityIndicator size="large" color={PRIMARY_COLOR} />
-                    <Text style={styles.loadingText}>Loading logs...</Text>
+                    <ActivityIndicator size="large" color={colors.primary} />
+                    <Text style={[styles.loadingText, { color: colors.textSecondary }]}>Loading logs...</Text>
                 </View>
                 <BottomNav />
             </View>
@@ -71,7 +71,7 @@ export default function ActivityLogsScreen() {
             {/* Stats Bar */}
             <View style={[styles.statsBar, { backgroundColor: colors.card, borderBottomColor: colors.cardBorder }]}>
                 <View style={styles.statItem}>
-                    <View style={[styles.statIcon, { backgroundColor: '#fff7ed' }]}>
+                    <View style={[styles.statIcon, { backgroundColor: isDark ? '#451a03' : '#fff7ed' }]}>
                         <Ionicons name="exit-outline" size={18} color="#f59e0b" />
                     </View>
                     <View>
@@ -81,7 +81,7 @@ export default function ActivityLogsScreen() {
                 </View>
                 <View style={[styles.statDivider, { backgroundColor: colors.cardBorder }]} />
                 <View style={styles.statItem}>
-                    <View style={[styles.statIcon, { backgroundColor: '#f0fdf4' }]}>
+                    <View style={[styles.statIcon, { backgroundColor: isDark ? '#14532d' : '#f0fdf4' }]}>
                         <Ionicons name="enter-outline" size={18} color="#16a34a" />
                     </View>
                     <View>
@@ -91,7 +91,7 @@ export default function ActivityLogsScreen() {
                 </View>
                 <View style={[styles.statDivider, { backgroundColor: colors.cardBorder }]} />
                 <View style={styles.statItem}>
-                    <View style={[styles.statIcon, { backgroundColor: '#eff6ff' }]}>
+                    <View style={[styles.statIcon, { backgroundColor: isDark ? '#1e3a5f' : '#eff6ff' }]}>
                         <Ionicons name="list" size={18} color="#1d4ed8" />
                     </View>
                     <View>
@@ -108,7 +108,7 @@ export default function ActivityLogsScreen() {
                     <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[PRIMARY_COLOR]} />
                 }
             >
-                <Text style={styles.sectionTitle}>Today's Activity</Text>
+                <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>Today's Activity</Text>
 
                 {logs.length > 0 ? (
                     <View style={styles.timeline}>
@@ -119,7 +119,7 @@ export default function ActivityLogsScreen() {
                             return (
                                 <View key={log._id} style={styles.logItem}>
                                     {/* Timeline line */}
-                                    {!isLast && <View style={styles.timelineLine} />}
+                                    {!isLast && <View style={[styles.timelineLine, { backgroundColor: colors.cardBorder }]} />}
 
                                     {/* Timeline dot */}
                                     <View style={[
@@ -173,7 +173,7 @@ export default function ActivityLogsScreen() {
                                         <Text style={[styles.studentInfo, { color: colors.textSecondary }]}>
                                             {log.user?.rollNo} • Room {log.user?.room} • {log.user?.hostel}
                                         </Text>
-                                        <Text style={styles.phoneInfo}>📞 {log.user?.phone || 'N/A'}</Text>
+                                        <Text style={styles.phoneInfo}>{log.user?.phone || 'N/A'}</Text>
 
                                         {/* Footer */}
                                         <View style={[styles.logFooter, { borderTopColor: colors.cardBorder }]}>
@@ -182,8 +182,8 @@ export default function ActivityLogsScreen() {
                                                     `Going for: ${log.gatePass?.reason || 'Gate Pass'}`
                                                 ) : (
                                                     log.isLate ?
-                                                        `⚠️ Returned ${log.note ? log.note.replace('Student returned ', '') : 'late'}` :
-                                                        `✅ Returned on time`
+                                                        `Returned ${log.note ? log.note.replace('Student returned ', '') : 'late'}` :
+                                                        `Returned on time`
                                                 )}
                                             </Text>
                                             <Text style={[styles.timeStamp, { color: colors.text }]}>{formatTime(log.timestamp)}</Text>
@@ -195,9 +195,9 @@ export default function ActivityLogsScreen() {
                     </View>
                 ) : (
                     <View style={styles.emptyContainer}>
-                        <Ionicons name="document-text-outline" size={64} color="#d4d4d4" />
-                        <Text style={styles.emptyTitle}>No Activity</Text>
-                        <Text style={styles.emptyText}>No entry/exit logs recorded today</Text>
+                        <Ionicons name="document-text-outline" size={64} color={colors.textTertiary} />
+                        <Text style={[styles.emptyTitle, { color: colors.text }]}>No Activity</Text>
+                        <Text style={[styles.emptyText, { color: colors.textSecondary }]}>No entry/exit logs recorded today</Text>
                     </View>
                 )}
             </ScrollView>
@@ -208,24 +208,22 @@ export default function ActivityLogsScreen() {
 }
 
 const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: '#f8fafc' },
+    container: { flex: 1 },
     loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
     loadingText: { marginTop: 12, color: '#737373', fontSize: 14 },
 
     // Stats Bar
     statsBar: {
         flexDirection: 'row',
-        backgroundColor: 'white',
         paddingVertical: 16,
         paddingHorizontal: 20,
         borderBottomWidth: 1,
-        borderBottomColor: '#e5e5e5',
     },
     statItem: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: 10 },
     statIcon: { width: 36, height: 36, borderRadius: 10, alignItems: 'center', justifyContent: 'center' },
-    statValue: { fontSize: 20, fontWeight: '700', color: '#0a0a0a' },
-    statLabel: { fontSize: 11, color: '#737373', fontWeight: '500' },
-    statDivider: { width: 1, backgroundColor: '#e5e5e5', marginHorizontal: 8 },
+    statValue: { fontSize: 20, fontWeight: '700' },
+    statLabel: { fontSize: 13, fontWeight: '500' },
+    statDivider: { width: 1, marginHorizontal: 8 },
 
     scrollView: { flex: 1 },
     scrollContent: { padding: 16, paddingBottom: 100 },
@@ -233,7 +231,6 @@ const styles = StyleSheet.create({
     sectionTitle: {
         fontSize: 13,
         fontWeight: '600',
-        color: '#737373',
         textTransform: 'uppercase',
         letterSpacing: 0.5,
         marginBottom: 16,
@@ -248,7 +245,6 @@ const styles = StyleSheet.create({
         top: 32,
         bottom: -16,
         width: 2,
-        backgroundColor: '#e5e5e5',
     },
     timelineDot: {
         width: 30,
@@ -263,21 +259,21 @@ const styles = StyleSheet.create({
     // Log Card
     logCard: {
         flex: 1,
-        backgroundColor: 'white',
+        backgroundColor: 'transparent',
         borderRadius: 12,
         padding: 14,
         borderLeftWidth: 3,
     },
     logHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 },
     actionBadge: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 6 },
-    actionText: { fontSize: 11, fontWeight: '700', letterSpacing: 0.5 },
+    actionText: { fontSize: 13, fontWeight: '700', letterSpacing: 0.5 },
     lateBadge: { flexDirection: 'row', alignItems: 'center', gap: 4, paddingHorizontal: 8, paddingVertical: 4, borderRadius: 6, marginLeft: 8 },
-    lateText: { fontSize: 10, fontWeight: '700', letterSpacing: 0.5 },
+    lateText: { fontSize: 12, fontWeight: '700', letterSpacing: 0.5 },
     timeAgo: { fontSize: 12, color: '#a3a3a3' },
 
-    studentName: { fontSize: 16, fontWeight: '600', color: '#0a0a0a', marginBottom: 2 },
-    studentInfo: { fontSize: 13, color: '#525252', marginBottom: 2 },
-    phoneInfo: { fontSize: 12, color: '#1d4ed8', marginBottom: 10 },
+    studentName: { fontSize: 16, fontWeight: '600', marginBottom: 2 },
+    studentInfo: { fontSize: 14, marginBottom: 2 },
+    phoneInfo: { fontSize: 13, color: '#1d4ed8', marginBottom: 10 },
 
     logFooter: {
         flexDirection: 'row',
@@ -285,13 +281,12 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         paddingTop: 10,
         borderTopWidth: 1,
-        borderTopColor: '#f5f5f5',
     },
-    passReason: { flex: 1, fontSize: 12, color: '#737373' },
-    timeStamp: { fontSize: 12, fontWeight: '600', color: '#0a0a0a' },
+    passReason: { flex: 1, fontSize: 13 },
+    timeStamp: { fontSize: 13, fontWeight: '600' },
 
     // Empty State
     emptyContainer: { alignItems: 'center', paddingVertical: 60 },
-    emptyTitle: { fontSize: 18, fontWeight: '600', color: '#0a0a0a', marginTop: 12 },
-    emptyText: { fontSize: 14, color: '#a3a3a3', marginTop: 4 },
+    emptyTitle: { fontSize: 18, fontWeight: '600', marginTop: 12 },
+    emptyText: { fontSize: 14, marginTop: 4 },
 });

@@ -251,7 +251,7 @@ const styles = StyleSheet.create({
     eyeIcon: { paddingRight: 16 },
     roleContainer: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
     roleButton: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, paddingVertical: 10, paddingHorizontal: 12, borderRadius: 12, borderWidth: 2, minWidth: '30%' },
-    roleText: { fontSize: 12, fontWeight: '600' },
+    roleText: { fontSize: 13, fontWeight: '600' },
     registerButton: { paddingVertical: 16, borderRadius: 12, alignItems: 'center', marginTop: 8 },
     registerButtonDisabled: { opacity: 0.7 },
     registerButtonText: { color: 'white', fontSize: 16, fontWeight: '600' },

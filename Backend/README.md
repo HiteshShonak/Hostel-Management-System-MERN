@@ -1,6 +1,6 @@
-# Smart Hostel - Backend API
+# HMS — Backend API | IIIT Sonepat
 
-A comprehensive RESTful API for hostel management built with Node.js, Express, TypeScript, and MongoDB, featuring role-based authentication, push notifications, and real-time data management.
+A comprehensive RESTful API for the IIIT Sonepat Hostel Management System, built with Node.js, Express, TypeScript, and MongoDB, featuring role-based authentication, push notifications, and real-time data management.
 
 ## 🚀 Tech Stack
 
@@ -632,7 +632,7 @@ curl http://localhost:5000/api/gatepass \
 
 ## 👨‍💻 Developed By
 
-Hostel Management System Team
+Hostel Management System — IIIT Sonepat
 
 ---
 

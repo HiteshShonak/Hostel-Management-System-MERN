@@ -338,5 +338,5 @@ const styles = StyleSheet.create({
     wardenBadge: { backgroundColor: '#dbeafe' },
     messBadge: { backgroundColor: '#dcfce7' },
     systemBadge: { backgroundColor: '#f3e8ff' },
-    sourceBadgeText: { fontSize: 10, fontWeight: '600' },
+    sourceBadgeText: { fontSize: 12, fontWeight: '600' },
 });

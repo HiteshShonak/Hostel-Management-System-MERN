@@ -131,7 +131,7 @@ function AlertManagementView() {
                                         {alertUser?.phone ? (
                                             <Pressable onPress={() => Linking.openURL(`tel:${alertUser.phone}`)}>
                                                 <Text style={[styles.studentPhone, { color: isDark ? '#60a5fa' : '#2563eb' }]}>
-                                                    📞 {alertUser.phone}
+                                                    {alertUser.phone}
                                                 </Text>
                                             </Pressable>
                                         ) : null}
@@ -284,7 +284,7 @@ function StudentSOSView() {
             { type: type as 'Medical' | 'Fire' | 'Ragging' | 'Other', message },
             {
                 onSuccess: () => {
-                    Alert.alert('🚨 Alert Sent!', `${type} emergency alert has been sent. Help is on the way.`, [{ text: 'OK' }]);
+                    Alert.alert('Alert Sent!', `${type} emergency alert has been sent. Help is on the way.`, [{ text: 'OK' }]);
                 },
                 onError: () => {
                     Alert.alert('Alert Failed', 'Could not send alert. Please try calling emergency contacts directly.', [{ text: 'OK' }]);
@@ -302,7 +302,7 @@ function StudentSOSView() {
             { type: 'Other', message: 'Emergency SOS Alert!' },
             {
                 onSuccess: () => {
-                    Alert.alert('🚨 SOS Sent!', 'Help is on the way. The warden and security have been alerted.', [{ text: 'OK' }]);
+                    Alert.alert('SOS Sent!', 'Help is on the way. The warden and security have been alerted.', [{ text: 'OK' }]);
                 },
                 onError: () => {
                     Alert.alert('SOS Failed', 'Could not send SOS. Please call emergency contacts directly.', [{ text: 'OK' }]);
@@ -451,7 +451,7 @@ const styles = StyleSheet.create({
     },
     alertBannerLeft: { flexDirection: 'row', alignItems: 'center', flex: 1 },
     alertBannerTitle: { fontSize: 17, fontWeight: '700' },
-    alertBannerSub: { fontSize: 13, marginTop: 2 },
+    alertBannerSub: { fontSize: 14, marginTop: 2 },
     refreshBtn: { width: 36, height: 36, borderRadius: 18, alignItems: 'center', justifyContent: 'center' },
     alertsList: { gap: 12 },
     alertCard: {
@@ -461,22 +461,22 @@ const styles = StyleSheet.create({
     },
     alertCardHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
     typeBadge: { flexDirection: 'row', alignItems: 'center', gap: 5, paddingHorizontal: 10, paddingVertical: 4, borderRadius: 20 },
-    typeBadgeText: { fontSize: 12, fontWeight: '600' },
-    alertTime: { fontSize: 12 },
+    typeBadgeText: { fontSize: 13, fontWeight: '600' },
+    alertTime: { fontSize: 13 },
     alertStudentRow: { flexDirection: 'row', alignItems: 'center' },
     avatarCircle: { width: 44, height: 44, borderRadius: 22, alignItems: 'center', justifyContent: 'center' },
     studentName: { fontSize: 15, fontWeight: '700' },
-    studentDetails: { fontSize: 12, marginTop: 2 },
-    studentPhone: { fontSize: 12, marginTop: 4, fontWeight: '500' },
+    studentDetails: { fontSize: 13, marginTop: 2 },
+    studentPhone: { fontSize: 13, marginTop: 4, fontWeight: '500' },
     messageBox: { padding: 10, borderRadius: 10 },
-    messageText: { fontSize: 13, fontStyle: 'italic' },
+    messageText: { fontSize: 14, fontStyle: 'italic' },
     locationRow: { flexDirection: 'row', alignItems: 'center', gap: 4 },
-    locationText: { fontSize: 12 },
+    locationText: { fontSize: 13 },
     statusRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
     statusBadge: { flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 10, paddingVertical: 4, borderRadius: 20 },
     statusDot: { width: 7, height: 7, borderRadius: 4 },
-    statusText: { fontSize: 12, fontWeight: '600' },
-    acknowledgedByText: { fontSize: 11 },
+    statusText: { fontSize: 13, fontWeight: '600' },
+    acknowledgedByText: { fontSize: 13 },
     actionRow: { flexDirection: 'row', gap: 10, marginTop: 4 },
     actionBtn: {
         flex: 1,
@@ -491,7 +491,7 @@ const styles = StyleSheet.create({
     acknowledgeBtnText: { color: '#1d4ed8', fontSize: 14, fontWeight: '600' },
     resolveBtn: { backgroundColor: '#16a34a' },
     resolveBtnText: { color: 'white', fontSize: 14, fontWeight: '600' },
-    emptyState: { alignItems: 'center', paddingVertical: 48 },
+    emptyState: { alignItems: 'center', paddingVertical: 60 },
     emptyTitle: { fontSize: 20, fontWeight: '700', marginTop: 16 },
     emptyText: { fontSize: 15, marginTop: 8 },
 
@@ -533,7 +533,7 @@ const styles = StyleSheet.create({
     quickButtons: { flexDirection: 'row', gap: 12, marginBottom: 32 },
     quickBtn: { flex: 1, alignItems: 'center', paddingVertical: 20, borderRadius: 16 },
     quickProgress: { position: 'absolute', top: 0, left: 0, bottom: 0 },
-    quickBtnText: { fontSize: 12, fontWeight: '600', marginTop: 8 },
+    quickBtnText: { fontSize: 13, fontWeight: '600', marginTop: 8 },
     sectionTitle: { fontSize: 18, fontWeight: '600', marginBottom: 16 },
     contactsList: { gap: 12 },
     contactCard: { flexDirection: 'row', alignItems: 'center', padding: 12, borderRadius: 16, borderWidth: 1 },

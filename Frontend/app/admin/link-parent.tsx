@@ -31,7 +31,7 @@ export default function AdminLinkParent() {
     React.useEffect(() => {
         if (linkMutation.isSuccess) {
             Alert.alert(
-                '✅ Success',
+                'Success',
                 `${selectedParent?.name} has been linked to ${selectedStudent?.name} as ${relationship}`,
                 [{ text: 'OK', onPress: resetForm }]
             );
@@ -331,7 +331,7 @@ const styles = StyleSheet.create({
     stepCircleActive: { backgroundColor: '#7c3aed' },
     stepNumber: { fontSize: 16, fontWeight: '600' },
     stepNumberActive: { color: 'white' },
-    stepLabel: { fontSize: 12 },
+    stepLabel: { fontSize: 13 },
     stepTitle: { fontSize: 22, fontWeight: '700', marginBottom: 4 },
     stepSubtitle: { fontSize: 14, marginBottom: 20 },
     backStep: {
@@ -404,7 +404,7 @@ const styles = StyleSheet.create({
         marginRight: 16,
     },
     summaryInfo: { flex: 1 },
-    summaryLabel: { fontSize: 12, textTransform: 'uppercase' },
+    summaryLabel: { fontSize: 13, textTransform: 'uppercase' },
     summaryValue: { fontSize: 18, fontWeight: '600', marginTop: 2 },
     summarySubvalue: { fontSize: 13, marginTop: 2 },
     linkArrow: {

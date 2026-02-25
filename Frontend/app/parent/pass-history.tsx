@@ -67,7 +67,7 @@ export default function ParentPassHistory() {
 
     return (
         <View style={[styles.container, { backgroundColor: colors.background }]}>
-            <PageHeader title="📋 Gate Pass History" showBack />
+            <PageHeader title="Gate Pass History" showBack />
 
             <ScrollView
                 style={styles.scrollView}
@@ -189,7 +189,7 @@ const styles = StyleSheet.create({
         borderRadius: 8,
         marginBottom: 16,
     },
-    statsText: { fontSize: 13, textAlign: 'center' },
+    statsText: { fontSize: 14, textAlign: 'center' },
     passCard: {
         borderRadius: 16,
         padding: 16,
@@ -211,7 +211,7 @@ const styles = StyleSheet.create({
     },
     avatarText: { fontSize: 18, fontWeight: '700' },
     studentName: { fontSize: 15, fontWeight: '600' },
-    studentDetails: { fontSize: 12, marginTop: 2 },
+    studentDetails: { fontSize: 13, marginTop: 2 },
     statusBadge: {
         flexDirection: 'row',
         alignItems: 'center',
@@ -220,17 +220,17 @@ const styles = StyleSheet.create({
         borderRadius: 12,
         gap: 4,
     },
-    statusText: { fontSize: 11, fontWeight: '600', textTransform: 'capitalize' },
+    statusText: { fontSize: 13, fontWeight: '600', textTransform: 'capitalize' },
     passDetails: { gap: 8, marginBottom: 12 },
     detailRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 8 },
-    detailText: { fontSize: 13, flex: 1 },
+    detailText: { fontSize: 14, flex: 1 },
     passFooter: {
         paddingTop: 12,
         borderTopWidth: 1,
         flexDirection: 'row',
         flexWrap: 'wrap',
     },
-    footerText: { fontSize: 11 },
+    footerText: { fontSize: 13 },
     emptyState: { alignItems: 'center', paddingVertical: 60 },
     emptyIcon: {
         width: 120,

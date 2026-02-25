@@ -199,7 +199,7 @@ const styles = StyleSheet.create({
     unreadDot: { width: 8, height: 8, borderRadius: 4 },
     message: { fontSize: 14, marginTop: 4 },
     time: { fontSize: 12, marginTop: 8 },
-    emptyState: { alignItems: 'center', padding: 48 },
+    emptyState: { alignItems: 'center', paddingVertical: 60 },
     emptyTitle: { fontSize: 20, fontWeight: '600', marginTop: 16 },
     emptyText: { fontSize: 14, marginTop: 4 },
 });

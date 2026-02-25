@@ -234,9 +234,9 @@ const styles = StyleSheet.create({
         borderRadius: 6,
         gap: 4,
     },
-    outBadgeText: { fontSize: 11, fontWeight: '600' },
-    presentBadgeText: { fontSize: 11, fontWeight: '600' },
-    markBadgeText: { fontSize: 11, fontWeight: '600' },
+    outBadgeText: { fontSize: 13, fontWeight: '600' },
+    presentBadgeText: { fontSize: 13, fontWeight: '600' },
+    markBadgeText: { fontSize: 13, fontWeight: '600' },
     emptyContainer: { alignItems: 'center', paddingVertical: 60 },
     emptyText: { fontSize: 16, marginTop: 12 },
     paginationContainer: {

@@ -1,4 +1,4 @@
-# 🏨 HMS Mobile - Smart Hostel Management System
+# 🏨 HMS — Hostel Management System | IIIT Sonepat
 
 [![React Native](https://img.shields.io/badge/React%20Native-0.81-blue.svg)](https://reactnative.dev/)
 [![Expo SDK](https://img.shields.io/badge/Expo-54.0-000020.svg)](https://expo.dev/)
@@ -6,7 +6,7 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.9-blue.svg)](https://www.typescriptlang.org/)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-A comprehensive mobile and backend solution for digitizing hostel operations, featuring QR-based gate passes, smart attendance, mess management, and real-time notifications.
+A comprehensive mobile and backend solution built for **Indian Institute of Information Technology, Sonepat (IIIT Sonepat)** to digitize hostel operations — featuring QR-based gate passes, smart attendance, mess management, emergency SOS, and real-time notifications.
 
 **Live Backend:** [https://hostel-management-system-backend-jde3.onrender.com](https://hostel-management-system-backend-jde3.onrender.com)
 
@@ -398,7 +398,7 @@ This project is licensed under the MIT License.
 
 ## 👥 Team
 
-Developed by the HMS Development Team
+Developed at **Indian Institute of Information Technology, Sonepat (IIIT Sonepat)**
 
 ---
 
@@ -407,7 +407,8 @@ Developed by the HMS Development Team
 For issues or questions:
 - Check [Documentation.md](Documentation.md)
 - Review API docs
-- Open an issue on GitHub
+- Open an issue on the GitHub repository
+- Contact the team at IIIT Sonepat
 
 ---
 
@@ -426,4 +427,4 @@ For issues or questions:
 
 ---
 
-**Built with ❤️ for modern hostel management**
+**Built with ❤️ at IIIT Sonepat for smarter hostel management**

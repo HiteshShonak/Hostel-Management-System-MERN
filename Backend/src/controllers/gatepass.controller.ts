@@ -223,7 +223,7 @@ export const approveGatePass = asyncHandler(async (req: AuthRequest, res: Respon
     createNotification({
         userId: pass.user,
         type: 'gatepass',
-        title: '✅ Gate Pass Approved',
+        title: 'Gate Pass Approved',
         message: 'Your gate pass has been approved. Show the QR code at the gate.',
         link: '/gate-pass',
         relatedId: pass._id,
@@ -251,7 +251,7 @@ export const rejectGatePass = asyncHandler(async (req: AuthRequest, res: Respons
     createNotification({
         userId: pass.user,
         type: 'gatepass',
-        title: '❌ Gate Pass Rejected',
+        title: 'Gate Pass Rejected',
         message: 'Your gate pass request has been rejected.',
         link: '/gate-pass',
         relatedId: pass._id,

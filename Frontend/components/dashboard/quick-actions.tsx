@@ -30,34 +30,6 @@ export function QuickActions() {
             color: 'white',
             bg: '#f59e0b', // Amber
         },
-        // {
-        //     icon: 'notifications',
-        //     label: 'Notices',
-        //     route: '/notices',
-        //     color: 'white',
-        //     bg: '#6366f1', // Indigo
-        // },
-        // {
-        //     icon: 'shirt',
-        //     label: 'Laundry',
-        //     route: '/laundry',
-        //     color: 'white',
-        //     bg: '#06b6d4', // Cyan
-        // },
-        // {
-        //     icon: 'people',
-        //     label: 'Visitors',
-        //     route: '/visitors',
-        //     color: 'white',
-        //     bg: '#14b8a6', // Teal
-        // },
-        // {
-        //     icon: 'card',
-        //     label: 'Payments',
-        //     route: '/payments',
-        //     color: 'white',
-        //     bg: '#10b981', // Emerald
-        // },
         {
             icon: 'alert-circle',
             label: 'Emergency',
@@ -101,27 +73,21 @@ const styles = StyleSheet.create({
     grid: {
         flexDirection: 'row',
         flexWrap: 'wrap',
-        gap: 16, // Spacing between items
+        gap: 16,
         justifyContent: 'space-between',
     },
     itemContainer: {
-        width: '21%', // Fits 4 items with gap (100% / 4 = 25% -> minus gap -> ~21-22%)
+        width: '21%',
         alignItems: 'center',
         gap: 8,
         marginBottom: 8,
     },
     iconBox: {
-        width: 64, // Large square like image
+        width: 64,
         height: 64,
-        borderRadius: 20, // Squircle
+        borderRadius: 20,
         alignItems: 'center',
         justifyContent: 'center',
-        // Subtle shadow matching image feel
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 3,
-        elevation: 2,
     },
     label: {
         fontSize: 12,

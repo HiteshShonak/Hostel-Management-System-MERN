@@ -93,7 +93,7 @@ export default function StudentsOutScreen() {
                                         <Text style={[styles.studentMeta, { color: colors.textSecondary }]}>
                                             {user?.rollNo || ''} • Room {user?.room || 'N/A'} • {user?.hostel || ''}
                                         </Text>
-                                        <Text style={[styles.phoneText, { color: isDark ? softRed.dark.icon : softRed.light.icon }]}>📞 {user?.phone || 'N/A'}</Text>
+                                        <Text style={[styles.phoneText, { color: isDark ? softRed.dark.icon : softRed.light.icon }]}>{user?.phone || 'N/A'}</Text>
                                     </View>
                                 </View>
 
@@ -177,7 +177,7 @@ const styles = StyleSheet.create({
     cardInfo: { flex: 1 },
     studentName: { fontSize: 16, fontWeight: '600' },
     studentMeta: { fontSize: 13, marginTop: 2 },
-    phoneText: { fontSize: 12, marginTop: 4 },
+    phoneText: { fontSize: 13, marginTop: 4 },
     detailsRow: { flexDirection: 'row', gap: 12, marginBottom: 12 },
     detailBox: {
         flex: 1,
@@ -185,9 +185,9 @@ const styles = StyleSheet.create({
         padding: 12,
         alignItems: 'center',
     },
-    detailLabel: { fontSize: 11, marginTop: 4 },
+    detailLabel: { fontSize: 13, marginTop: 4 },
     detailValue: { fontSize: 16, fontWeight: '700', marginTop: 2 },
-    detailDate: { fontSize: 11 },
+    detailDate: { fontSize: 13 },
     reasonRow: { flexDirection: 'row', alignItems: 'center', gap: 6, paddingTop: 12, borderTopWidth: 1 },
     reasonText: { flex: 1, fontSize: 13 },
     emptyContainer: { alignItems: 'center', paddingVertical: 60 },

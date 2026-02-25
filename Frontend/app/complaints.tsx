@@ -169,7 +169,7 @@ export default function ComplaintsPage() {
                                                 />
                                             </View>
                                             <Badge variant={getStatusVariant(complaint.status) as any}>
-                                                <Text style={{ color: 'white', fontSize: 11 }}>{complaint.status}</Text>
+                                                <Text style={{ color: 'white', fontSize: 13 }}>{complaint.status}</Text>
                                             </Badge>
                                         </View>
 
@@ -328,7 +328,7 @@ const styles = StyleSheet.create({
         borderRadius: 12,
     },
     statNum: { fontSize: 24, fontWeight: '700' },
-    statLabel: { fontSize: 12, marginTop: 4 },
+    statLabel: { fontSize: 13, marginTop: 4 },
     list: { gap: 16 },
     card: {
         padding: 16,
@@ -339,7 +339,7 @@ const styles = StyleSheet.create({
     categoryIcon: { width: 36, height: 36, borderRadius: 18, alignItems: 'center', justifyContent: 'center' },
     userRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 8 },
     userName: { fontSize: 14, fontWeight: '600' },
-    userRoom: { fontSize: 12 },
+    userRoom: { fontSize: 13 },
     complaintTitle: { fontSize: 16, fontWeight: '600', marginBottom: 4 },
     complaintDesc: { fontSize: 14, lineHeight: 20 },
     complaintDate: { fontSize: 12, marginTop: 12 },

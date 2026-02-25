@@ -24,7 +24,7 @@ export default function ParentPendingPasses() {
 
     React.useEffect(() => {
         if (approveMutation.isSuccess) {
-            Alert.alert('✅ Approved', 'Gate pass approved. Now waiting for warden approval.');
+            Alert.alert('Approved', 'Gate pass approved. Now waiting for warden approval.');
         }
     }, [approveMutation.isSuccess]);
 
@@ -39,7 +39,7 @@ export default function ParentPendingPasses() {
             setRejectModalVisible(false);
             setRejectReason('');
             setSelectedPassId(null);
-            Alert.alert('❌ Rejected', 'Gate pass has been rejected.');
+            Alert.alert('Rejected', 'Gate pass has been rejected.');
         }
     }, [rejectMutation.isSuccess]);
 
@@ -94,7 +94,7 @@ export default function ParentPendingPasses() {
 
     return (
         <View style={[styles.container, { backgroundColor: colors.background }]}>
-            <PageHeader title="🎫 Pending Approvals" showBack />
+            <PageHeader title="Pending Approvals" showBack />
 
             <ScrollView
                 style={styles.scrollView}
@@ -278,13 +278,13 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     studentName: { fontSize: 16, fontWeight: '600' },
-    studentDetails: { fontSize: 13, marginTop: 2 },
+    studentDetails: { fontSize: 14, marginTop: 2 },
     pendingBadge: {
         paddingHorizontal: 12,
         paddingVertical: 6,
         borderRadius: 20,
     },
-    pendingText: { fontSize: 12, fontWeight: '600' },
+    pendingText: { fontSize: 13, fontWeight: '600' },
     passDetails: { gap: 8, marginBottom: 16 },
     detailRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
     detailText: { fontSize: 14, flex: 1 },

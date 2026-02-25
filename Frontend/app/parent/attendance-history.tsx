@@ -47,7 +47,7 @@ export default function ParentAttendanceHistory() {
 
     return (
         <View style={[styles.container, { backgroundColor: colors.background }]}>
-            <PageHeader title="📊 Attendance History" showBack />
+            <PageHeader title="Attendance History" showBack />
 
             <ScrollView
                 style={styles.scrollView}
@@ -197,7 +197,7 @@ const styles = StyleSheet.create({
     },
     todayIcon: {},
     todayInfo: {},
-    todayLabel: { fontSize: 12 },
+    todayLabel: { fontSize: 13 },
     todayStatus: { fontSize: 18, fontWeight: '700', marginTop: 2 },
     todayTime: { fontSize: 13, marginTop: 2 },
     historyTitle: { fontSize: 16, fontWeight: '600', marginBottom: 12 },

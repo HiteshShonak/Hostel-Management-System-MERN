@@ -1,6 +1,6 @@
-# Smart Hostel - Mobile App
+# HMS — Mobile App | IIIT Sonepat
 
-A comprehensive **mobile-first** hostel management system built with React Native and Expo for iOS and Android, featuring role-based access for students, parents, guards, wardens, and administrators.
+A comprehensive **mobile-first** hostel management system built for **IIIT Sonepat** using React Native and Expo for iOS and Android, featuring role-based access for students, parents, guards, wardens, and administrators.
 
 ## 🚀 Tech Stack
 
@@ -407,7 +407,7 @@ This is a private hostel management system. For development:
 
 ## 👨‍💻 Developed By
 
-Hostel Management System Team
+Hostel Management System — IIIT Sonepat
 
 ---
 

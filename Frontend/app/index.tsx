@@ -42,28 +42,28 @@ function WardenDashboard() {
             {/* quick stats - 2x2 grid */}
             <View style={styles.statsGrid}>
                 <View style={[styles.statCard, { backgroundColor: isDark ? '#052e16' : '#f0fdf4' }]}>
-                    <View style={styles.statIcon}>
+                    <View style={[styles.statIcon, { backgroundColor: isDark ? '#052e16' : 'white' }]}>
                         <Ionicons name="home" size={22} color="#16a34a" />
                     </View>
                     <Text style={[styles.statNumber, { color: colors.text }]}>{stats?.studentsInside || 0}</Text>
                     <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Inside</Text>
                 </View>
                 <View style={[styles.statCard, { backgroundColor: isDark ? '#431407' : '#fff7ed' }]}>
-                    <View style={styles.statIcon}>
+                    <View style={[styles.statIcon, { backgroundColor: isDark ? '#431407' : 'white' }]}>
                         <Ionicons name="walk" size={22} color="#f59e0b" />
                     </View>
                     <Text style={[styles.statNumber, { color: colors.text }]}>{stats?.studentsOut || 0}</Text>
                     <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Outside</Text>
                 </View>
                 <View style={[styles.statCard, { backgroundColor: isDark ? '#172554' : '#eff6ff' }]}>
-                    <View style={styles.statIcon}>
+                    <View style={[styles.statIcon, { backgroundColor: isDark ? '#172554' : 'white' }]}>
                         <Ionicons name="checkmark-circle" size={22} color="#1d4ed8" />
                     </View>
                     <Text style={[styles.statNumber, { color: colors.text }]}>{stats?.attendancePercentage || 0}%</Text>
                     <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Attendance</Text>
                 </View>
                 <View style={[styles.statCard, { backgroundColor: isDark ? '#450a0a' : '#fef2f2' }]}>
-                    <View style={styles.statIcon}>
+                    <View style={[styles.statIcon, { backgroundColor: isDark ? '#450a0a' : 'white' }]}>
                         <Ionicons name="warning" size={22} color="#dc2626" />
                     </View>
                     <Text style={[styles.statNumber, { color: colors.text }]}>{activeAlerts?.length || 0}</Text>
@@ -139,7 +139,7 @@ function WardenDashboard() {
             {/* Active Alerts Preview */}
             {activeAlerts && activeAlerts.length > 0 && (
                 <View style={styles.alertsSection}>
-                    <Text style={[styles.sectionTitle, { color: colors.text }]}>🚨 Active SOS Alerts</Text>
+                    <Text style={[styles.sectionTitle, { color: colors.text }]}>Active SOS Alerts</Text>
                     {activeAlerts.slice(0, 3).map((alert) => {
                         const alertUser = typeof alert.user === 'object' && alert.user ? alert.user : null;
                         return (
@@ -147,7 +147,7 @@ function WardenDashboard() {
                                 <Ionicons name="warning" size={20} color="#dc2626" />
                                 <View style={styles.alertInfo}>
                                     <Text style={styles.alertType}>{alert.type} Emergency</Text>
-                                    <Text style={styles.alertUser}>
+                                    <Text style={[styles.alertUser, { color: colors.textSecondary }]}>
                                         {alertUser ? `${alertUser.name || 'Unknown'} - Room ${alertUser.room || 'N/A'}` : 'Unknown User'}
                                     </Text>
                                 </View>
@@ -273,7 +273,7 @@ function ParentDashboard() {
                 </View>
             </View>
 
-            <Text style={[styles.parentSectionTitle, { color: isDark ? '#fbbf24' : '#78350f' }]}>👨‍👩‍👧 My Children</Text>
+            <Text style={[styles.parentSectionTitle, { color: isDark ? '#fbbf24' : '#78350f' }]}>My Children</Text>
             <Pressable style={[styles.parentActionCard, { backgroundColor: colors.card }]} onPress={() => router.push('/parent/children')}>
                 <View style={[styles.parentActionIcon, { backgroundColor: isDark ? '#451a03' : '#fef3c7' }]}>
                     <Ionicons name="people-circle" size={28} color="#b45309" />
@@ -285,7 +285,7 @@ function ParentDashboard() {
                 <Ionicons name="chevron-forward" size={20} color="#b45309" />
             </Pressable>
 
-            <Text style={[styles.parentSectionTitle, { color: isDark ? '#fbbf24' : '#78350f' }]}>🎫 Gate Pass Approvals</Text>
+            <Text style={[styles.parentSectionTitle, { color: isDark ? '#fbbf24' : '#78350f' }]}>Gate Pass Approvals</Text>
             <View style={styles.parentGrid}>
                 <Pressable style={[styles.parentGridCard, { backgroundColor: colors.card }]} onPress={() => router.push('/parent/pending-passes')}>
                     <View style={[styles.parentGridIcon, { backgroundColor: isDark ? '#451a03' : '#fef3c7' }]}>
@@ -303,7 +303,7 @@ function ParentDashboard() {
                 </Pressable>
             </View>
 
-            <Text style={[styles.parentSectionTitle, { color: isDark ? '#fbbf24' : '#78350f' }]}>📋 Attendance Tracking</Text>
+            <Text style={[styles.parentSectionTitle, { color: isDark ? '#fbbf24' : '#78350f' }]}>Attendance Tracking</Text>
             <View style={styles.parentGrid}>
                 <Pressable style={[styles.parentGridCard, { backgroundColor: colors.card }]} onPress={() => router.push('/parent/today-attendance')}>
                     <View style={[styles.parentGridIcon, { backgroundColor: isDark ? '#172554' : '#eff6ff' }]}>
@@ -362,14 +362,14 @@ function AdminDashboard() {
             {/* Quick Stats */}
             <View style={styles.statsRow}>
                 <View style={[styles.statCard, { backgroundColor: isDark ? '#450a0a' : '#fef2f2' }]}>
-                    <View style={styles.statIcon}>
+                    <View style={[styles.statIcon, { backgroundColor: isDark ? '#450a0a' : 'white' }]}>
                         <Ionicons name="warning" size={24} color="#dc2626" />
                     </View>
                     <Text style={[styles.statNumber, { color: colors.text }]}>{activeAlerts?.length || 0}</Text>
                     <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Active Alerts</Text>
                 </View>
                 <View style={[styles.statCard, { backgroundColor: isDark ? '#451a03' : '#fef3c7' }]}>
-                    <View style={styles.statIcon}>
+                    <View style={[styles.statIcon, { backgroundColor: isDark ? '#431407' : 'white' }]}>
                         <Ionicons name="time" size={24} color="#f59e0b" />
                     </View>
                     <Text style={[styles.statNumber, { color: colors.text }]}>{pendingPasses?.length || 0}</Text>
@@ -399,7 +399,7 @@ function AdminDashboard() {
                 </Pressable>
             </View>
 
-            <Text style={[styles.adminSectionTitle, { color: isDark ? '#a78bfa' : '#4c1d95' }]}>🎫 Gate Pass Management</Text>
+            <Text style={[styles.adminSectionTitle, { color: isDark ? '#a78bfa' : '#4c1d95' }]}>Gate Pass Management</Text>
             <View style={styles.adminGrid}>
                 <Pressable style={[styles.adminCard, { backgroundColor: colors.card }]} onPress={() => router.push('/qr-scanner')}>
                     <View style={[styles.adminCardIcon, { backgroundColor: isDark ? '#052e16' : '#dcfce7' }]}>
@@ -455,7 +455,7 @@ function AdminDashboard() {
                 </Pressable>
             </View>
 
-            <Text style={[styles.adminSectionTitle, { color: isDark ? '#a78bfa' : '#4c1d95' }]}>🍽️ Mess & Services</Text>
+            <Text style={[styles.adminSectionTitle, { color: isDark ? '#a78bfa' : '#4c1d95' }]}>Mess Management</Text>
             <View style={styles.adminGrid}>
                 <Pressable style={[styles.adminCard, { backgroundColor: colors.card }]} onPress={() => router.push('/mess-menu')}>
                     <View style={[styles.adminCardIcon, { backgroundColor: isDark ? '#052e16' : '#f0fdf4' }]}>
@@ -463,21 +463,9 @@ function AdminDashboard() {
                     </View>
                     <Text style={[styles.adminCardLabel, { color: colors.text }]}>Mess Menu</Text>
                 </Pressable>
-                <Pressable style={[styles.adminCard, { backgroundColor: colors.card }]} onPress={() => router.push('/laundry')}>
-                    <View style={[styles.adminCardIcon, { backgroundColor: isDark ? '#082f49' : '#e0f2fe' }]}>
-                        <Ionicons name="shirt" size={24} color="#0284c7" />
-                    </View>
-                    <Text style={[styles.adminCardLabel, { color: colors.text }]}>Laundry</Text>
-                </Pressable>
-                <Pressable style={[styles.adminCard, { backgroundColor: colors.card }]} onPress={() => router.push('/payments')}>
-                    <View style={[styles.adminCardIcon, { backgroundColor: isDark ? '#581c87' : '#fae8ff' }]}>
-                        <Ionicons name="card" size={24} color="#a855f7" />
-                    </View>
-                    <Text style={[styles.adminCardLabel, { color: colors.text }]}>Payments</Text>
-                </Pressable>
             </View>
 
-            <Text style={[styles.adminSectionTitle, { color: isDark ? '#a78bfa' : '#4c1d95' }]}>⚙️ System Settings</Text>
+            <Text style={[styles.adminSectionTitle, { color: isDark ? '#a78bfa' : '#4c1d95' }]}>System Settings</Text>
             <View style={styles.adminGrid}>
                 <Pressable style={[styles.adminCard, { backgroundColor: colors.card }]} onPress={() => router.push('/admin/stats')}>
                     <View style={[styles.adminCardIcon, { backgroundColor: isDark ? '#1e1b4b' : '#e0e7ff' }]}>
@@ -502,7 +490,7 @@ function AdminDashboard() {
             {/* Active Alerts Preview */}
             {activeAlerts && activeAlerts.length > 0 && (
                 <View style={styles.alertsSection}>
-                    <Text style={[styles.sectionTitle, { color: colors.text }]}>🚨 Active SOS Alerts</Text>
+                    <Text style={[styles.sectionTitle, { color: colors.text }]}>Active SOS Alerts</Text>
                     {activeAlerts.slice(0, 3).map((alert) => {
                         const alertUser = typeof alert.user === 'object' && alert.user ? alert.user : null;
                         return (
@@ -584,9 +572,9 @@ export default function Dashboard() {
 }
 
 const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: '#f5f5f5' },
-    loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#ffffff' },
-    loadingText: { marginTop: 12, color: '#737373' },
+    container: { flex: 1 },
+    loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
+    loadingText: { marginTop: 12 },
     scrollView: { flex: 1 },
     scrollContent: { paddingBottom: 100 },
     wardenContent: { padding: 16 },
@@ -600,84 +588,76 @@ const styles = StyleSheet.create({
         borderRadius: 14,
         alignItems: 'center',
     },
-    alertCard: { backgroundColor: '#fef2f2' },
-    pendingCard: { backgroundColor: '#fef3c7' },
-    studentsInCard: { backgroundColor: '#f0fdf4' },
-    studentsOutCard: { backgroundColor: '#fff7ed' },
-    attendanceCard: { backgroundColor: '#eff6ff' },
-    statIcon: { width: 44, height: 44, borderRadius: 22, backgroundColor: 'white', alignItems: 'center', justifyContent: 'center', marginBottom: 8 },
-    statNumber: { fontSize: 24, fontWeight: '700', color: '#0a0a0a' },
-    statLabel: { fontSize: 11, color: '#737373', marginTop: 2 },
-    sectionTitle: { fontSize: 18, fontWeight: '600', color: '#0a0a0a', marginBottom: 16 },
+    alertCard: {},
+    pendingCard: {},
+    studentsInCard: {},
+    studentsOutCard: {},
+    attendanceCard: {},
+    statIcon: { width: 44, height: 44, borderRadius: 22, alignItems: 'center', justifyContent: 'center', marginBottom: 8 },
+    statNumber: { fontSize: 24, fontWeight: '700' },
+    statLabel: { fontSize: 13, marginTop: 2 },
+    sectionTitle: { fontSize: 18, fontWeight: '600', marginBottom: 16 },
     quickGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 12, marginBottom: 24 },
     quickCard: {
         width: '47%',
-        backgroundColor: 'white',
         padding: 16,
         borderRadius: 16,
         alignItems: 'center',
     },
     quickIcon: { width: 48, height: 48, borderRadius: 24, alignItems: 'center', justifyContent: 'center', marginBottom: 12 },
-    quickLabel: { fontSize: 14, fontWeight: '500', color: '#0a0a0a', textAlign: 'center' },
+    quickLabel: { fontSize: 14, fontWeight: '500', textAlign: 'center' },
     alertsSection: { marginBottom: 24 },
-    alertItem: { flexDirection: 'row', alignItems: 'center', padding: 12, backgroundColor: '#fef2f2', borderRadius: 12, marginBottom: 8 },
+    alertItem: { flexDirection: 'row', alignItems: 'center', padding: 12, borderRadius: 12, marginBottom: 8 },
     alertInfo: { flex: 1, marginLeft: 12 },
     alertType: { fontSize: 14, fontWeight: '600', color: '#dc2626' },
-    alertUser: { fontSize: 12, color: '#737373', marginTop: 2 },
-    alertTime: { fontSize: 12, color: '#a3a3a3' },
+    alertUser: { fontSize: 13, marginTop: 2 },
+    alertTime: { fontSize: 13, color: '#a3a3a3' },
     resolveBtn: { padding: 8 },
     // Guard Dashboard Styles
     scanQRButton: {
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: '#dcfce7',
         padding: 20,
         borderRadius: 20,
         borderWidth: 2,
-        borderColor: '#bbf7d0',
         marginBottom: 24,
     },
     scanQRIcon: {
         width: 80,
         height: 80,
         borderRadius: 40,
-        backgroundColor: 'white',
         alignItems: 'center',
         justifyContent: 'center',
         marginRight: 16,
     },
     scanQRTextContainer: { flex: 1 },
-    scanQRTitle: { fontSize: 20, fontWeight: '700', color: '#166534' },
-    scanQRSubtitle: { fontSize: 14, color: '#15803d', marginTop: 4 },
+    scanQRTitle: { fontSize: 20, fontWeight: '700' },
+    scanQRSubtitle: { fontSize: 14, marginTop: 4 },
     // Parent Dashboard Styles - Gold Theme
     parentContent: { padding: 16 },
     parentWelcome: {
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: '#fef3c7',
         padding: 20,
         borderRadius: 20,
         marginBottom: 24,
         borderWidth: 2,
-        borderColor: '#fcd34d',
     },
     parentWelcomeIcon: {
         width: 64,
         height: 64,
         borderRadius: 32,
-        backgroundColor: 'white',
         alignItems: 'center',
         justifyContent: 'center',
         marginRight: 16,
     },
     parentWelcomeText: { flex: 1 },
-    parentWelcomeTitle: { fontSize: 22, fontWeight: '700', color: '#92400e' },
-    parentWelcomeSubtitle: { fontSize: 14, color: '#b45309', marginTop: 4 },
-    parentSectionTitle: { fontSize: 16, fontWeight: '600', color: '#78350f', marginBottom: 12, marginTop: 8 },
+    parentWelcomeTitle: { fontSize: 22, fontWeight: '700' },
+    parentWelcomeSubtitle: { fontSize: 14, marginTop: 4 },
+    parentSectionTitle: { fontSize: 16, fontWeight: '600', marginBottom: 12, marginTop: 8 },
     parentActionCard: {
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: 'white',
         padding: 16,
         borderRadius: 16,
         marginBottom: 12,
@@ -691,20 +671,14 @@ const styles = StyleSheet.create({
         marginRight: 16,
     },
     parentActionInfo: { flex: 1 },
-    parentActionTitle: { fontSize: 16, fontWeight: '600', color: '#0a0a0a' },
-    parentActionSubtitle: { fontSize: 13, color: '#737373', marginTop: 2 },
+    parentActionTitle: { fontSize: 16, fontWeight: '600' },
+    parentActionSubtitle: { fontSize: 13, marginTop: 2 },
     parentGrid: { flexDirection: 'row', gap: 12, marginBottom: 16 },
     parentGridCard: {
         flex: 1,
-        backgroundColor: 'white',
         padding: 20,
         borderRadius: 16,
         alignItems: 'center',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.05,
-        shadowRadius: 4,
-        elevation: 2,
     },
     parentGridIcon: {
         width: 52,
@@ -714,37 +688,33 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         marginBottom: 12,
     },
-    parentGridLabel: { fontSize: 15, fontWeight: '600', color: '#0a0a0a' },
-    parentGridSubtext: { fontSize: 12, color: '#737373', marginTop: 2 },
+    parentGridLabel: { fontSize: 15, fontWeight: '600' },
+    parentGridSubtext: { fontSize: 13, marginTop: 2 },
     // Admin Dashboard Styles - Purple Accent
     adminContent: { padding: 16 },
     adminHeader: {
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: '#f3e8ff',
         padding: 20,
         borderRadius: 20,
         marginBottom: 24,
         borderWidth: 2,
-        borderColor: '#e9d5ff',
     },
     adminHeaderIcon: {
         width: 64,
         height: 64,
         borderRadius: 32,
-        backgroundColor: 'white',
         alignItems: 'center',
         justifyContent: 'center',
         marginRight: 16,
     },
     adminHeaderText: { flex: 1 },
-    adminHeaderTitle: { fontSize: 22, fontWeight: '700', color: '#5b21b6' },
-    adminHeaderSubtitle: { fontSize: 14, color: '#7c3aed', marginTop: 4 },
-    adminSectionTitle: { fontSize: 16, fontWeight: '600', color: '#4c1d95', marginBottom: 12, marginTop: 8 },
+    adminHeaderTitle: { fontSize: 22, fontWeight: '700' },
+    adminHeaderSubtitle: { fontSize: 14, marginTop: 4 },
+    adminSectionTitle: { fontSize: 16, fontWeight: '600', marginBottom: 12, marginTop: 8 },
     adminGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 12, marginBottom: 16 },
     adminCard: {
         width: '30%',
-        backgroundColor: 'white',
         padding: 16,
         borderRadius: 16,
         alignItems: 'center',
@@ -757,5 +727,5 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         marginBottom: 8,
     },
-    adminCardLabel: { fontSize: 12, fontWeight: '500', color: '#0a0a0a', textAlign: 'center' },
+    adminCardLabel: { fontSize: 13, fontWeight: '500', textAlign: 'center' },
 });
