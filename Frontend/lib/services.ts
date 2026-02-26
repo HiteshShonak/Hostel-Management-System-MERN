@@ -81,8 +81,8 @@ export const gatePassService = {
         };
     },
 
-    getCurrent: async (): Promise<GatePass | null> => {
-        const response = await api.get<GatePass | null>('/gatepass/current');
+    getCurrent: async (): Promise<{ pass: GatePass | null; isCurrentlyOut: boolean }> => {
+        const response = await api.get<{ pass: GatePass | null; isCurrentlyOut: boolean }>('/gatepass/current');
         return response.data;
     },
 

@@ -113,18 +113,10 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     marginBottom: 4,
   },
-  iconContainerActive: {
-    backgroundColor: 'rgba(29, 78, 216, 0.12)',
-  },
   navLabel: {
     fontSize: 12,
     fontWeight: '500',
-    color: '#6b7280',
     textAlign: 'center',
-  },
-  navLabelActive: {
-    color: PRIMARY_COLOR,
-    fontWeight: '600',
   },
 });
 

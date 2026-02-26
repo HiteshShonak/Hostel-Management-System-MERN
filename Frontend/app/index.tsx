@@ -5,11 +5,12 @@ import { router } from 'expo-router';
 import { DashboardHeader } from '../components/dashboard/header';
 import { QuickActions } from '../components/dashboard/quick-actions';
 import { AttendanceCard } from '../components/dashboard/attendance-card';
+import { ActivePassCard } from '../components/dashboard/active-pass-card';
 import { RecentNotices } from '../components/dashboard/recent-notices';
 import { BottomNav } from '@/components/ui/BottomNav';
 import { useAuth } from '@/lib/auth-context';
 import { useTheme } from '@/lib/theme-context';
-import { usePendingGatePasses, useActiveAlerts, useResolveAlert, useRefreshDashboard, useWardenDashboardStats, useSystemConfig } from '@/lib/hooks';
+import { usePendingGatePasses, useActiveAlerts, useRefreshDashboard, useWardenDashboardStats, useSystemConfig } from '@/lib/hooks';
 import { getCurrentISTHour, isWithinTimeWindow } from '@/lib/utils/date';
 
 function StudentDashboard() {
@@ -22,6 +23,7 @@ function StudentDashboard() {
 
     return (
         <>
+            <ActivePassCard />
             <QuickActions />
             {isAttendanceTime && <AttendanceCard />}
             <RecentNotices />
@@ -35,7 +37,7 @@ function WardenDashboard() {
     const { data: pendingPasses } = usePendingGatePasses();
     const { data: activeAlerts } = useActiveAlerts();
     const { data: stats } = useWardenDashboardStats();
-    const resolveMutation = useResolveAlert();
+
 
     return (
         <View style={styles.wardenContent}>
@@ -135,36 +137,6 @@ function WardenDashboard() {
                     <Text style={[styles.quickLabel, { color: colors.text }]}>Complaints</Text>
                 </Pressable>
             </View>
-
-            {/* Active Alerts Preview */}
-            {activeAlerts && activeAlerts.length > 0 && (
-                <View style={styles.alertsSection}>
-                    <Text style={[styles.sectionTitle, { color: colors.text }]}>Active SOS Alerts</Text>
-                    {activeAlerts.slice(0, 3).map((alert) => {
-                        const alertUser = typeof alert.user === 'object' && alert.user ? alert.user : null;
-                        return (
-                            <View key={alert._id} style={[styles.alertItem, { backgroundColor: isDark ? '#450a0a' : '#fef2f2' }]}>
-                                <Ionicons name="warning" size={20} color="#dc2626" />
-                                <View style={styles.alertInfo}>
-                                    <Text style={styles.alertType}>{alert.type} Emergency</Text>
-                                    <Text style={[styles.alertUser, { color: colors.textSecondary }]}>
-                                        {alertUser ? `${alertUser.name || 'Unknown'} - Room ${alertUser.room || 'N/A'}` : 'Unknown User'}
-                                    </Text>
-                                </View>
-                                <Pressable
-                                    style={styles.resolveBtn}
-                                    onPress={() => resolveMutation.mutate(alert._id)}
-                                    disabled={resolveMutation.isPending}
-                                >
-                                    <Ionicons name="checkmark-circle" size={24} color="#16a34a" />
-                                </Pressable>
-                            </View>
-                        );
-                    })}
-                </View>
-            )}
-
-            <RecentNotices />
         </View>
     );
 }
@@ -188,14 +160,7 @@ function MessStaffDashboard() {
                     </View>
                     <Text style={[styles.quickLabel, { color: colors.text }]}>View Ratings</Text>
                 </Pressable>
-                <Pressable style={[styles.quickCard, { backgroundColor: colors.card }]} onPress={() => router.push('/notices')}>
-                    <View style={[styles.quickIcon, { backgroundColor: isDark ? '#172554' : '#eff6ff' }]}>
-                        <Ionicons name="megaphone" size={24} color="#1d4ed8" />
-                    </View>
-                    <Text style={[styles.quickLabel, { color: colors.text }]}>Issue Notice</Text>
-                </Pressable>
             </View>
-            <RecentNotices />
         </View>
     );
 }
@@ -321,7 +286,7 @@ function ParentDashboard() {
                 </Pressable>
             </View>
 
-            <Text style={[styles.parentSectionTitle, { color: isDark ? '#fbbf24' : '#78350f' }]}>📣 General</Text>
+            <Text style={[styles.parentSectionTitle, { color: isDark ? '#fbbf24' : '#78350f' }]}>General</Text>
             <Pressable style={[styles.parentActionCard, { backgroundColor: colors.card }]} onPress={() => router.push('/notices')}>
                 <View style={[styles.parentActionIcon, { backgroundColor: isDark ? '#172554' : '#eff6ff' }]}>
                     <Ionicons name="megaphone" size={28} color="#1d4ed8" />
@@ -341,7 +306,7 @@ function AdminDashboard() {
     const { colors, isDark } = useTheme();
     const { data: pendingPasses } = usePendingGatePasses();
     const { data: activeAlerts } = useActiveAlerts();
-    const resolveMutation = useResolveAlert();
+
 
     return (
         <View style={styles.adminContent}>
@@ -377,7 +342,7 @@ function AdminDashboard() {
                 </View>
             </View>
 
-            <Text style={[styles.adminSectionTitle, { color: isDark ? '#a78bfa' : '#4c1d95' }]}>👔 Administration</Text>
+            <Text style={[styles.adminSectionTitle, { color: isDark ? '#a78bfa' : '#4c1d95' }]}>Administration</Text>
             <View style={styles.adminGrid}>
                 <Pressable style={[styles.adminCard, { backgroundColor: colors.card }]} onPress={() => router.push('/admin/users')}>
                     <View style={[styles.adminCardIcon, { backgroundColor: isDark ? '#3b0764' : '#f3e8ff' }]}>
@@ -433,7 +398,7 @@ function AdminDashboard() {
                 </Pressable>
             </View>
 
-            <Text style={[styles.adminSectionTitle, { color: isDark ? '#a78bfa' : '#4c1d95' }]}>📢 Communication</Text>
+            <Text style={[styles.adminSectionTitle, { color: isDark ? '#a78bfa' : '#4c1d95' }]}>Communication</Text>
             <View style={styles.adminGrid}>
                 <Pressable style={[styles.adminCard, { backgroundColor: colors.card }]} onPress={() => router.push('/notices')}>
                     <View style={[styles.adminCardIcon, { backgroundColor: isDark ? '#451a03' : '#fef3c7' }]}>
@@ -486,34 +451,6 @@ function AdminDashboard() {
                     <Text style={[styles.adminCardLabel, { color: colors.text }]}>Students</Text>
                 </Pressable>
             </View>
-
-            {/* Active Alerts Preview */}
-            {activeAlerts && activeAlerts.length > 0 && (
-                <View style={styles.alertsSection}>
-                    <Text style={[styles.sectionTitle, { color: colors.text }]}>Active SOS Alerts</Text>
-                    {activeAlerts.slice(0, 3).map((alert) => {
-                        const alertUser = typeof alert.user === 'object' && alert.user ? alert.user : null;
-                        return (
-                            <View key={alert._id} style={[styles.alertItem, { backgroundColor: isDark ? '#450a0a' : '#fef2f2' }]}>
-                                <Ionicons name="warning" size={20} color="#dc2626" />
-                                <View style={styles.alertInfo}>
-                                    <Text style={styles.alertType}>{alert.type} Emergency</Text>
-                                    <Text style={styles.alertUser}>
-                                        {alertUser ? `${alertUser.name || 'Unknown'} - Room ${alertUser.room || 'N/A'}` : 'Unknown User'}
-                                    </Text>
-                                </View>
-                                <Pressable
-                                    style={styles.resolveBtn}
-                                    onPress={() => resolveMutation.mutate(alert._id)}
-                                    disabled={resolveMutation.isPending}
-                                >
-                                    <Ionicons name="checkmark-circle" size={24} color="#16a34a" />
-                                </Pressable>
-                            </View>
-                        );
-                    })}
-                </View>
-            )}
         </View>
     );
 }
@@ -588,11 +525,6 @@ const styles = StyleSheet.create({
         borderRadius: 14,
         alignItems: 'center',
     },
-    alertCard: {},
-    pendingCard: {},
-    studentsInCard: {},
-    studentsOutCard: {},
-    attendanceCard: {},
     statIcon: { width: 44, height: 44, borderRadius: 22, alignItems: 'center', justifyContent: 'center', marginBottom: 8 },
     statNumber: { fontSize: 24, fontWeight: '700' },
     statLabel: { fontSize: 13, marginTop: 2 },
@@ -606,13 +538,6 @@ const styles = StyleSheet.create({
     },
     quickIcon: { width: 48, height: 48, borderRadius: 24, alignItems: 'center', justifyContent: 'center', marginBottom: 12 },
     quickLabel: { fontSize: 14, fontWeight: '500', textAlign: 'center' },
-    alertsSection: { marginBottom: 24 },
-    alertItem: { flexDirection: 'row', alignItems: 'center', padding: 12, borderRadius: 12, marginBottom: 8 },
-    alertInfo: { flex: 1, marginLeft: 12 },
-    alertType: { fontSize: 14, fontWeight: '600', color: '#dc2626' },
-    alertUser: { fontSize: 13, marginTop: 2 },
-    alertTime: { fontSize: 13, color: '#a3a3a3' },
-    resolveBtn: { padding: 8 },
     // Guard Dashboard Styles
     scanQRButton: {
         flexDirection: 'row',

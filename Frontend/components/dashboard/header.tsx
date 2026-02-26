@@ -18,7 +18,6 @@ export function DashboardHeader() {
     const headerBg = isDark ? '#1e293b' : '#1d4ed8';
     const textColor = isDark ? '#e2e8f0' : 'white';
     const textSecondary = isDark ? 'rgba(226, 232, 240, 0.7)' : 'rgba(255, 255, 255, 0.8)';
-    const badgeBg = isDark ? 'rgba(226, 232, 240, 0.1)' : 'rgba(255, 255, 255, 0.1)';
     const avatarBorder = isDark ? 'rgba(226, 232, 240, 0.3)' : 'rgba(255, 255, 255, 0.3)';
     const fallbackBg = isDark ? '#e2e8f0' : 'white';
     const fallbackText = isDark ? '#1e293b' : '#1d4ed8';
@@ -33,7 +32,7 @@ export function DashboardHeader() {
                 return 0;
             }
         },
-        refetchInterval: 30000, // Refresh every 30 seconds
+        refetchInterval: 30000,
         retry: false,
     });
 
@@ -44,17 +43,6 @@ export function DashboardHeader() {
         return 'Good Evening';
     };
 
-    const getRoleLabel = () => {
-        switch (user?.role) {
-            case 'parent': return 'Parent';
-            case 'warden': return 'Warden';
-            case 'admin': return 'Admin';
-            case 'guard': return 'Guard';
-            case 'mess_staff': return 'Mess Staff';
-            default: return null; // Students show room instead
-        }
-    };
-
     if (isLoading) {
         return (
             <View style={[styles.container, { backgroundColor: headerBg }]}>
@@ -62,8 +50,6 @@ export function DashboardHeader() {
             </View>
         );
     }
-
-    const roleLabel = getRoleLabel();
 
     return (
         <View style={[styles.container, { backgroundColor: headerBg }]}>
@@ -77,34 +63,26 @@ export function DashboardHeader() {
                     </AvatarFallback>
                 </Avatar>
                 <View>
-                    <Text style={[styles.greeting, { color: textSecondary }]}>{getGreeting()},</Text>
-                    <Text style={[styles.name, { color: textColor }]}>{user?.name?.split(' ')[0] || 'Guest'}</Text>
-                </View>
-            </View>
-            <View style={styles.rightSection}>
-                {/* Show role badge for non-students, room badge for students */}
-                <View style={[styles.roomBadge, { backgroundColor: badgeBg }]}>
-                    <Ionicons name={roleLabel ? 'person' : 'location'} size={14} color={textColor} />
-                    <Text style={[styles.roomText, { color: textColor }]}>
-                        {roleLabel || `Room ${user?.room || '--'}`}
+                    <Text style={[styles.greetingName, { color: textColor }]} numberOfLines={1}>
+                        {getGreeting()}, {user?.name?.split(' ')[0] || 'Guest'}
                     </Text>
                 </View>
-
-                {/* Notification Bell - Works for ALL users */}
-                <Pressable
-                    style={styles.notificationBtn}
-                    onPress={() => router.push('/notifications')}
-                >
-                    <Ionicons name="notifications" size={20} color={textColor} />
-                    {typeof unreadCount === 'number' && unreadCount > 0 && (
-                        <View style={styles.notificationBadge}>
-                            <Text style={styles.badgeText}>
-                                {unreadCount > 9 ? '9+' : String(unreadCount)}
-                            </Text>
-                        </View>
-                    )}
-                </Pressable>
             </View>
+
+            {/* Notification Bell */}
+            <Pressable
+                style={styles.notificationBtn}
+                onPress={() => router.push('/notifications')}
+            >
+                <Ionicons name="notifications-outline" size={24} color={textColor} />
+                {typeof unreadCount === 'number' && unreadCount > 0 && (
+                    <View style={styles.notificationBadge}>
+                        <Text style={styles.badgeText}>
+                            {unreadCount > 9 ? '9+' : String(unreadCount)}
+                        </Text>
+                    </View>
+                )}
+            </Pressable>
         </View>
     );
 }
@@ -121,44 +99,25 @@ const styles = StyleSheet.create({
     leftSection: {
         flexDirection: 'row',
         alignItems: 'center',
-        gap: 12,
+        gap: 10,
     },
     avatar: {
-        width: 48,
-        height: 48,
-        borderRadius: 24,
-        borderWidth: 2,
+        width: 32,
+        height: 32,
+        borderRadius: 16,
+        borderWidth: 1.5,
     },
     fallback: {},
     initials: {
         fontWeight: '600',
     },
-    greeting: {
-        fontSize: 14,
-    },
-    name: {
-        fontSize: 18,
+    greetingName: {
+        fontSize: 17,
         fontWeight: '600',
-    },
-    rightSection: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 12,
-    },
-    roomBadge: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 4,
-        paddingHorizontal: 12,
-        paddingVertical: 6,
-        borderRadius: 9999,
-    },
-    roomText: {
-        fontSize: 14,
     },
     notificationBtn: {
         position: 'relative',
-        padding: 8,
+        padding: 4,
         borderRadius: 9999,
     },
     notificationBadge: {
@@ -179,4 +138,3 @@ const styles = StyleSheet.create({
         fontWeight: '700',
     },
 });
-

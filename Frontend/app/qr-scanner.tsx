@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Pressable, Vibration, Animated } from 'react-native';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { View, Text, StyleSheet, Pressable, Vibration, Animated, ScrollView, ActivityIndicator } from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
@@ -23,11 +23,23 @@ export default function QRScannerPage() {
     const [permission, requestPermission] = useCameraPermissions();
     const [scanned, setScanned] = useState(false);
     const [scanResult, setScanResult] = useState<ScanResult | null>(null);
+    const [actionCompleted, setActionCompleted] = useState(false);
+    const [isValidating, setIsValidating] = useState(false);
     const validateMutation = useValidateGatePass();
     const markExitMutation = useMarkExit();
     const markEntryMutation = useMarkEntry();
 
-    const pulseAnim = new Animated.Value(1);
+    // animation values
+    const pulseAnim = useRef(new Animated.Value(1)).current;
+    const validatePulse = useRef(new Animated.Value(0.4)).current;
+    const resultOpacity = useRef(new Animated.Value(0)).current;
+    const statusSlide = useRef(new Animated.Value(30)).current;
+    const cardSlide = useRef(new Animated.Value(30)).current;
+    const cardOpacity = useRef(new Animated.Value(0)).current;
+    const actionsSlide = useRef(new Animated.Value(30)).current;
+    const actionsOpacity = useRef(new Animated.Value(0)).current;
+    const confirmOpacity = useRef(new Animated.Value(0)).current;
+    const confirmSlide = useRef(new Animated.Value(20)).current;
 
     useEffect(() => {
         // Pulse animation for scan frame
@@ -37,6 +49,78 @@ export default function QRScannerPage() {
                 Animated.timing(pulseAnim, { toValue: 1, duration: 1000, useNativeDriver: true }),
             ])
         ).start();
+    }, []);
+
+    // validating pulse loop
+    useEffect(() => {
+        if (isValidating) {
+            Animated.loop(
+                Animated.sequence([
+                    Animated.timing(validatePulse, { toValue: 1, duration: 800, useNativeDriver: true }),
+                    Animated.timing(validatePulse, { toValue: 0.4, duration: 800, useNativeDriver: true }),
+                ])
+            ).start();
+        }
+    }, [isValidating]);
+
+    // staggered result entry animation
+    useEffect(() => {
+        if (scanResult && !isValidating) {
+            // reset values
+            resultOpacity.setValue(0);
+            statusSlide.setValue(30);
+            cardOpacity.setValue(0);
+            cardSlide.setValue(30);
+            actionsOpacity.setValue(0);
+            actionsSlide.setValue(30);
+
+            // stagger: status header → student card → actions
+            Animated.stagger(120, [
+                Animated.parallel([
+                    Animated.timing(resultOpacity, { toValue: 1, duration: 300, useNativeDriver: true }),
+                    Animated.spring(statusSlide, { toValue: 0, tension: 60, friction: 8, useNativeDriver: true }),
+                ]),
+                Animated.parallel([
+                    Animated.timing(cardOpacity, { toValue: 1, duration: 300, useNativeDriver: true }),
+                    Animated.spring(cardSlide, { toValue: 0, tension: 60, friction: 8, useNativeDriver: true }),
+                ]),
+                Animated.parallel([
+                    Animated.timing(actionsOpacity, { toValue: 1, duration: 300, useNativeDriver: true }),
+                    Animated.spring(actionsSlide, { toValue: 0, tension: 60, friction: 8, useNativeDriver: true }),
+                ]),
+            ]).start();
+        }
+    }, [scanResult, isValidating]);
+
+    // action completion crossfade
+    useEffect(() => {
+        if (actionCompleted) {
+            confirmOpacity.setValue(0);
+            confirmSlide.setValue(20);
+            Animated.parallel([
+                Animated.timing(confirmOpacity, { toValue: 1, duration: 300, useNativeDriver: true }),
+                Animated.spring(confirmSlide, { toValue: 0, tension: 60, friction: 8, useNativeDriver: true }),
+            ]).start();
+        }
+    }, [actionCompleted]);
+
+    const resetScan = useCallback(() => {
+        // fade out then reset
+        Animated.timing(resultOpacity, { toValue: 0, duration: 200, useNativeDriver: true }).start(() => {
+            setScanned(false);
+            setScanResult(null);
+            setActionCompleted(false);
+            setIsValidating(false);
+            // reset all animation values for next scan
+            resultOpacity.setValue(0);
+            statusSlide.setValue(30);
+            cardOpacity.setValue(0);
+            cardSlide.setValue(30);
+            actionsOpacity.setValue(0);
+            actionsSlide.setValue(30);
+            confirmOpacity.setValue(0);
+            confirmSlide.setValue(20);
+        });
     }, []);
 
     // Check if user has permission to scan (guard/warden/admin)
@@ -87,10 +171,12 @@ export default function QRScannerPage() {
         if (scanned) return;
 
         setScanned(true);
+        setIsValidating(true);
         Vibration.vibrate(100);
 
         validateMutation.mutate(data, {
             onSuccess: (result) => {
+                setIsValidating(false);
                 if (result.valid) {
                     Vibration.vibrate([0, 100, 50, 100]);
                     setScanResult({
@@ -139,6 +225,7 @@ export default function QRScannerPage() {
                 }
             },
             onError: (error: any) => {
+                setIsValidating(false);
                 Vibration.vibrate([0, 500]);
                 setScanResult({
                     type: 'invalid',
@@ -148,10 +235,7 @@ export default function QRScannerPage() {
         });
     };
 
-    const resetScan = () => {
-        setScanned(false);
-        setScanResult(null);
-    };
+
 
     const getUserInfo = (passUser: string | User | undefined) => {
         if (typeof passUser === 'object' && passUser) {
@@ -167,6 +251,7 @@ export default function QRScannerPage() {
             onSuccess: () => {
                 Vibration.vibrate([0, 100]);
                 const now = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                setActionCompleted(true);
                 setScanResult({
                     ...scanResult,
                     message: `Exit recorded at ${now}`,
@@ -187,6 +272,7 @@ export default function QRScannerPage() {
                 const isLate = data?.isLate || false;
                 const lateNote = data?.lateNote || '';
 
+                setActionCompleted(true);
                 if (isLate) {
                     setScanResult({
                         type: 'late',
@@ -250,174 +336,211 @@ export default function QRScannerPage() {
                             <Text style={styles.scanHint}>Point camera at QR code on gate pass</Text>
                         </View>
                     </View>
+
+                    {/* Validating overlay */}
+                    {isValidating && (
+                        <View style={styles.validatingOverlay}>
+                            <Animated.View style={[styles.validatingContent, { opacity: validatePulse }]}>
+                                <ActivityIndicator size="large" color="white" />
+                                <Text style={styles.validatingText}>Verifying gate pass...</Text>
+                            </Animated.View>
+                        </View>
+                    )}
                 </View>
             ) : (
                 /* Result View */
-                <View style={[styles.resultContainer, { backgroundColor: colors.background }]}>
-                    {/* Compact Status Header */}
-                    <View style={[styles.statusHeader, { backgroundColor: colors.card }]}>
-                        <View style={[
-                            styles.statusIconCompact,
-                            scanResult.type === 'success' && styles.statusSuccess,
-                            scanResult.type === 'late' && styles.statusLate,
-                            scanResult.type === 'expired' && styles.statusExpired,
-                            scanResult.type === 'pending' && styles.statusPending,
-                            (scanResult.type === 'error' || scanResult.type === 'invalid') && styles.statusError,
-                        ]}>
-                            <Ionicons
-                                name={
-                                    scanResult.type === 'success' ? 'checkmark-circle' :
-                                        scanResult.type === 'late' ? 'time' :
-                                            scanResult.type === 'expired' ? 'warning' :
-                                                scanResult.type === 'pending' ? 'hourglass' : 'close-circle'
-                                }
-                                size={32}
-                                color="white"
-                            />
-                        </View>
-                        <View style={styles.statusTextContainer}>
-                            <Text style={[
-                                styles.statusTitleCompact,
-                                {
-                                    color: scanResult.type === 'success' ? '#16a34a' :
-                                        scanResult.type === 'late' ? '#ea580c' :
-                                            scanResult.type === 'expired' ? '#dc2626' :
-                                                scanResult.type === 'pending' ? '#d97706' : '#dc2626'
-                                }
+                <Animated.View style={[styles.resultContainer, { backgroundColor: colors.background, opacity: resultOpacity }]}>
+                    <ScrollView style={{ flex: 1 }} contentContainerStyle={styles.resultScrollContent} showsVerticalScrollIndicator={false}>
+                        {/* Compact Status Header */}
+                        <Animated.View style={[styles.statusHeader, { backgroundColor: colors.card, transform: [{ translateY: statusSlide }] }]}>
+                            <View style={[
+                                styles.statusIconCompact,
+                                scanResult.type === 'success' && styles.statusSuccess,
+                                scanResult.type === 'late' && styles.statusLate,
+                                scanResult.type === 'expired' && styles.statusExpired,
+                                scanResult.type === 'pending' && styles.statusPending,
+                                (scanResult.type === 'error' || scanResult.type === 'invalid') && styles.statusError,
                             ]}>
-                                {scanResult.type === 'success' ? 'VALID' :
-                                    scanResult.type === 'late' ? 'LATE RETURN' :
-                                        scanResult.type === 'expired' ? 'EXPIRED' :
-                                            scanResult.type === 'pending' ? 'NOT YET' : 'REJECTED'}
-                            </Text>
-                            <Text style={[styles.statusMessageCompact, { color: colors.textSecondary }]}>{scanResult.message}</Text>
-                        </View>
-                    </View>
-
-                    {/* Student Details Card */}
-                    {scanResult.pass && (scanResult.type === 'success' || scanResult.type === 'late' || scanResult.type === 'expired') && studentInfo && (
-                        <View style={[styles.studentCard, { backgroundColor: colors.card }]}>
-                            <View style={styles.studentHeader}>
-                                <Ionicons name="person-circle" size={24} color={colors.primary} />
-                                <Text style={[styles.studentName, { color: colors.text }]}>{studentInfo.name}</Text>
-                            </View>
-
-                            <View style={[styles.divider, { backgroundColor: colors.cardBorder }]} />
-
-                            <View style={styles.infoGrid}>
-                                <View style={styles.infoItem}>
-                                    <Ionicons name="school" size={18} color={colors.textSecondary} />
-                                    <View style={styles.infoTextContainer}>
-                                        <Text style={[styles.infoLabel, { color: colors.textSecondary }]}>Roll Number</Text>
-                                        <Text style={[styles.infoValue, { color: colors.text }]}>{studentInfo.rollNo}</Text>
-                                    </View>
-                                </View>
-
-                                <View style={styles.infoItem}>
-                                    <Ionicons name="home" size={18} color={colors.textSecondary} />
-                                    <View style={styles.infoTextContainer}>
-                                        <Text style={[styles.infoLabel, { color: colors.textSecondary }]}>Room</Text>
-                                        <Text style={[styles.infoValue, { color: colors.text }]}>{studentInfo.room}</Text>
-                                    </View>
-                                </View>
-                            </View>
-
-                            <View style={styles.infoGrid}>
-                                <View style={styles.infoItem}>
-                                    <Ionicons name="business" size={18} color={colors.textSecondary} />
-                                    <View style={styles.infoTextContainer}>
-                                        <Text style={[styles.infoLabel, { color: colors.textSecondary }]}>Hostel</Text>
-                                        <Text style={[styles.infoValue, { color: colors.text }]}>{studentInfo.hostel || 'N/A'}</Text>
-                                    </View>
-                                </View>
-
-                                <View style={styles.infoItem}>
-                                    <Ionicons name="call" size={18} color={colors.textSecondary} />
-                                    <View style={styles.infoTextContainer}>
-                                        <Text style={[styles.infoLabel, { color: colors.textSecondary }]}>Phone</Text>
-                                        <Text style={[styles.infoValue, { color: colors.text }]}>{studentInfo.phone || 'N/A'}</Text>
-                                    </View>
-                                </View>
-                            </View>
-
-                            <View style={[styles.divider, { backgroundColor: colors.cardBorder }]} />
-
-                            <View style={styles.reasonContainer}>
-                                <Ionicons name="document-text" size={18} color={colors.textSecondary} />
-                                <View style={styles.infoTextContainer}>
-                                    <Text style={[styles.infoLabel, { color: colors.textSecondary }]}>Reason</Text>
-                                    <Text style={[styles.reasonText, { color: colors.textSecondary }]}>{scanResult.pass.reason}</Text>
-                                </View>
-                            </View>
-
-                            <View style={[styles.validityContainer, { backgroundColor: isDark ? '#14532d' : '#f0fdf4' }]}>
-                                <Ionicons name="calendar" size={16} color={isDark ? '#4ade80' : colors.success} />
-                                <Text style={[styles.validityText, { color: isDark ? '#4ade80' : colors.success }]}>
-                                    Valid: {new Date(scanResult.pass.fromDate).toLocaleDateString()} - {new Date(scanResult.pass.toDate).toLocaleDateString()}
-                                </Text>
-                            </View>
-
-                            {isPassExpired && hasExited && (
-                                <View style={[styles.validityContainer, { backgroundColor: isDark ? '#450a0a' : '#fef2f2', marginTop: 8 }]}>
-                                    <Ionicons name="warning" size={16} color={isDark ? '#fca5a5' : '#dc2626'} />
-                                    <Text style={[styles.validityText, { color: isDark ? '#fca5a5' : '#dc2626' }]}>
-                                        Student is still outside — pass expired
-                                    </Text>
-                                </View>
-                            )}
-                        </View>
-                    )}
-
-                    {/* Action Buttons - Compact */}
-                    {(scanResult.type === 'success' || scanResult.type === 'late' || (scanResult.type === 'expired' && hasExited)) && (
-                        <View style={styles.actionsCompact}>
-                            {/* Primary Action: Let Out or Let In - Sleeker */}
-                            <Pressable
-                                style={[
-                                    styles.primaryBtnCompact,
-                                    hasExited ? styles.letInBtn : styles.letOutBtn
-                                ]}
-                                onPress={hasExited ? handleLetIn : handleLetOut}
-                                disabled={markExitMutation.isPending || markEntryMutation.isPending}
-                            >
                                 <Ionicons
-                                    name={hasExited ? "enter" : "exit"}
-                                    size={22}
+                                    name={
+                                        scanResult.type === 'success' ? 'checkmark-circle' :
+                                            scanResult.type === 'late' ? 'time' :
+                                                scanResult.type === 'expired' ? 'warning' :
+                                                    scanResult.type === 'pending' ? 'hourglass' : 'close-circle'
+                                    }
+                                    size={32}
                                     color="white"
                                 />
-                                <Text style={styles.primaryBtnText}>
-                                    {hasExited ? "LET IN" : "LET OUT"}
+                            </View>
+                            <View style={styles.statusTextContainer}>
+                                <Text style={[
+                                    styles.statusTitleCompact,
+                                    {
+                                        color: scanResult.type === 'success' ? '#16a34a' :
+                                            scanResult.type === 'late' ? '#ea580c' :
+                                                scanResult.type === 'expired' ? '#dc2626' :
+                                                    scanResult.type === 'pending' ? '#d97706' : '#dc2626'
+                                    }
+                                ]}>
+                                    {scanResult.type === 'success' ? 'VALID' :
+                                        scanResult.type === 'late' ? 'LATE RETURN' :
+                                            scanResult.type === 'expired' ? 'EXPIRED' :
+                                                scanResult.type === 'pending' ? 'NOT YET' : 'REJECTED'}
                                 </Text>
-                            </Pressable>
+                                <Text style={[styles.statusMessageCompact, { color: colors.textSecondary }]}>{scanResult.message}</Text>
+                            </View>
+                        </Animated.View>
 
-                            {/* Secondary Action: Scan Another - Icon only */}
-                            <Pressable
-                                style={[styles.secondaryBtnCompact, { backgroundColor: colors.card }]}
-                                onPress={resetScan}
-                            >
-                                <Ionicons name="scan" size={20} color={colors.textSecondary} />
-                                <Text style={[styles.secondaryBtnTextCompact, { color: colors.textSecondary }]}>Scan Another</Text>
-                            </Pressable>
-                        </View>
-                    )}
+                        {/* Student Details Card */}
+                        {scanResult.pass && (scanResult.type === 'success' || scanResult.type === 'late' || scanResult.type === 'expired') && studentInfo && (
+                            <Animated.View style={[styles.studentCard, { backgroundColor: colors.card, opacity: cardOpacity, transform: [{ translateY: cardSlide }] }]}>
+                                <View style={styles.studentHeader}>
+                                    <Ionicons name="person-circle" size={24} color={colors.primary} />
+                                    <Text style={[styles.studentName, { color: colors.text }]}>{studentInfo.name}</Text>
+                                </View>
 
-                    {/* For rejected/invalid, just show scan another - BUT NOT if we already showed actions above */}
-                    {!(scanResult.type === 'success' || scanResult.type === 'late' || (scanResult.type === 'expired' && hasExited)) && (
-                        <Pressable style={[styles.scanAgainBtn, { backgroundColor: colors.primary }]} onPress={resetScan}>
-                            <Ionicons name="scan" size={22} color="white" />
-                            <Text style={styles.scanAgainText}>Scan Another</Text>
+                                <View style={[styles.divider, { backgroundColor: colors.cardBorder }]} />
+
+                                <View style={styles.infoGrid}>
+                                    <View style={styles.infoItem}>
+                                        <Ionicons name="school" size={18} color={colors.textSecondary} />
+                                        <View style={styles.infoTextContainer}>
+                                            <Text style={[styles.infoLabel, { color: colors.textSecondary }]}>Roll Number</Text>
+                                            <Text style={[styles.infoValue, { color: colors.text }]}>{studentInfo.rollNo}</Text>
+                                        </View>
+                                    </View>
+
+                                    <View style={styles.infoItem}>
+                                        <Ionicons name="home" size={18} color={colors.textSecondary} />
+                                        <View style={styles.infoTextContainer}>
+                                            <Text style={[styles.infoLabel, { color: colors.textSecondary }]}>Room</Text>
+                                            <Text style={[styles.infoValue, { color: colors.text }]}>{studentInfo.room}</Text>
+                                        </View>
+                                    </View>
+                                </View>
+
+                                <View style={styles.infoGrid}>
+                                    <View style={styles.infoItem}>
+                                        <Ionicons name="business" size={18} color={colors.textSecondary} />
+                                        <View style={styles.infoTextContainer}>
+                                            <Text style={[styles.infoLabel, { color: colors.textSecondary }]}>Hostel</Text>
+                                            <Text style={[styles.infoValue, { color: colors.text }]}>{studentInfo.hostel || 'N/A'}</Text>
+                                        </View>
+                                    </View>
+
+                                    <View style={styles.infoItem}>
+                                        <Ionicons name="call" size={18} color={colors.textSecondary} />
+                                        <View style={styles.infoTextContainer}>
+                                            <Text style={[styles.infoLabel, { color: colors.textSecondary }]}>Phone</Text>
+                                            <Text style={[styles.infoValue, { color: colors.text }]}>{studentInfo.phone || 'N/A'}</Text>
+                                        </View>
+                                    </View>
+                                </View>
+
+                                <View style={[styles.divider, { backgroundColor: colors.cardBorder }]} />
+
+                                <View style={styles.reasonContainer}>
+                                    <Ionicons name="document-text" size={18} color={colors.textSecondary} />
+                                    <View style={styles.infoTextContainer}>
+                                        <Text style={[styles.infoLabel, { color: colors.textSecondary }]}>Reason</Text>
+                                        <Text style={[styles.reasonText, { color: colors.textSecondary }]}>{scanResult.pass.reason}</Text>
+                                    </View>
+                                </View>
+
+                                <View style={[styles.validityContainer, { backgroundColor: isDark ? '#14532d' : '#f0fdf4' }]}>
+                                    <Ionicons name="calendar" size={16} color={isDark ? '#4ade80' : colors.success} />
+                                    <Text style={[styles.validityText, { color: isDark ? '#4ade80' : colors.success }]}>
+                                        Valid: {new Date(scanResult.pass.fromDate).toLocaleDateString()} - {new Date(scanResult.pass.toDate).toLocaleDateString()}
+                                    </Text>
+                                </View>
+
+                                {isPassExpired && hasExited && (
+                                    <View style={[styles.validityContainer, { backgroundColor: isDark ? '#450a0a' : '#fef2f2', marginTop: 8 }]}>
+                                        <Ionicons name="warning" size={16} color={isDark ? '#fca5a5' : '#dc2626'} />
+                                        <Text style={[styles.validityText, { color: isDark ? '#fca5a5' : '#dc2626' }]}>
+                                            Student is still outside — pass expired
+                                        </Text>
+                                    </View>
+                                )}
+                            </Animated.View>
+                        )}
+
+                        {/* Action Buttons - Compact */}
+                        {(scanResult.type === 'success' || scanResult.type === 'late' || (scanResult.type === 'expired' && hasExited)) && !actionCompleted && (
+                            <Animated.View style={[styles.actionsCompact, { opacity: actionsOpacity, transform: [{ translateY: actionsSlide }] }]}>
+                                {/* Primary Action: Let Out or Let In */}
+                                <Pressable
+                                    style={[
+                                        styles.primaryBtnCompact,
+                                        hasExited ? styles.letInBtn : styles.letOutBtn
+                                    ]}
+                                    onPress={hasExited ? handleLetIn : handleLetOut}
+                                    disabled={markExitMutation.isPending || markEntryMutation.isPending}
+                                >
+                                    {(markExitMutation.isPending || markEntryMutation.isPending) ? (
+                                        <ActivityIndicator size="small" color="white" />
+                                    ) : (
+                                        <Ionicons
+                                            name={hasExited ? "enter" : "exit"}
+                                            size={22}
+                                            color="white"
+                                        />
+                                    )}
+                                    <Text style={styles.primaryBtnText}>
+                                        {(markExitMutation.isPending || markEntryMutation.isPending) ? 'PROCESSING...' : hasExited ? "LET IN" : "LET OUT"}
+                                    </Text>
+                                </Pressable>
+
+                                {/* Secondary Action: Scan Another */}
+                                <Pressable
+                                    style={[styles.scanAgainBtn, { backgroundColor: colors.primary }]}
+                                    onPress={resetScan}
+                                >
+                                    <Ionicons name="scan" size={22} color="white" />
+                                    <Text style={styles.scanAgainText}>Scan Another</Text>
+                                </Pressable>
+                            </Animated.View>
+                        )}
+
+                        {/* Success confirmation after action completed */}
+                        {actionCompleted && (
+                            <Animated.View style={[styles.actionsCompact, { opacity: confirmOpacity, transform: [{ translateY: confirmSlide }] }]}>
+                                <View style={[styles.actionConfirmation, { backgroundColor: isDark ? '#052e16' : '#f0fdf4' }]}>
+                                    <Ionicons name="checkmark-circle" size={24} color={isDark ? '#4ade80' : '#16a34a'} />
+                                    <Text style={[styles.actionConfirmationText, { color: isDark ? '#4ade80' : '#16a34a' }]}>
+                                        {scanResult.message}
+                                    </Text>
+                                </View>
+                                <Pressable
+                                    style={[styles.scanAgainBtn, { backgroundColor: colors.primary }]}
+                                    onPress={resetScan}
+                                >
+                                    <Ionicons name="scan" size={22} color="white" />
+                                    <Text style={styles.scanAgainText}>Scan Another</Text>
+                                </Pressable>
+                            </Animated.View>
+                        )}
+
+                        {/* For rejected/invalid, just show scan another */}
+                        {!(scanResult.type === 'success' || scanResult.type === 'late' || (scanResult.type === 'expired' && hasExited)) && (
+                            <Animated.View style={{ opacity: actionsOpacity, transform: [{ translateY: actionsSlide }] }}>
+                                <Pressable style={[styles.scanAgainBtn, { backgroundColor: colors.primary }]} onPress={resetScan}>
+                                    <Ionicons name="scan" size={22} color="white" />
+                                    <Text style={styles.scanAgainText}>Scan Another</Text>
+                                </Pressable>
+                            </Animated.View>
+                        )}
+
+                        {/* Back to Dashboard */}
+                        <Pressable
+                            style={styles.backToDashboard}
+                            onPress={() => router.back()}
+                        >
+                            <Ionicons name="arrow-back" size={18} color={colors.textSecondary} />
+                            <Text style={[styles.backToDashboardText, { color: colors.textSecondary }]}>Back to Dashboard</Text>
                         </Pressable>
-                    )}
-
-                    {/* Back to Dashboard */}
-                    <Pressable
-                        style={styles.backToDashboard}
-                        onPress={() => router.back()}
-                    >
-                        <Ionicons name="arrow-back" size={18} color={colors.textSecondary} />
-                        <Text style={[styles.backToDashboardText, { color: colors.textSecondary }]}>Back to Dashboard</Text>
-                    </Pressable>
-                </View>
+                    </ScrollView>
+                </Animated.View>
             )}
         </View>
     );
@@ -471,33 +594,30 @@ const styles = StyleSheet.create({
         flex: 1,
         padding: 16,
     },
-    statusIconContainer: {
-        width: 120,
-        height: 120,
-        borderRadius: 60,
-        alignItems: 'center',
+    resultScrollContent: {
+        paddingBottom: 20,
+    },
+    validatingOverlay: {
+        ...StyleSheet.absoluteFillObject,
+        backgroundColor: 'rgba(0,0,0,0.75)',
         justifyContent: 'center',
-        marginTop: 40,
-        marginBottom: 20,
+        alignItems: 'center',
+    },
+    validatingContent: {
+        alignItems: 'center',
+        gap: 16,
+    },
+    validatingText: {
+        color: 'white',
+        fontSize: 16,
+        fontWeight: '600',
+        marginTop: 8,
     },
     statusSuccess: { backgroundColor: '#16a34a' },
     statusLate: { backgroundColor: '#ea580c' },
     statusExpired: { backgroundColor: '#dc2626' },
     statusPending: { backgroundColor: '#d97706' },
     statusError: { backgroundColor: '#dc2626' },
-    statusTitle: {
-        fontSize: 32,
-        fontWeight: '800',
-        letterSpacing: 2,
-        marginBottom: 8,
-    },
-    statusMessage: {
-        fontSize: 16,
-        textAlign: 'center',
-        marginBottom: 24,
-        paddingHorizontal: 20,
-        lineHeight: 22,
-    },
 
     // Student Card Styles
     studentCard: {
@@ -566,66 +686,20 @@ const styles = StyleSheet.create({
         fontWeight: '500',
     },
 
-    // Action Buttons
-    actionsContainer: {
-        width: '100%',
-        gap: 12,
-    },
-    primaryActionBtn: {
-        width: '100%',
-        borderRadius: 16,
-        overflow: 'hidden',
-    },
     letOutBtn: {
         backgroundColor: '#16a34a',
     },
     letInBtn: {
         backgroundColor: '#1d4ed8',
     },
-    primaryActionContent: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        padding: 20,
-        gap: 16,
-    },
-    primaryActionTextContainer: {
-        flex: 1,
-    },
-    primaryActionTitle: {
-        fontSize: 22,
-        fontWeight: '800',
-        color: 'white',
-        letterSpacing: 1.5,
-        marginBottom: 4,
-    },
-    primaryActionSubtitle: {
-        fontSize: 14,
-        color: 'rgba(255,255,255,0.85)',
-        fontWeight: '500',
-    },
-    secondaryActionBtn: {
-        width: '100%',
+    scanAgainBtn: {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
         gap: 10,
-        borderWidth: 2,
-        borderColor: '#1d4ed8',
-        borderRadius: 14,
-        padding: 16,
-    },
-    secondaryActionText: {
-        fontSize: 16,
-        fontWeight: '600',
-    },
-    scanAgainBtn: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 10,
-        paddingHorizontal: 32,
         paddingVertical: 16,
-        borderRadius: 14,
-        marginTop: 16,
+        borderRadius: 12,
+        marginTop: 10,
     },
     scanAgainText: {
         color: 'white',
@@ -665,76 +739,25 @@ const styles = StyleSheet.create({
         lineHeight: 20,
     },
 
-    // Compact Student Card
-    studentCardCompact: {
-        width: '100%',
-        borderRadius: 14,
-        padding: 16,
-        marginBottom: 16,
-    },
-    nameRow: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 10,
-        marginBottom: 14,
-        paddingBottom: 12,
-        borderBottomWidth: 1,
-        borderBottomColor: 'transparent',
-    },
-    studentNameCompact: {
-        fontSize: 18,
-        fontWeight: '700',
-        flex: 1,
-    },
-    infoRows: {
-        flexDirection: 'row',
-        gap: 12,
-        marginBottom: 12,
-    },
-    compactInfoRow: {
-        flex: 1,
-        backgroundColor: 'transparent',
-        padding: 10,
-        borderRadius: 8,
-    },
-    compactLabel: {
-        fontSize: 13,
-        marginBottom: 4,
-        fontWeight: '500',
-        textTransform: 'uppercase',
-        letterSpacing: 0.3,
-    },
-    compactValue: {
-        fontSize: 15,
-        fontWeight: '700',
-    },
-    reasonRowCompact: {
-        marginBottom: 10,
-    },
-    reasonTextCompact: {
-        fontSize: 14,
-        lineHeight: 20,
-        marginTop: 4,
-    },
-    validityBadge: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 6,
-        backgroundColor: 'transparent',
-        paddingVertical: 8,
-        paddingHorizontal: 12,
-        borderRadius: 8,
-        alignSelf: 'flex-start',
-    },
-    validityBadgeText: {
-        fontSize: 12,
-        fontWeight: '600',
-    },
+
 
     // Compact Action Buttons
     actionsCompact: {
         width: '100%',
         gap: 10,
+    },
+    actionConfirmation: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 10,
+        paddingVertical: 14,
+        paddingHorizontal: 16,
+        borderRadius: 12,
+    },
+    actionConfirmationText: {
+        fontSize: 15,
+        fontWeight: '600',
+        flex: 1,
     },
     primaryBtnCompact: {
         flexDirection: 'row',
@@ -750,18 +773,7 @@ const styles = StyleSheet.create({
         color: 'white',
         letterSpacing: 1.2,
     },
-    secondaryBtnCompact: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-        gap: 8,
-        paddingVertical: 12,
-        borderRadius: 10,
-    },
-    secondaryBtnTextCompact: {
-        fontSize: 14,
-        fontWeight: '600',
-    },
+
     backToDashboard: {
         flexDirection: 'row',
         alignItems: 'center',

@@ -54,7 +54,13 @@ export const getCurrentPass = asyncHandler(async (req: AuthRequest, res: Respons
         toDate: { $gte: now },
     });
 
-    return res.status(200).json(new ApiResponse(200, currentPass, 'Current pass retrieved'));
+    // figure out if student is currently outside
+    const isCurrentlyOut = currentPass ? !!(currentPass.exitTime && !currentPass.entryTime) : false;
+
+    return res.status(200).json(new ApiResponse(200, {
+        pass: currentPass,
+        isCurrentlyOut,
+    }, 'Current pass retrieved'));
 });
 
 // request a new gate pass
