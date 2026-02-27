@@ -4,8 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { DashboardHeader } from '../components/dashboard/header';
 import { QuickActions } from '../components/dashboard/quick-actions';
-import { AttendanceCard } from '../components/dashboard/attendance-card';
-import { ActivePassCard } from '../components/dashboard/active-pass-card';
+import { StatusCarousel } from '../components/dashboard/status-carousel';
 import { RecentNotices } from '../components/dashboard/recent-notices';
 import { BottomNav } from '@/components/ui/BottomNav';
 import { useAuth } from '@/lib/auth-context';
@@ -23,9 +22,8 @@ function StudentDashboard() {
 
     return (
         <>
-            <ActivePassCard />
             <QuickActions />
-            {isAttendanceTime && <AttendanceCard />}
+            <StatusCarousel showAttendance={isAttendanceTime} />
             <RecentNotices />
         </>
     );
@@ -513,7 +511,7 @@ const styles = StyleSheet.create({
     loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
     loadingText: { marginTop: 12 },
     scrollView: { flex: 1 },
-    scrollContent: { paddingBottom: 100 },
+    scrollContent: { paddingTop: 16, paddingBottom: 100 },
     wardenContent: { padding: 16 },
     staffContent: { padding: 16 },
     guardContent: { padding: 16 },

@@ -18,85 +18,90 @@ export function ActivePassCard() {
     const returnTime = toDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     const returnDate = toDate.toLocaleDateString([], { month: 'short', day: 'numeric' });
 
+    // theme colors matching attendance card pattern
+    const themeColor = isCurrentlyOut
+        ? (isDark ? '#fb923c' : '#ea580c')
+        : (isDark ? '#60a5fa' : '#2563eb');
+
+    const bgColor = isCurrentlyOut
+        ? (isDark ? '#431407' : '#fff7ed')
+        : (isDark ? '#172554' : '#eff6ff');
+
+    const borderColor = isCurrentlyOut
+        ? (isDark ? '#7c2d12' : '#fdba74')
+        : (isDark ? '#1e3a8a' : '#93c5fd');
+
+    const iconBg = isCurrentlyOut
+        ? (isDark ? '#7c2d12' : '#fed7aa')
+        : (isDark ? '#1e40af' : '#bfdbfe');
+
     return (
-        <Pressable
-            style={[
-                styles.card,
-                {
-                    backgroundColor: isCurrentlyOut
-                        ? (isDark ? '#431407' : '#fff7ed')
-                        : (isDark ? '#172554' : '#eff6ff'),
-                    borderColor: isCurrentlyOut
-                        ? (isDark ? '#f97316' : '#fdba74')
-                        : (isDark ? '#3b82f6' : '#93c5fd'),
-                },
-            ]}
-            onPress={() => router.push('/gate-pass')}
-        >
-            <View style={[
-                styles.iconContainer,
-                {
-                    backgroundColor: isCurrentlyOut
-                        ? (isDark ? '#7c2d12' : '#fed7aa')
-                        : (isDark ? '#1e3a5f' : '#bfdbfe'),
-                },
-            ]}>
-                <Ionicons
-                    name={isCurrentlyOut ? 'walk' : 'document-text'}
-                    size={24}
-                    color={isCurrentlyOut
-                        ? (isDark ? '#fb923c' : '#ea580c')
-                        : (isDark ? '#60a5fa' : '#2563eb')
-                    }
-                />
-            </View>
-            <View style={styles.info}>
-                <Text style={[styles.status, {
-                    color: isCurrentlyOut
-                        ? (isDark ? '#fb923c' : '#ea580c')
-                        : (isDark ? '#60a5fa' : '#2563eb'),
-                }]}>
-                    {isCurrentlyOut ? 'Currently Outside' : 'Active Pass'}
-                </Text>
-                <Text style={[styles.detail, { color: colors.textSecondary }]}>
-                    {isCurrentlyOut
-                        ? `Return by ${returnTime}, ${returnDate}`
-                        : `Valid until ${returnDate}`
-                    }
-                </Text>
-            </View>
-            <Ionicons name="chevron-forward" size={18} color={colors.textSecondary} />
-        </Pressable>
+        <View style={styles.container}>
+            <Pressable
+                style={[
+                    styles.card,
+                    {
+                        backgroundColor: bgColor,
+                        borderColor: borderColor,
+                    },
+                ]}
+                onPress={() => router.push('/gate-pass')}
+            >
+                <View style={[styles.iconContainer, { backgroundColor: iconBg }]}>
+                    <Ionicons
+                        name={isCurrentlyOut ? 'walk' : 'document-text'}
+                        size={28}
+                        color={themeColor}
+                    />
+                </View>
+                <View style={styles.content}>
+                    <Text style={[styles.title, { color: themeColor }]}>
+                        {isCurrentlyOut ? 'Currently Outside' : 'Active Gate Pass'}
+                    </Text>
+                    <Text style={[styles.subtitle, { color: isDark ? '#9ca3af' : '#4b5563' }]}>
+                        {isCurrentlyOut
+                            ? `Return by ${returnTime}, ${returnDate}`
+                            : `Valid until ${returnDate}`
+                        }
+                    </Text>
+                </View>
+                <Ionicons name="chevron-forward" size={20} color={themeColor} />
+            </Pressable>
+        </View>
     );
 }
 
 const styles = StyleSheet.create({
+    container: {
+        paddingHorizontal: 16,
+        marginBottom: 16,
+    },
     card: {
         flexDirection: 'row',
         alignItems: 'center',
-        padding: 14,
-        borderRadius: 14,
-        marginHorizontal: 16,
-        marginBottom: 12,
-        borderWidth: 1,
+        padding: 16,
+        borderRadius: 16,
+        borderWidth: 2,
+        gap: 16,
     },
     iconContainer: {
-        width: 44,
-        height: 44,
-        borderRadius: 22,
+        width: 52,
+        height: 52,
+        borderRadius: 26,
         alignItems: 'center',
         justifyContent: 'center',
-        marginRight: 12,
     },
-    info: {
+    content: {
         flex: 1,
     },
-    status: {
-        fontSize: 15,
+    title: {
+        fontSize: 17,
         fontWeight: '700',
+        marginBottom: 4,
+        letterSpacing: 0.3,
     },
-    detail: {
+    subtitle: {
         fontSize: 13,
-        marginTop: 2,
+        fontWeight: '500',
     },
 });

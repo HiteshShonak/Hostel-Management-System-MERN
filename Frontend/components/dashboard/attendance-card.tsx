@@ -66,7 +66,7 @@ export function AttendanceCard() {
 const styles = StyleSheet.create({
     container: {
         paddingHorizontal: 16,
-        marginBottom: 12, // Increased spacing
+        marginBottom: 16,
     },
     card: {
         flexDirection: 'row',
