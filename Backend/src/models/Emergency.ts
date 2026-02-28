@@ -12,4 +12,7 @@ const emergencySchema = new Schema<IEmergency>({
     createdAt: { type: Date, default: Date.now },
 });
 
+// speeds up active/acknowledged alert queries
+emergencySchema.index({ status: 1, createdAt: -1 });
+
 export default mongoose.model<IEmergency>('Emergency', emergencySchema);

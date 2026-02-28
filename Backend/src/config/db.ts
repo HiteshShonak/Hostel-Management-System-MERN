@@ -5,7 +5,12 @@ const connectDB = async (): Promise<void> => {
     try {
         const mongoURI = process.env.MONGODB_URI || 'mongodb://localhost:27017/hms';
 
-        await mongoose.connect(mongoURI);
+        await mongoose.connect(mongoURI, {
+            maxPoolSize: 50,
+            minPoolSize: 5,
+            serverSelectionTimeoutMS: 5000,
+            socketTimeoutMS: 45000,
+        });
 
         logger.info('MongoDB connected successfully');
     } catch (error) {

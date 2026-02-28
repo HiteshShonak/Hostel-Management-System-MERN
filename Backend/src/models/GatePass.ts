@@ -30,4 +30,7 @@ const gatePassSchema = new Schema<IGatePass>({
     entryMarkedBy: { type: Schema.Types.ObjectId, ref: 'User' },
 }, { timestamps: true });
 
+// speeds up getCurrentPass, overlap checks, and pending pass queries
+gatePassSchema.index({ user: 1, status: 1, fromDate: -1 });
+
 export default mongoose.model<IGatePass>('GatePass', gatePassSchema);

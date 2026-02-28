@@ -76,7 +76,7 @@ export const createNotice = asyncHandler(async (req: AuthRequest, res: Response)
     );
 
     // clear cache
-    await cache.deletePattern('notices:*');
+    await cache.deletePattern('notices:all:*');
 
     return res.status(201).json(new ApiResponse(201, notice, 'Notice created successfully'));
 });
@@ -104,6 +104,9 @@ export const updateNotice = asyncHandler(async (req: AuthRequest, res: Response)
     notice.urgent = urgent !== undefined ? urgent : notice.urgent;
     await notice.save();
 
+    // clear cached notices so updates show immediately
+    await cache.deletePattern('notices:all:*');
+
     return res.status(200).json(new ApiResponse(200, notice, 'Notice updated successfully'));
 });
 
@@ -124,6 +127,9 @@ export const deleteNotice = asyncHandler(async (req: AuthRequest, res: Response)
     }
 
     await Notice.findByIdAndDelete(req.params.id);
+
+    // clear cached notices
+    await cache.deletePattern('notices:all:*');
 
     return res.status(200).json(new ApiResponse(200, null, 'Notice deleted successfully'));
 });

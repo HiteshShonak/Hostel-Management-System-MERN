@@ -8,6 +8,7 @@ import { asyncHandler } from '../utils/asyncHandler';
 import { ApiError } from '../utils/ApiError';
 import { ApiResponse } from '../utils/ApiResponse';
 import { getPaginationParams, getPaginationMeta } from '../utils/pagination';
+import { logger } from '../utils/logger';
 
 // send an sos
 export const sendSOS = asyncHandler(async (req: AuthRequest, res: Response) => {
@@ -38,7 +39,7 @@ export const sendSOS = asyncHandler(async (req: AuthRequest, res: Response) => {
         }
     ).catch(err => {
         // don't fail request if push doesn't work
-        console.error('Failed to send emergency push:', err);
+        logger.error('Failed to send emergency push', { error: err?.message || String(err) });
     });
 
     return res.status(201).json(new ApiResponse(201, {

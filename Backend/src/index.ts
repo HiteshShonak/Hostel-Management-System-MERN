@@ -6,6 +6,7 @@ import connectDB from './config/db';
 import GatePass from './models/GatePass';
 import mongoose from 'mongoose';
 import { logger } from './utils/logger';
+import cache from './utils/cache';
 
 const PORT = process.env.PORT || 5000;
 
@@ -15,6 +16,9 @@ const startServer = async () => {
     try {
         // connect to mongo
         await connectDB();
+
+        // boot up redis cache (gracefully degrades if unavailable)
+        await cache.init();
 
         // fix unique indexes if they're messed up
         await GatePass.syncIndexes();
@@ -51,6 +55,9 @@ const gracefulShutdown = async (signal: string) => {
     }
 
     try {
+        // Close Redis connection
+        await cache.close();
+
         // Close MongoDB connection
         await mongoose.connection.close();
         logger.info('MongoDB connection closed');

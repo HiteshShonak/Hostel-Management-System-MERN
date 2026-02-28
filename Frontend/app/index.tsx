@@ -159,6 +159,8 @@ function MessStaffDashboard() {
                     <Text style={[styles.quickLabel, { color: colors.text }]}>View Ratings</Text>
                 </Pressable>
             </View>
+
+            <RecentNotices />
         </View>
     );
 }

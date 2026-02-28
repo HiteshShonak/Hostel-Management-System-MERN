@@ -10,4 +10,7 @@ const complaintSchema = new Schema<IComplaint>({
     resolvedAt: { type: Date },
 }, { timestamps: true });
 
+// speeds up "my complaints" queries sorted by newest first
+complaintSchema.index({ user: 1, createdAt: -1 });
+
 export default mongoose.model<IComplaint>('Complaint', complaintSchema);
