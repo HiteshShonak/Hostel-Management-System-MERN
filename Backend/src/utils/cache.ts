@@ -41,6 +41,20 @@ export const initRedis = async (): Promise<void> => {
             maxRetriesPerRequest: 3,
             enableOfflineQueue: false,
             lazyConnect: true,
+            retryStrategy(times) {
+                // give up after 3 attempts — no point retrying if redis isn't there
+                if (times > 3) return null;
+                return Math.min(times * 200, 1000);
+            },
+            reconnectOnError: () => false,
+        });
+
+        // catch connection errors so ioredis doesn't spam "Unhandled error event"
+        redis.on('error', (err) => {
+            if (isConnected) {
+                logger.warn('Redis error', { error: err.message });
+            }
+            // silently ignore if we already know it's disconnected
         });
 
         await redis.connect();
@@ -48,6 +62,10 @@ export const initRedis = async (): Promise<void> => {
         logger.info('Redis connected', { url: REDIS_URL.replace(/\/\/.*@/, '//*****@') });
     } catch (error: any) {
         logger.warn('Redis connection failed, caching disabled', { error: error.message });
+        // fully disconnect so ioredis doesn't keep retrying in the background
+        if (redis) {
+            try { redis.disconnect(); } catch (_) { /* ignore */ }
+        }
         redis = null;
         isConnected = false;
     }

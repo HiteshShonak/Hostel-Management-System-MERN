@@ -123,6 +123,9 @@ export const updateTimings = asyncHandler(async (req: AuthRequest, res: Response
         });
     }
 
+    // Invalidate menu cache since timings are part of the menu response
+    await cache.delete(CACHE_KEYS.MESS_MENU);
+
     return res.status(200).json(new ApiResponse(200, { timings }, 'Timings updated successfully'));
 });
 
