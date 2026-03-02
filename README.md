@@ -1,14 +1,29 @@
-# 🏨 HMS — Hostel Management System | IIIT Sonepat
+<div align="center">
 
-[![React Native](https://img.shields.io/badge/React%20Native-0.81-blue.svg)](https://reactnative.dev/)
-[![Expo SDK](https://img.shields.io/badge/Expo-54.0-000020.svg)](https://expo.dev/)
-[![Node.js](https://img.shields.io/badge/Node.js-18+-green.svg)](https://nodejs.org/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.9-blue.svg)](https://www.typescriptlang.org/)
-[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+# 🏨 HMS — Hostel Management System
+### IIIT Sonepat
 
-A comprehensive mobile and backend solution built for **Indian Institute of Information Technology, Sonepat (IIIT Sonepat)** to digitize hostel operations — featuring QR-based gate passes, smart attendance, mess management, emergency SOS, and real-time notifications.
+*A production-grade mobile platform to digitize hostel operations*
 
-**Live Backend:** [https://hostel-management-system-backend-jde3.onrender.com](https://hostel-management-system-backend-jde3.onrender.com)
+[![React Native](https://img.shields.io/badge/React%20Native-0.81-61DAFB?style=flat-square&logo=react&logoColor=white)](https://reactnative.dev/)
+[![Expo SDK](https://img.shields.io/badge/Expo_SDK-54.0-000020?style=flat-square&logo=expo&logoColor=white)](https://expo.dev/)
+[![Node.js](https://img.shields.io/badge/Node.js-18+-339933?style=flat-square&logo=nodedotjs&logoColor=white)](https://nodejs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![MongoDB](https://img.shields.io/badge/MongoDB-Atlas-47A248?style=flat-square&logo=mongodb&logoColor=white)](https://mongodb.com/)
+[![License](https://img.shields.io/badge/License-MIT-F7DF1E?style=flat-square)](LICENSE)
+
+<br/>
+
+[![Live API](https://img.shields.io/badge/🌐_Live_Backend-Render-46E3B7?style=for-the-badge)](https://hostel-management-system-backend-jde3.onrender.com)
+&nbsp;&nbsp;
+[![Download APK](https://img.shields.io/badge/📲_Download_APK-Preview_Build_v1.0-3DDC84?style=for-the-badge&logo=android&logoColor=white)](https://drive.google.com/file/d/1qd2N3z_puIUvb0FmkYBWMVlB6mTDZXH_/view?usp=sharing)
+
+<br/>
+
+> Built with ❤️ for **Indian Institute of Information Technology, Sonepat** —
+> featuring QR gate passes, GPS attendance, mess management, emergency SOS & real-time notifications.
+
+</div>
 
 ---
 
