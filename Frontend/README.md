@@ -1,10 +1,11 @@
-# HMS — Mobile App | IIIT Sonepat
+# HMS - Mobile App | IIIT Sonepat
 
-A comprehensive **mobile-first** hostel management system built for **IIIT Sonepat** using React Native and Expo for iOS and Android, featuring role-based access for students, parents, guards, wardens, and administrators.
+Mobile app for **IIIT Sonepat** hostel operations, built with React Native and Expo for iOS and Android. It supports students, parents, guards, wardens, and administrators with role-based access.
 
 ## 🚀 Tech Stack
 
 ### Core Framework
+
 - **React Native** 0.81.5
 - **Expo SDK** ~54.0
 - **TypeScript** 5.9
@@ -12,16 +13,19 @@ A comprehensive **mobile-first** hostel management system built for **IIIT Sonep
 - **React** 19.1
 
 ### State Management & Data Fetching
+
 - **TanStack React Query** 5.64 - Server state management
 - **Axios** 1.7 - HTTP client
 - **React Context** - Auth & theme management
 
 ### UI & Styling
+
 - **@expo/vector-icons** - Icon library (Ionicons)
 - **React Native SVG** - SVG support for QR codes
 - **Custom styling** - Native StyleSheet
 
 ### Device Features
+
 - **expo-camera** - QR code scanning, attendance verification
 - **expo-notifications** - Push notifications (Expo Push API)
 - **expo-location** - Emergency location services
@@ -30,6 +34,7 @@ A comprehensive **mobile-first** hostel management system built for **IIIT Sonep
 - **react-native-qrcode-svg** - QR code generation
 
 ### Build & Deployment
+
 - **EAS Build** - Production APK builds
 - **EAS Updates** - OTA updates
 - **Expo Push Notifications** - Native push notification service
@@ -45,6 +50,7 @@ A comprehensive **mobile-first** hostel management system built for **IIIT Sonep
 ## 📱 Features
 
 ### Student Features
+
 - **Dashboard** - Quick access to all services
 - **Gate Pass** - Request and manage digital gate passes with QR codes
 - **Mess Menu** - View weekly menu and rate meals (time-restricted)
@@ -60,6 +66,7 @@ A comprehensive **mobile-first** hostel management system built for **IIIT Sonep
 - **Notifications** - Real-time push notifications
 
 ### Parent Features
+
 - **Children Dashboard** - View linked student's information
 - **Today's Attendance** - Real-time attendance status
 - **Pending Passes** - Approve/reject gate pass requests
@@ -68,16 +75,19 @@ A comprehensive **mobile-first** hostel management system built for **IIIT Sonep
 - **Notifications** - Alerts for gate pass requests
 
 ### Guard Features
+
 - **QR Scanner** - Verify gate passes
 - **Activity Logs** - View entry/exit history
 - **Pass Verification** - Real-time pass validation
 
 ### Warden Features
+
 - **Pass Management** - Approve/reject gate passes
 - **Dashboard** - Overview of pending requests
 - **Student Monitoring** - Track students currently outside
 
 ### Admin Features
+
 - **Complaint Management** - Review and resolve complaints
 - **Notice Management** - Create and manage announcements
 - **Menu Management** - Update mess menu
@@ -176,6 +186,7 @@ Frontend/
 ## 🚀 Getting Started
 
 ### Prerequisites
+
 - **Node.js** 18 or higher
 - **npm** or **yarn**
 - **Expo CLI** (installed via npx)
@@ -236,6 +247,7 @@ npx eas build --platform android --profile production --clear-cache
 ### Environment Variables
 
 Create `.env` file:
+
 ```env
 API_URL=http://your_backend_url_here/api
 ```
@@ -245,11 +257,13 @@ API_URL=http://your_backend_url_here/api
 Push notifications are automatically configured via Expo's native push service. No additional setup required for development!
 
 **For Production:**
+
 1. Build with EAS: `eas build --platform android`
 2. Expo handles push notification credentials automatically
 3. Test notifications via backend API
 
 **How it works:**
+
 - Uses Expo Push Token (not FCM)
 - Backend sends to `https://exp.host/--/api/v2/push/send`
 - No Firebase configuration needed
@@ -257,11 +271,13 @@ Push notifications are automatically configured via Expo's native push service. 
 ### App Configuration
 
 **app.json:**
+
 - Package: `com.hostelhub.app`
 - Version: `1.0.0`
 - Expo Project ID: `d0ca44c9-b72a-424f-88e5-ff0c4a1938b1`
 
 **eas.json:**
+
 - Preview build: APK
 - Production build: APK/AAB
 - OTA updates: Enabled
@@ -269,6 +285,7 @@ Push notifications are automatically configured via Expo's native push service. 
 ## 🎨 Features Deep Dive
 
 ### Gate Pass System
+
 - Digital passes with QR codes
 - Parent approval workflow
 - Real-time status tracking
@@ -276,6 +293,7 @@ Push notifications are automatically configured via Expo's native push service. 
 - Automatic expiry handling
 
 ### Mess Menu & Ratings
+
 - Weekly menu display (7 days)
 - Meal ratings (1-5 stars)
 - **Time-restricted rating windows:**
@@ -287,12 +305,14 @@ Push notifications are automatically configured via Expo's native push service. 
 - Staff can edit menu and timings
 
 ### Attendance System
+
 - Smart check-in/check-out
 - Real-time tracking
 - Parent visibility
 - Historical records
 
 ### Notification System
+
 - Expo Push Notifications (native service)
 - Push notifications for:
   - Gate pass approvals/rejections
@@ -318,6 +338,7 @@ Push notifications are automatically configured via Expo's native push service. 
 **Authentication:** JWT tokens
 
 API endpoints handled via `lib/services.ts`:
+
 - Auth (login/register)
 - Gate passes (CRUD)
 - Complaints (CRUD)
@@ -330,18 +351,21 @@ API endpoints handled via `lib/services.ts`:
 ## 📊 Key Technologies Explained
 
 ### React Query
+
 - Server state caching
 - Automatic refetching
 - Optimistic updates
 - Background sync
 
 ### Expo Router
+
 - File-based routing
 - Nested layouts
 - Deep linking support
 - Type-safe navigation
 
 ### IST Timezone Handling
+
 - Custom `getISTTime()` utility
 - Prevents timezone bugs
 - Consistent across all features
@@ -350,12 +374,15 @@ API endpoints handled via `lib/services.ts`:
 ## 🐛 Known Issues & Solutions
 
 ### Issue: Notifications Silent in Expo Go
+
 **Solution:** Build development/preview APK with `eas build`
 
 ### Issue: QR Scanner Not Working
+
 **Solution:** Grant camera permissions in device settings
 
 ### Issue: Rating Window Times Incorrect
+
 **Solution:** App uses IST timezone utilities (`lib/timezone.ts`)
 
 ## 📱 Supported Platforms
@@ -366,6 +393,7 @@ API endpoints handled via `lib/services.ts`:
 ## 🔄 OTA Updates
 
 Over-the-air updates enabled via EAS Update:
+
 ```bash
 # Publish update to preview channel
 npx eas update --branch preview
@@ -376,17 +404,20 @@ npx eas update --branch preview
 ## 📝 Development Guidelines
 
 ### Code Style
+
 - TypeScript strict mode
 - Functional components with hooks
 - React Query for server state
 - Context for global state
 
 ### File Naming
+
 - Components: PascalCase (`DashboardCard.tsx`)
 - Utilities: camelCase (`timezone.ts`)
 - Screens: kebab-case (`mess-menu.tsx`)
 
 ### State Management
+
 - Server state: React Query
 - Auth state: Context
 - Theme state: Context
@@ -407,7 +438,7 @@ This is a private hostel management system. For development:
 
 ## 👨‍💻 Developed By
 
-Hostel Management System — IIIT Sonepat
+Hostel Management System - IIIT Sonepat
 
 ---
 

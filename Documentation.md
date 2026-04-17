@@ -1,8 +1,8 @@
-# HMS — Hostel Management System | IIIT Sonepat — Complete Project Documentation
+# HMS - Hostel Management System | IIIT Sonepat | Project Documentation
 
 ## 📋 Project Overview
 
-Smart Hostel is a comprehensive **mobile-first** hostel management system built for **Indian Institute of Information Technology, Sonepat (IIIT Sonepat)** using React Native (Expo) for iOS and Android platforms, and Node.js (Express) for backend. The system supports multiple user roles including students, parents, guards, wardens, and administrators, providing a complete digital solution for hostel operations at the institute.
+Smart Hostel is a **mobile-first** hostel management system for **Indian Institute of Information Technology, Sonepat (IIIT Sonepat)**. The app is built with React Native (Expo) for iOS and Android, with a Node.js (Express) backend. It supports students, parents, guards, wardens, and administrators in one workflow.
 
 **Platform:** Mobile-only (iOS & Android)  
 **Version:** 1.0.0  
@@ -12,6 +12,7 @@ Smart Hostel is a comprehensive **mobile-first** hostel management system built 
 ## 📊 Project Statistics
 
 ### Frontend Summary
+
 - **Total Screens**: 22 screens (18 main + 4 role-specific groups)
 - **Total Lines**: ~12,000+ lines of TypeScript/TSX
 - **Components**: 16 reusable UI components
@@ -20,6 +21,7 @@ Smart Hostel is a comprehensive **mobile-first** hostel management system built 
 - **Platforms**: iOS 11.0+ & Android 5.0+ (Tested on both using Expo Go)
 
 ### Backend Summary
+
 - **Total Files**: 80+ TypeScript files
 - **Total Lines**: ~15,000+ lines of TypeScript
 - **Controllers**: 16 controllers
@@ -263,6 +265,7 @@ HMS-Mobile/
 ### Frontend Technologies
 
 #### Core
+
 - **React Native** 0.81.5 - Mobile framework
 - **Expo SDK** ~54.0 - Development platform
 - **TypeScript** 5.9 - Type safety
@@ -270,11 +273,13 @@ HMS-Mobile/
 - **React** 19.1 - UI library
 
 #### State & Data
+
 - **TanStack React Query** 5.64 - Server state management ⭐
 - **Axios** 1.7 - HTTP client
 - **React Context** - Global state (Auth, Theme)
 
 #### Device Features
+
 - **expo-camera** - QR scanning, verification
 - **expo-notifications** - Push notifications (FCM)
 - **expo-location** - Emergency location
@@ -283,11 +288,13 @@ HMS-Mobile/
 - **@react-native-community/datetimepicker** - Date/time pickers
 
 #### UI
+
 - **@expo/vector-icons** - Ionicons
 - **react-native-svg** - SVG support
 - **Custom StyleSheet** - Native styling
 
 #### Build & Deploy
+
 - **EAS Build** - Production builds
 - **EAS Update** - OTA updates
 - **Firebase FCM** - Push notifications
@@ -295,12 +302,14 @@ HMS-Mobile/
 ### Backend Technologies
 
 #### Core
+
 - **Node.js** 18+ - Runtime
 - **Express** 4.21 - Web framework
 - **TypeScript** 5.9 - Type safety
 - **MongoDB** 8.9 with **Mongoose** - Database
 
 #### Security
+
 - **JWT** (jsonwebtoken 9.0) - Authentication
 - **bcryptjs** 2.4 - Password hashing
 - **Helmet** 8.1 - Security headers
@@ -308,15 +317,18 @@ HMS-Mobile/
 - **Zod** 4.3 - Input validation
 
 #### Performance
+
 - **Redis** (ioredis 5.9) - Caching layer
 - **compression** 1.8 - Response compression
 - **PM2** - Process management
 
 #### Monitoring
+
 - **morgan** 1.10 - HTTP logging
 - Custom Winston-style logger
 
 #### Development
+
 - **ts-node-dev** - Hot reload
 - **dotenv** - Environment config
 
@@ -325,6 +337,7 @@ HMS-Mobile/
 ## 🎯 Key Features
 
 ### Student Features (18)
+
 1. **Dashboard** - Unified hub with quick actions
 2. **Gate Pass** - Request passes with QR codes
 3. **Mess Menu** - View weekly meals + ratings
@@ -345,6 +358,7 @@ HMS-Mobile/
 18. **Payment Dues** - Pending fees
 
 ### Parent Features (6)
+
 1. **Children Dashboard** - Linked students overview
 2. **Today's Attendance** - Real-time status
 3. **Pending Passes** - Approve/reject requests
@@ -353,16 +367,19 @@ HMS-Mobile/
 6. **Notifications** - Gate pass alerts
 
 ### Guard Features (3)
+
 1. **QR Scanner** - Verify gate passes
 2. **Activity Logs** - Entry/exit history
 3. **Pass Verification** - Real-time validation
 
 ### Warden Features (3)
+
 1. **Pass Management** - Approve/reject passes
 2. **Dashboard** - Hostel overview
 3. **Student Monitoring** - Track students outside
 
 ### Admin Features (8)
+
 1. **User Management** - CRUD all users
 2. **Parent Linking** - Link parents to students
 3. **System Config** - Geofence, timings
@@ -379,50 +396,65 @@ HMS-Mobile/
 ### API Endpoint Summary (80+)
 
 **Authentication** (5)
+
 - Register, Login, Profile, Change Password
 
 **Gate Pass** (8)
+
 - CRUD, Approve/Reject, QR Verify, Entry/Exit
 
 **Parent Portal** (6)
+
 - Children, Attendance, Passes, Approvals
 
 **Mess & Ratings** (7)
+
 - Menu CRUD, Timings, Rate Meal, Stats
 
 **Attendance** (4)
+
 - Mark, History, Stats
 
 **Complaints** (5)
+
 - CRUD, Status Update, Resolve
 
 **Notices** (5)
+
 - CRUD operations
 
 **Notifications** (5)
+
 - Get, Read, Read All, Unread Count, Token
 
 **Emergency** (3)
+
 - SOS, Contacts, Add Contact
 
 **Visitors** (5)
+
 - CRUD, Approve
 
 **Payments** (3)
+
 - History, Dues, Record
 
 **Laundry** (4)
+
 - Schedule, Status, History
 
 **Admin** (6)
+
 - Users, Link Parent, Stats, Config
 
 **Testing** (3)
+
 - Push Test, Health Check
 
 ### API Response Format
 
 **Success:**
+
 ```json
 {
   "success": true,
@@ -432,6 +464,7 @@ HMS-Mobile/
 ```
 
 **Error:**
+
 ```json
 {
   "success": false,
@@ -447,25 +480,26 @@ HMS-Mobile/
 
 ### MongoDB Collections (15)
 
-| Collection | Purpose | Key Fields |
-|------------|---------|------------|
-| `users` | All user accounts | email, password, role, name |
-| `gatepasses` | Gate pass requests | student, status, from, to, qrCode |
-| `gatepasslogs` | Entry/exit logs | gatePass, type, timestamp, guard |
-| `parentstudents` | Parent-child links | parent, student, status |
-| `foodratings` | Meal ratings | user, mealType, rating, date |
-| `messmenus` | Weekly menu | day, meals, timing |
-| `attendances` | Attendance records | user, date, status, location |
-| `complaints` | Complaints | user, category, status, priority |
-| `notices` | Announcements | title, content, priority |
-| `notifications` | Push notifications | user, type, message, read |
-| `emergencies` | SOS alerts | user, location, timestamp |
-| `visitors` | Visitor records | student, name, phone, purpose |
-| `payments` | Payment history | user, amount, type, date |
-| `laundries` | Laundry requests | user, items, status |
-| `systemconfigs` | System settings | geofence, timings (singleton) |
+| Collection       | Purpose            | Key Fields                        |
+| ---------------- | ------------------ | --------------------------------- |
+| `users`          | All user accounts  | email, password, role, name       |
+| `gatepasses`     | Gate pass requests | student, status, from, to, qrCode |
+| `gatepasslogs`   | Entry/exit logs    | gatePass, type, timestamp, guard  |
+| `parentstudents` | Parent-child links | parent, student, status           |
+| `foodratings`    | Meal ratings       | user, mealType, rating, date      |
+| `messmenus`      | Weekly menu        | day, meals, timing                |
+| `attendances`    | Attendance records | user, date, status, location      |
+| `complaints`     | Complaints         | user, category, status, priority  |
+| `notices`        | Announcements      | title, content, priority          |
+| `notifications`  | Push notifications | user, type, message, read         |
+| `emergencies`    | SOS alerts         | user, location, timestamp         |
+| `visitors`       | Visitor records    | student, name, phone, purpose     |
+| `payments`       | Payment history    | user, amount, type, date          |
+| `laundries`      | Laundry requests   | user, items, status               |
+| `systemconfigs`  | System settings    | geofence, timings (singleton)     |
 
 ### Key Indexes
+
 - `users`: email (unique), role
 - `gatepasses`: student, status, createdAt
 - `foodratings`: [user, mealType, date] (compound unique)
@@ -477,29 +511,34 @@ HMS-Mobile/
 ## 🔐 Security Features
 
 ### Authentication
+
 - JWT tokens with expiry (7 days)
 - Secure password hashing (bcrypt, 10 rounds)
 - Token stored in expo-secure-store
 - Automatic token refresh
 
 ### Authorization
+
 - Role-based access control (RBAC)
 - Middleware: `auth`, `role(['admin', 'warden'])`
 - Protected routes on frontend & backend
 
 ### Input Protection
+
 - Zod schema validation
 - Input sanitization middleware
 - SQL injection prevention (Mongoose)
 - XSS protection
 
 ### API Security
+
 - Helmet - Secure HTTP headers
 - CORS - Origin whitelisting
 - Rate limiting - 100 req/15min
 - Compression - Gzip responses
 
 ### Data Security
+
 - Password never returned in API
 - FCM server key in environment
 - Sensitive data in .env (gitignored)
@@ -510,6 +549,7 @@ HMS-Mobile/
 ## ⚡ Performance Optimizations
 
 ### Frontend
+
 - React Query caching (5min stale time)
 - Optimistic updates for UX
 - Background refetching
@@ -517,6 +557,7 @@ HMS-Mobile/
 - Lazy loading components
 
 ### Backend
+
 - Redis caching:
   - Mess menu: 1 hour TTL
   - System config: 24 hours TTL
@@ -527,6 +568,7 @@ HMS-Mobile/
 - Graceful Redis fallback
 
 ### Build
+
 - TypeScript compilation
 - Metro bundler optimization
 - APK size optimization
@@ -537,19 +579,23 @@ HMS-Mobile/
 ## 🚀 Deployment
 
 ### Frontend Deployment
+
 **Platform:** EAS Build (Expo Application Services)
 
 **Build Profiles:**
+
 - `development` - Development builds
 - `preview` - Testing APKs
 - `production` - Production APKs/AABs
 
 **OTA Updates:**
+
 - Enabled via EAS Update
 - Channels: development, preview, production
 - Automatic update checks
 
 **Build Commands:**
+
 ```bash
 # Preview build
 eas build --platform android --profile preview
@@ -562,15 +608,18 @@ eas update --branch preview
 ```
 
 ### Backend Deployment
+
 **Platform:** Render.com
 
 **Environment:**
+
 - Node.js 18+ runtime
 - MongoDB Atlas database
 - Redis Cloud caching
 - PM2 process manager
 
 **Deployment:**
+
 - Auto-deploy from GitHub
 - Build: `npm install`
 - Start: `npm start`
@@ -581,6 +630,7 @@ eas update --branch preview
 ## 🔧 Development Setup
 
 ### Prerequisites
+
 - Node.js 18+
 - MongoDB 5+
 - Redis 6+ (optional)
@@ -590,6 +640,7 @@ eas update --branch preview
 ### Installation
 
 **Backend:**
+
 ```bash
 cd Backend
 npm install
@@ -599,6 +650,7 @@ npm run dev
 ```
 
 **Frontend:**
+
 ```bash
 cd Frontend
 npm install
@@ -608,6 +660,7 @@ npx expo start
 ### Environment Variables
 
 **Backend (.env):**
+
 ```env
 NODE_ENV=development
 PORT=5000
@@ -621,6 +674,7 @@ ALLOWED_ORIGINS=http://localhost:8081
 ```
 
 **Frontend (app.json):**
+
 ```json
 {
   "extra": {
@@ -634,6 +688,7 @@ ALLOWED_ORIGINS=http://localhost:8081
 ## 🎨 Special Features Deep Dive
 
 ### Meal Rating System
+
 - **Time Windows:** Opens when meal starts, closes 12 hours later
 - **IST Timezone:** Custom utilities prevent timezone bugs
 - **Duplicate Prevention:** Compound unique index [user, mealType, date]
@@ -642,6 +697,7 @@ ALLOWED_ORIGINS=http://localhost:8081
 - **Rating Banner:** Shows countdown to opening/closing
 
 ### Gate Pass Workflow
+
 ```
 Student Request
     ↓
@@ -657,6 +713,7 @@ Activity Logged
 ```
 
 **Features:**
+
 - Multi-level approvals
 - Real-time status updates
 - QR code security
@@ -665,6 +722,7 @@ Activity Logged
 - Parent notifications
 
 ### Push Notifications
+
 - **FCM Integration:** Firebase Cloud Messaging
 - **Channels:** HMS Notifications (high priority)
 - **Badge Counts:** Real-time unread tracking
@@ -672,6 +730,7 @@ Activity Logged
 - **Platform:** Android (iOS ready)
 
 ### IST Timezone Handling
+
 - **Custom Utilities:** `getISTTime()`, `getISTDate()`
 - **Prevents Bugs:** Midnight boundaries, day transitions
 - **Used In:** Meal ratings, attendance, gate passes
@@ -694,6 +753,7 @@ Activity Logged
 ### Scripts
 
 **Frontend:**
+
 ```bash
 npm start              # Dev server
 npm run android        # Android dev
@@ -702,6 +762,7 @@ eas update ...        # OTA update
 ```
 
 **Backend:**
+
 ```bash
 npm run dev           # Dev server (hot reload)
 npm run build         # Compile TypeScript
@@ -716,18 +777,21 @@ npm run logs          # View PM2 logs
 ## 📊 Project Metrics
 
 ### Code Quality
+
 - TypeScript strict mode
 - Consistent code style
 - Error handling patterns
 - API response standards
 
 ### Test Coverage
+
 - Manual testing on Android
 - API endpoint verification
 - Role-based access testing
 - Security audit completed
 
 ### Performance
+
 - API response time: <500ms
 - App launch time: <3s
 - Build size: ~40MB (APK)
@@ -758,7 +822,7 @@ npm run logs          # View PM2 logs
 
 ## 👨‍💻 Development Team
 
-Hostel Management System — IIIT Sonepat  
+Hostel Management System - IIIT Sonepat  
 Built with React Native + Node.js
 
 ---

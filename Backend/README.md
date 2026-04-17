@@ -1,16 +1,18 @@
-# HMS — Backend API | IIIT Sonepat
+# HMS - Backend API | IIIT Sonepat
 
-A comprehensive RESTful API for the IIIT Sonepat Hostel Management System, built with Node.js, Express, TypeScript, and MongoDB, featuring role-based authentication, push notifications, and real-time data management.
+REST API for the IIIT Sonepat Hostel Management System, built with Node.js, Express, TypeScript, and MongoDB. It handles role-based access, notifications, and day-to-day hostel workflows.
 
 ## 🚀 Tech Stack
 
 ### Core Framework
+
 - **Node.js** 18+
 - **Express** 4.21
 - **TypeScript** 5.9
 - **MongoDB** with **Mongoose** 8.9
 
 ### Authentication & Security
+
 - **JWT** (jsonwebtoken 9.0) - Token-based authentication
 - **bcryptjs** 2.4 - Password hashing
 - **Helmet** 8.1 - Security headers
@@ -18,15 +20,18 @@ A comprehensive RESTful API for the IIIT Sonepat Hostel Management System, built
 - **Zod** 4.3 - Input validation & sanitization
 
 ### Caching & Performance
+
 - **Redis** via **ioredis** 5.9 - Caching layer
 - **compression** 1.8 - Response compression
 - **PM2** - Production process manager
 
 ### Monitoring & Logging
+
 - **morgan** 1.10 - HTTP request logging
 - Custom logger utility
 
 ### Development Tools
+
 - **ts-node-dev** - Development server with hot reload
 - **TypeScript strict mode** - Type safety
 - **dotenv** - Environment configuration
@@ -34,6 +39,7 @@ A comprehensive RESTful API for the IIIT Sonepat Hostel Management System, built
 ## 📚 Features
 
 ### Authentication & Authorization
+
 - JWT-based authentication
 - Role-based access control (Student, Parent, Guard, Warden, Admin)
 - Secure password hashing
@@ -41,6 +47,7 @@ A comprehensive RESTful API for the IIIT Sonepat Hostel Management System, built
 - Parent-student linking system
 
 ### Gate Pass Management
+
 - Digital gate pass requests
 - QR code generation
 - Parent approval workflow
@@ -50,6 +57,7 @@ A comprehensive RESTful API for the IIIT Sonepat Hostel Management System, built
 - Automatic pass expiry
 
 ### Mess Management
+
 - Weekly menu system (7 days)
 - Meal ratings (1-5 stars)
 - Time-restricted rating windows (12 hours)
@@ -58,6 +66,7 @@ A comprehensive RESTful API for the IIIT Sonepat Hostel Management System, built
 - Duplicate rating prevention
 
 ### Notification System
+
 - Expo Push API integration
 - Push notification delivery via HTTP
 - In-app notification center
@@ -65,6 +74,7 @@ A comprehensive RESTful API for the IIIT Sonepat Hostel Management System, built
 - Notification preferences
 
 ### Attendance System
+
 - Daily attendance tracking
 - Real-time status updates
 - Parent visibility
@@ -72,6 +82,7 @@ A comprehensive RESTful API for the IIIT Sonepat Hostel Management System, built
 - Stats and analytics
 
 ### Complaint Management
+
 - Category-based complaints
 - Priority levels
 - Status tracking (Pending/In Progress/Resolved)
@@ -79,18 +90,21 @@ A comprehensive RESTful API for the IIIT Sonepat Hostel Management System, built
 - Comment threads
 
 ### Notice Board
+
 - Announcement system
 - Priority-based display
 - Read status tracking
 - Admin management
 
 ### Emergency Services
+
 - SOS alerts with location
 - Emergency contacts management
 - Instant notifications to wardens
 - Location tracking
 
 ### Additional Features
+
 - Visitor management
 - Laundry tracking
 - Payment history
@@ -216,6 +230,7 @@ Backend/
 ## 🚀 Getting Started
 
 ### Prerequisites
+
 - **Node.js** 18 or higher
 - **MongoDB** 4.4+ (local or Atlas)
 - **Redis** 6+ (optional, for caching)
@@ -304,6 +319,7 @@ npm run seed:menu:force
 ## 📡 API Endpoints
 
 ### Authentication
+
 ```
 POST   /api/auth/register          # Register new user
 POST   /api/auth/login             # Login user
@@ -313,6 +329,7 @@ POST   /api/auth/change-password   # Change password
 ```
 
 ### Gate Pass
+
 ```
 GET    /api/gatepass                    # Get user's gate passes
 GET    /api/gatepass/current            # Get active pass
@@ -325,6 +342,7 @@ GET    /api/gatepass/logs               # Get entry/exit logs (guard)
 ```
 
 ### Parent
+
 ```
 GET    /api/parent/children             # Get linked students
 POST   /api/parent/link                 # Link to student
@@ -335,6 +353,7 @@ GET    /api/parent/attendance/:studentId # Get student attendance
 ```
 
 ### Mess Menu & Ratings
+
 ```
 GET    /api/messmenu                    # Get weekly menu
 GET    /api/messmenu/:day               # Get specific day menu
@@ -347,6 +366,7 @@ GET    /api/foodrating/stats            # Get rating statistics
 ```
 
 ### Complaints
+
 ```
 GET    /api/complaints                  # Get user's complaints
 GET    /api/complaints/:id              # Get specific complaint
@@ -356,6 +376,7 @@ PUT    /api/complaints/:id/status       # Update status (admin)
 ```
 
 ### Notices
+
 ```
 GET    /api/notices                     # Get all notices
 GET    /api/notices/:id                 # Get specific notice
@@ -365,6 +386,7 @@ DELETE /api/notices/:id                 # Delete notice (admin)
 ```
 
 ### Attendance
+
 ```
 POST   /api/attendance/mark             # Mark attendance (student)
 GET    /api/attendance/my               # Get my attendance
@@ -373,6 +395,7 @@ GET    /api/attendance/history          # Get historical records
 ```
 
 ### Notifications
+
 ```
 GET    /api/notifications               # Get user notifications
 PUT    /api/notifications/:id/read      # Mark as read
@@ -382,6 +405,7 @@ POST   /api/notifications/token         # Save Expo push token
 ```
 
 ### Emergency
+
 ```
 POST   /api/emergency/sos               # Send SOS alert
 GET    /api/emergency/contacts          # Get emergency contacts
@@ -389,6 +413,7 @@ POST   /api/emergency/contacts          # Add contact (admin)
 ```
 
 ### Visitors
+
 ```
 GET    /api/visitors                    # Get visitor history
 POST   /api/visitors                    # Register visitor
@@ -397,6 +422,7 @@ PUT    /api/visitors/:id/approve        # Approve visitor (guard)
 ```
 
 ### Payments
+
 ```
 GET    /api/payments                    # Get payment history
 GET    /api/payments/dues               # Get pending dues
@@ -404,6 +430,7 @@ POST   /api/payments                    # Record payment (admin)
 ```
 
 ### Laundry
+
 ```
 GET    /api/laundry                     # Get laundry schedule
 POST   /api/laundry                     # Schedule pickup
@@ -411,6 +438,7 @@ PUT    /api/laundry/:id/status          # Update status (admin)
 ```
 
 ### Admin
+
 ```
 GET    /api/admin/users                 # Get all users
 GET    /api/admin/users/:id             # Get user details
@@ -421,6 +449,7 @@ POST   /api/admin/config                # Update system config
 ```
 
 ### Testing
+
 ```
 POST   /api/test/notification           # Send test push notification
 POST   /api/test/email                  # Send test email
@@ -430,6 +459,7 @@ GET    /api/test/health                 # Health check
 ## 🔐 Authentication Flow
 
 ### Login Process
+
 1. User sends credentials to `/api/auth/login`
 2. Server validates credentials
 3. Server generates JWT token
@@ -439,6 +469,7 @@ GET    /api/test/health                 # Health check
 ### Role-Based Access
 
 **Roles:**
+
 - `student` - Basic features
 - `parent` - Parent-specific features
 - `guard` - Gate pass verification
@@ -447,24 +478,29 @@ GET    /api/test/health                 # Health check
 - `mess-staff` - Menu management
 
 **Protected Routes:**
+
 - Use `auth` middleware for authentication
 - Use `role(['admin', 'warden'])` for role-based access
 
 ## 🔧 Key Features Explained
 
 ### IST Timezone Handling
+
 All date/time operations use IST (Indian Standard Time) via `timezone.ts` utility:
+
 - Prevents timezone-related bugs
 - Consistent across meal ratings, gate passes
 - Handles midnight boundaries correctly
 
 ### Meal Rating Windows
+
 - Opens when meal starts
 - Closes 12 hours after meal start
 - Prevents duplicate ratings (unique compound index)
 - Day-locked validation
 
 ### Gate Pass Workflow
+
 ```
 Student Request → Parent Approval → Warden Approval → QR Generated
      ↓                                                       ↓
@@ -472,17 +508,21 @@ Student Request → Parent Approval → Warden Approval → QR Generated
 ```
 
 ### Redis Caching
+
 Caches frequently accessed data:
+
 - Mess menu (1 hour TTL)
 - System config (24 hours TTL)
 - User profiles (30 minutes TTL)
 
 ### Rate Limiting
+
 - Default: 100 requests per 15 minutes
 - Stricter limits on auth endpoints
 - Bypassed for trusted IPs (configurable)
 
 ### Push Notifications
+
 - Expo Push API integration (HTTP-based)
 - Automatic Expo push token management
 - Notification queuing for offline users
@@ -533,6 +573,7 @@ npm run stop:prod
 ```
 
 ### Environment Checklist
+
 - [ ] `NODE_ENV=production`
 - [ ] Strong `JWT_SECRET` (min 32 chars)
 - [ ] MongoDB Atlas connection string
@@ -542,6 +583,7 @@ npm run stop:prod
 - [ ] Rate limiting configured
 
 ### Render.com Deployment
+
 1. Connect GitHub repository
 2. Set build command: `npm install`
 3. Set start command: `npm start`
@@ -551,18 +593,21 @@ npm run stop:prod
 ## 📝 Development Guidelines
 
 ### Code Style
+
 - TypeScript strict mode
 - Async/await over callbacks
 - Error handling with `asyncHandler`
 - Standardized API responses
 
 ### Database Conventions
+
 - Use Mongoose schemas with TypeScript
 - Compound indexes for performance
 - Virtual fields for computed data
 - Timestamps on all models
 
 ### API Response Format
+
 ```typescript
 // Success
 {
@@ -582,18 +627,23 @@ npm run stop:prod
 ## 🐛 Common Issues & Solutions
 
 ### Issue: MongoDB Connection Timeout
+
 **Solution:** Check `MONGODB_URI` and network connectivity
 
 ### Issue: JWT Token Invalid
+
 **Solution:** Verify `JWT_SECRET` matches and token hasn't expired
 
 ### Issue: Push Notifications Not Working
-**Solution:** 
+
+**Solution:**
+
 1. Verify Expo push token is being registered
 2. Check backend logs for Expo API errors
 3. Test with backend `/api/test/notification` endpoint
 
 ### Issue: Redis Connection Failed
+
 **Solution:** Set `REDIS_ENABLED=false` to disable caching
 
 ## 📚 Scripts
@@ -610,11 +660,13 @@ npm run logs         # View PM2 logs
 ## 🤝 API Testing
 
 Use tools like:
+
 - **Postman** - Full API testing
 - **Thunder Client** (VS Code extension)
 - **curl** - Command line testing
 
 Example:
+
 ```bash
 # Login
 curl -X POST http://localhost:5000/api/auth/login \
@@ -632,7 +684,7 @@ curl http://localhost:5000/api/gatepass \
 
 ## 👨‍💻 Developed By
 
-Hostel Management System — IIIT Sonepat
+Hostel Management System - IIIT Sonepat
 
 ---
 

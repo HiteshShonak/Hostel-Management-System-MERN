@@ -35,3 +35,7 @@ temp/
 # Internal planning (not for version control)
 FUTURE_SCOPE.md
 BUGLOG.md
+
+# Documentation drafts
+Documentation.md
+Backend/API_DOCUMENTATION.md

@@ -1,9 +1,10 @@
 <div align="center">
 
-# 🏨 HMS — Hostel Management System
+# 🏨 HMS - Hostel Management System
+
 ### IIIT Sonepat
 
-*A production-grade mobile platform to digitize hostel operations*
+_A mobile platform for day-to-day hostel operations_
 
 [![React Native](https://img.shields.io/badge/React%20Native-0.81-61DAFB?style=flat-square&logo=react&logoColor=white)](https://reactnative.dev/)
 [![Expo SDK](https://img.shields.io/badge/Expo_SDK-54.0-000020?style=flat-square&logo=expo&logoColor=white)](https://expo.dev/)
@@ -20,7 +21,7 @@
 
 <br/>
 
-> Built with ❤️ for **Indian Institute of Information Technology, Sonepat** —
+> Built with ❤️ for **Indian Institute of Information Technology, Sonepat**
 > featuring QR gate passes, GPS attendance, mess management, emergency SOS & real-time notifications.
 
 </div>
@@ -30,6 +31,7 @@
 ## 📱 Features
 
 ### For Students
+
 - 🎫 **Digital Gate Passes** - Request, track, and validate passes with QR codes
 - 📍 **Smart Attendance** - Geofence-based attendance marking (7 PM - 8 PM)
 - 🍽️ **Mess Menu** - Weekly menu with ratings and feedback
@@ -39,23 +41,27 @@
 - 🔔 **Push Notifications** - Real-time alerts and updates
 
 ### For Parents
+
 - 👨‍👩‍👧 **Child Monitoring** - View linked student activities
 - ✅ **Gate Pass Approval** - Two-tier approval (Parent → Warden)
 - 📊 **Attendance Tracking** - Daily attendance reports
 - 🚨 **Emergency Alerts** - Instant notifications
 
 ### For Guards
+
 - 📷 **QR Scanner** - Validate gate passes quickly
 - 📝 **Activity Logs** - Entry/exit tracking
 - 👥 **Real-time Dashboard** - Current pass status
 
 ### For Wardens
+
 - 📊 **Dashboard** - Hostel statistics at a glance
 - ✓ **Pass Management** - Approve/reject gate passes
 - 📋 **Student Management** - View student records
 - 📢 **Notice Creation** - Broadcast announcements
 
 ### For Admins
+
 - 👥 **User Management** - Create and manage all user types
 - 🔗 **Parent-Student Linking** - Link parent accounts
 - ⚙️ **System Configuration** - Geofence, attendance windows
@@ -66,6 +72,7 @@
 ## 🏗️ Architecture
 
 ### Frontend (Mobile App)
+
 ```
 Technology Stack:
 ├── React Native 0.81.5
@@ -85,6 +92,7 @@ Key Features:
 ```
 
 ### Backend (API Server)
+
 ```
 Technology Stack:
 ├── Node.js 18+
@@ -151,6 +159,7 @@ HMS-Mobile/
 ## 🚀 Quick Start
 
 ### Prerequisites
+
 - **Node.js** 18+ ([Download](https://nodejs.org/))
 - **MongoDB** 5+ (Local or [MongoDB Atlas](https://www.mongodb.com/cloud/atlas))
 - **Redis** 6+ (Optional but recommended)
@@ -209,6 +218,7 @@ npx expo start
 ## 🔧 Environment Variables
 
 ### Backend `.env`
+
 ```env
 # Server
 PORT=5000
@@ -230,6 +240,7 @@ ALLOWED_ORIGINS=https://yourdomain.com
 ```
 
 ### Frontend `.env`
+
 ```env
 # API Configuration
 EXPO_PUBLIC_API_URL=http://192.168.1.33:5000/api
@@ -274,6 +285,7 @@ eas submit --platform ios
 **Already deployed at:** `https://hostel-management-system-backend-jde3.onrender.com`
 
 **To deploy your own:**
+
 1. Create account at [render.com](https://render.com)
 2. Connect GitHub repository
 3. Add environment variables
@@ -284,6 +296,7 @@ eas submit --platform ios
 ## 🧪 Testing
 
 ### Backend Tests
+
 ```bash
 cd Backend
 npm test          # Run all tests
@@ -291,6 +304,7 @@ npm run test:watch # Watch mode
 ```
 
 ### API Testing
+
 ```bash
 # Health Check
 curl https://hostel-management-system-backend-jde3.onrender.com/health
@@ -305,13 +319,14 @@ curl -X POST https://your-backend/api/auth/login \
 
 ## 📊 Project Statistics
 
-| Component | Files | Lines of Code |
-|-----------|-------|---------------|
-| **Frontend** | ~5,206 lines | React Native, TypeScript |
-| **Backend** | ~5,755 lines | Node.js, Express, TypeScript |
-| **Total** | **~10,961 lines** | Production-grade code |
+| Component    | Files             | Lines of Code                |
+| ------------ | ----------------- | ---------------------------- |
+| **Frontend** | ~5,206 lines      | React Native, TypeScript     |
+| **Backend**  | ~5,755 lines      | Node.js, Express, TypeScript |
+| **Total**    | **~10,961 lines** | Production code              |
 
 ### Database Collections (15 total)
+
 - `users` - All user accounts (students, parents, staff)
 - `gatepasses` - Gate pass requests
 - `gatepasslogs` - Entry/exit activity
@@ -359,7 +374,7 @@ curl -X POST https://your-backend/api/auth/login \
 
 ## 📚 Documentation
 
-- **[Documentation.md](Documentation.md)** - Comprehensive project breakdown
+- **[Documentation.md](Documentation.md)** - Full project breakdown
 - **[Backend API Documentation](Backend/API_DOCUMENTATION.md)** - API endpoints reference
 - **[Deployment Guide](deployment_guide.md)** - Production deployment steps
 - **[Build Testing Guide](build_testing_guide.md)** - APK/IPA build instructions
@@ -420,6 +435,7 @@ Developed at **Indian Institute of Information Technology, Sonepat (IIIT Sonepat
 ## 🆘 Support
 
 For issues or questions:
+
 - Check [Documentation.md](Documentation.md)
 - Review API docs
 - Open an issue on the GitHub repository
