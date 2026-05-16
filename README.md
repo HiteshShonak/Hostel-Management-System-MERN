@@ -441,21 +441,4 @@ For issues or questions:
 - Open an issue on the GitHub repository
 - Contact the team at IIIT Sonepat
 
----
-
-## 🎯 Roadmap
-
-- [ ] WebSocket for live updates
-- [ ] Analytics dashboard
-- [ ] SMS notifications for parents
-- [ ] Biometric authentication
-- [ ] Offline mode sync
-- [ ] Multi-language support
-- [ ] Payment gateway integration
-- [ ] Medical records module
-- [ ] Event calendar
-- [ ] Chat system (Student ↔ Warden)
-
----
-
 **Built with ❤️ at IIIT Sonepat for smarter hostel management**
