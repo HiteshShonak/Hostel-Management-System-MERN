@@ -53,24 +53,21 @@ Mobile app for **IIIT Sonepat** hostel operations, built with React Native and E
 
 - **Dashboard** - Quick access to all services
 - **Gate Pass** - Request and manage digital gate passes with QR codes
-- **Mess Menu** - View weekly menu and rate meals (time-restricted)
-- **Attendance** - Smart attendance tracking
+- **Mess Menu & Ratings** - Weekly menu with time-restricted meal ratings
+- **Attendance** - Geofence-based attendance marking
 - **Complaints** - Submit and track complaints with categories
 - **Notices** - View hostel announcements
 - **Emergency** - Quick SOS with location sharing
-- **Visitors** - Register visitor requests
-- **Payments** - View payment history
-- **Laundry** - Track laundry service
 - **Food Ratings** - Rate meals within 12-hour windows
-- **Profile** - Manage personal information
+- **Profile & Settings** - Manage personal information and preferences
 - **Notifications** - Real-time push notifications
 
 ### Parent Features
 
 - **Children Dashboard** - View linked student's information
 - **Today's Attendance** - Real-time attendance status
+- **Attendance History** - Historical attendance records
 - **Pending Passes** - Approve/reject gate pass requests
-- **Linked Students** - Manage parent-student connections
 - **Pass History** - View past gate passes
 - **Notifications** - Alerts for gate pass requests
 
@@ -78,22 +75,22 @@ Mobile app for **IIIT Sonepat** hostel operations, built with React Native and E
 
 - **QR Scanner** - Verify gate passes
 - **Activity Logs** - View entry/exit history
-- **Pass Verification** - Real-time pass validation
+- **Students Outside** - Live list of students currently out
+- **Recent Entries** - Students who returned today
 
 ### Warden Features
 
 - **Pass Management** - Approve/reject gate passes
-- **Dashboard** - Overview of pending requests
-- **Student Monitoring** - Track students currently outside
+- **Pass History** - Review all gate passes
+- **Student Management** - Student list + detail view
+- **Attendance Marking** - Mark attendance for students
 
 ### Admin Features
 
-- **Complaint Management** - Review and resolve complaints
-- **Notice Management** - Create and manage announcements
-- **Menu Management** - Update mess menu
-- **User Management** - Manage all users
-- **System Reports** - Analytics and insights
-- **Approval Workflows** - Multi-level approvals
+- **User Management** - Manage users and roles
+- **Parent-Student Linking** - Link and unlink parent accounts
+- **System Configuration** - Geofence, attendance window, pass limits
+- **System Statistics** - Users, passes, attendance, complaints, notices
 
 ## 🏗️ Project Structure
 
@@ -111,9 +108,6 @@ Frontend/
 │   ├── complaints.tsx           # Complaint system (19KB)
 │   ├── notices.tsx              # Notice board (18KB)
 │   ├── emergency.tsx            # Emergency SOS (16KB)
-│   ├── visitors.tsx             # Visitor management (17KB)
-│   ├── payments.tsx             # Payment history (13KB)
-│   ├── laundry.tsx              # Laundry tracking (15KB)
 │   ├── profile.tsx              # User profile (14KB)
 │   ├── food-ratings.tsx         # Meal ratings (17KB)
 │   ├── notifications.tsx        # Notification center (9KB)
@@ -121,26 +115,28 @@ Frontend/
 │   ├── qr-scanner.tsx           # QR code scanner (29KB)
 │   │
 │   ├── admin/                   # Admin-only screens
-│   │   ├── complaints.tsx       # Complaint management
-│   │   ├── menu.tsx            # Menu editor
-│   │   ├── notices.tsx         # Notice management
-│   │   ├── reports.tsx         # System reports
 │   │   ├── users.tsx           # User management
-│   │   └── pending-passes.tsx  # Pass approvals
+│   │   ├── stats.tsx           # System stats
+│   │   ├── config.tsx          # System config
+│   │   ├── link-parent.tsx     # Link parent to student
+│   │   └── parent-links.tsx    # Manage links
 │   │
 │   ├── parent/                  # Parent-only screens
 │   │   ├── children.tsx        # Linked students
 │   │   ├── today-attendance.tsx # Real-time attendance
 │   │   ├── pending-passes.tsx  # Pass approvals
-│   │   └── pass-history.tsx    # Historical passes
+│   │   ├── pass-history.tsx    # Historical passes
+│   │   └── attendance-history.tsx # Attendance records
 │   │
 │   ├── guard/                   # Guard-only screens
-│   │   ├── scanner.tsx         # QR verification
-│   │   └── activity-logs.tsx   # Entry/exit logs
+│   │   ├── activity-logs.tsx   # Entry/exit logs
+│   │   ├── students-out.tsx    # Students outside
+│   │   └── recent-entries.tsx  # Recent entries
 │   │
 │   └── warden/                  # Warden-only screens
-│       ├── pending-passes.tsx  # Pass management
-│       └── dashboard.tsx       # Warden overview
+│       ├── students.tsx        # Student list
+│       ├── student-detail.tsx  # Student detail
+│       └── pass-history.tsx    # Pass history
 │
 ├── components/
 │   ├── ui/                      # Reusable UI components
@@ -205,7 +201,7 @@ npm install
 cp .env.example .env
 
 # Update .env with your backend URL
-# API_URL=http://your_backend_url_here/api
+# EXPO_PUBLIC_API_URL=http://your_backend_url_here/api
 ```
 
 ### Development
@@ -339,14 +335,16 @@ Push notifications are automatically configured via Expo's native push service. 
 
 API endpoints handled via `lib/services.ts`:
 
-- Auth (login/register)
-- Gate passes (CRUD)
-- Complaints (CRUD)
-- Notices (read)
-- Attendance (track)
-- Mess menu (read/rate)
-- Payments (read)
-- Notifications (read/update)
+- Auth (login/register/profile/push token)
+- Gate passes (request/approve/validate/entry-exit)
+- Complaints (create/status/resolve)
+- Notices (read + staff create/update/delete)
+- Attendance (mark/today/stats/history)
+- Mess menu (read/update timings)
+- Food ratings (rate/average/my ratings)
+- Notifications (read/unread/mark/delete)
+- Parent portal (children/passes/attendance)
+- Admin (users/parent links/system config/stats)
 
 ## 📊 Key Technologies Explained
 

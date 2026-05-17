@@ -13,24 +13,19 @@ Smart Hostel is a **mobile-first** hostel management system for **Indian Institu
 
 ### Frontend Summary
 
-- **Total Screens**: 22 screens (18 main + 4 role-specific groups)
-- **Total Lines**: ~12,000+ lines of TypeScript/TSX
+- **Total Screens**: 30 screens (14 core + 16 role-specific)
 - **Components**: 16 reusable UI components
-- **Lib Utilities**: 12 core files (hooks, services, API, auth)
+- **Lib Utilities**: 11 core files + hooks/utils helpers
 - **Technology**: React Native 0.81.5, Expo SDK ~54, TypeScript 5.9
 - **Platforms**: iOS 11.0+ & Android 5.0+ (Tested on both using Expo Go)
 
 ### Backend Summary
 
-- **Total Files**: 80+ TypeScript files
-- **Total Lines**: ~15,000+ lines of TypeScript
-- **Controllers**: 16 controllers
-- **Models**: 15 MongoDB schemas
-- **Routes**: 16 route files
+- **Controllers**: 12 controllers
+- **Models**: 12 MongoDB schemas
+- **Routes**: 12 route files
 - **Middleware**: 6 middleware files
 - **Technology**: Node.js 18+, Express 4.21, MongoDB 8.9, TypeScript 5.9
-
-### **Project Total**: ~27,000+ lines of production code
 
 ---
 
@@ -53,25 +48,21 @@ HMS-Mobile/
 │   │   ├── complaints.tsx           # Complaint system (19KB)
 │   │   ├── notices.tsx              # Notice board (18KB)
 │   │   ├── emergency.tsx            # Emergency SOS (16KB)
-│   │   ├── visitors.tsx             # Visitor management (17KB)
-│   │   ├── payments.tsx             # Payment history (13KB)
-│   │   ├── laundry.tsx              # Laundry tracking (15KB)
 │   │   ├── profile.tsx              # User profile (14KB)
 │   │   ├── food-ratings.tsx         # Meal ratings (17KB)
 │   │   ├── notifications.tsx        # Notification center (9KB)
 │   │   ├── settings.tsx             # App settings (11KB)
 │   │   ├── qr-scanner.tsx           # QR code scanner (29KB)
 │   │   │
-│   │   ├── admin/                   # Admin-only screens (6 screens)
+│   │   ├── admin/                   # Admin-only screens (5 screens)
 │   │   │   ├── _layout.tsx
-│   │   │   ├── complaints.tsx       # Complaint management
-│   │   │   ├── config.tsx          # System configuration
-│   │   │   ├── link-parent.tsx     # Parent-student linking
-│   │   │   ├── parent-links.tsx    # Manage all links
-│   │   │   ├── stats.tsx           # System statistics
-│   │   │   └── users.tsx           # User management
+│   │   │   ├── config.tsx           # System configuration
+│   │   │   ├── link-parent.tsx      # Parent-student linking
+│   │   │   ├── parent-links.tsx     # Manage all links
+│   │   │   ├── stats.tsx            # System statistics
+│   │   │   └── users.tsx            # User management
 │   │   │
-│   │   ├── parent/                  # Parent portal (6 screens)
+│   │   ├── parent/                  # Parent portal (5 screens)
 │   │   │   ├── _layout.tsx
 │   │   │   ├── children.tsx        # Linked students
 │   │   │   ├── today-attendance.tsx # Real-time attendance
@@ -80,14 +71,15 @@ HMS-Mobile/
 │   │   │   └── attendance-history.tsx # Attendance records
 │   │   │
 │   │   ├── guard/                   # Guard screens (3 screens)
-│   │   │   ├── _layout.tsx
-│   │   │   ├── scanner.tsx         # QR verification
-│   │   │   └── activity-logs.tsx   # Entry/exit logs
+│   │   │   ├── activity-logs.tsx   # Entry/exit logs
+│   │   │   ├── recent-entries.tsx  # Recent entries
+│   │   │   └── students-out.tsx    # Students outside
 │   │   │
 │   │   └── warden/                  # Warden screens (3 screens)
 │   │       ├── _layout.tsx
-│   │       ├── pending-passes.tsx  # Pass management
-│   │       └── dashboard.tsx       # Warden overview
+│   │       ├── students.tsx        # Student list
+│   │       ├── student-detail.tsx  # Student detail
+│   │       └── pass-history.tsx    # Pass history
 │   │
 │   ├── components/                   # Reusable Components
 │   │   ├── ui/                      # UI Components (10 files)
@@ -112,7 +104,7 @@ HMS-Mobile/
 │   │       ├── ComplaintModal.tsx
 │   │       └── TimingEditorModal.tsx
 │   │
-│   ├── lib/                         # Core Libraries & Utilities (12 files)
+│   ├── lib/                         # Core Libraries & Utilities (11 files)
 │   │   ├── api.ts                  # Axios client + interceptors (2KB)
 │   │   ├── auth-context.tsx        # Auth state management (3KB)
 │   │   ├── theme-context.tsx       # Dark/light theme (3KB)
@@ -121,17 +113,17 @@ HMS-Mobile/
 │   │   ├── types.ts                # TypeScript definitions (6KB)
 │   │   ├── utils.ts                # Helper utilities (1KB)
 │   │   ├── timezone.ts             # IST time utilities ⭐
-│   │   ├── notifications.ts        # FCM push setup (2KB)
+│   │   ├── notifications.ts        # Expo push setup (2KB)
 │   │   ├── error-utils.ts          # Error handling (6KB)
 │   │   ├── constants.ts            # App constants (1KB)
-│   │   └── data.ts                 # Mock/seed data (3KB)
+│   │   ├── hooks/                  # React Query hook helpers
+│   │   └── utils/                  # Utility helpers
 │   │
 │   ├── assets/                      # Static Assets
 │   │   └── icon.png                # App icon
 │   │
 │   ├── app.json                     # Expo configuration
 │   ├── eas.json                     # EAS Build configuration
-│   ├── google-services.json         # Firebase FCM config
 │   ├── package.json                 # Dependencies
 │   ├── tsconfig.json                # TypeScript config
 │   ├── babel.config.js              # Babel config
@@ -141,7 +133,7 @@ HMS-Mobile/
 ├── Backend/                          # Express API Backend
 │   ├── src/
 │   │   │
-│   │   ├── controllers/             # Business Logic (16 files)
+│   │   ├── controllers/             # Business Logic (12 files)
 │   │   │   ├── admin.controller.ts         # Admin ops (30KB) ⭐
 │   │   │   ├── gatepass.controller.ts      # Gate passes (18KB) ⭐
 │   │   │   ├── parent.controller.ts        # Parent portal (13KB) ⭐
@@ -152,14 +144,11 @@ HMS-Mobile/
 │   │   │   ├── notice.controller.ts        # Notices (4KB)
 │   │   │   ├── foodrating.controller.ts    # Ratings (4KB)
 │   │   │   ├── emergency.controller.ts     # Emergency (3KB)
-│   │   │   ├── visitor.controller.ts       # Visitors (3KB)
 │   │   │   ├── notification.controller.ts  # Notifications (3KB)
 │   │   │   ├── test.controller.ts          # Testing (3KB)
-│   │   │   ├── payment.controller.ts       # Payments (2KB)
-│   │   │   ├── laundry.controller.ts       # Laundry (2KB)
 │   │   │   └── index.ts                    # Exports
 │   │   │
-│   │   ├── models/                  # MongoDB Schemas (15 files)
+│   │   ├── models/                  # MongoDB Schemas (12 files)
 │   │   │   ├── User.ts             # Users (all roles)
 │   │   │   ├── GatePass.ts         # Gate passes
 │   │   │   ├── GatePassLog.ts      # Entry/exit logs
@@ -171,12 +160,9 @@ HMS-Mobile/
 │   │   │   ├── Notice.ts           # Announcements
 │   │   │   ├── Notification.ts     # Push notifications
 │   │   │   ├── Emergency.ts        # SOS alerts
-│   │   │   ├── Visitor.ts          # Visitor records
-│   │   │   ├── Payment.ts          # Payment history
-│   │   │   ├── Laundry.ts          # Laundry service
 │   │   │   └── SystemConfig.ts     # System settings
 │   │   │
-│   │   ├── routes/                  # API Routes (16 files)
+│   │   ├── routes/                  # API Routes (12 files)
 │   │   │   ├── auth.routes.ts
 │   │   │   ├── gatepass.routes.ts
 │   │   │   ├── admin.routes.ts
@@ -188,9 +174,6 @@ HMS-Mobile/
 │   │   │   ├── notice.routes.ts
 │   │   │   ├── notification.routes.ts
 │   │   │   ├── emergency.routes.ts
-│   │   │   ├── visitor.routes.ts
-│   │   │   ├── payment.routes.ts
-│   │   │   ├── laundry.routes.ts
 │   │   │   ├── test.routes.ts
 │   │   │   └── index.ts
 │   │   │
@@ -205,7 +188,7 @@ HMS-Mobile/
 │   │   ├── services/                # Business Services (4 files)
 │   │   │   ├── jwt.service.ts      # Token management
 │   │   │   ├── notification.service.ts # In-app notifications (3KB)
-│   │   │   ├── push-notification.service.ts # FCM push (7KB) ⭐
+│   │   │   ├── push-notification.service.ts # Expo Push API (7KB) ⭐
 │   │   │   └── index.ts
 │   │   │
 │   │   ├── utils/                   # Utilities (9 files)
@@ -219,15 +202,17 @@ HMS-Mobile/
 │   │   │   ├── timezone.ts         # IST utilities ⭐
 │   │   │   └── index.ts
 │   │   │
-│   │   ├── schemas/                 # Zod Validation (9 files)
-│   │   │   ├── auth.schema.ts
-│   │   │   ├── gatepass.schema.ts
-│   │   │   ├── complaint.schema.ts
-│   │   │   ├── notice.schema.ts
-│   │   │   ├── messmenu.schema.ts
+│   │   ├── schemas/                 # Zod Validation (11 files)
+│   │   │   ├── admin.schema.ts
 │   │   │   ├── attendance.schema.ts
-│   │   │   ├── visitor.schema.ts
-│   │   │   ├── laundry.schema.ts
+│   │   │   ├── auth.schema.ts
+│   │   │   ├── complaint.schema.ts
+│   │   │   ├── emergency.schema.ts
+│   │   │   ├── foodrating.schema.ts
+│   │   │   ├── gatepass.schema.ts
+│   │   │   ├── messmenu.schema.ts
+│   │   │   ├── notice.schema.ts
+│   │   │   ├── parent.schema.ts
 │   │   │   └── common.schema.ts
 │   │   │
 │   │   ├── scripts/                 # Utility Scripts (2 files)
@@ -281,7 +266,7 @@ HMS-Mobile/
 #### Device Features
 
 - **expo-camera** - QR scanning, verification
-- **expo-notifications** - Push notifications (FCM)
+- **expo-notifications** - Expo Push API notifications
 - **expo-location** - Emergency location
 - **expo-secure-store** - Secure token storage
 - **react-native-qrcode-svg** - QR generation
@@ -297,7 +282,7 @@ HMS-Mobile/
 
 - **EAS Build** - Production builds
 - **EAS Update** - OTA updates
-- **Firebase FCM** - Push notifications
+- **Expo Push API** - Push notifications
 
 ### Backend Technologies
 
@@ -336,120 +321,101 @@ HMS-Mobile/
 
 ## 🎯 Key Features
 
-### Student Features (18)
+### Student Features (13)
 
 1. **Dashboard** - Unified hub with quick actions
 2. **Gate Pass** - Request passes with QR codes
-3. **Mess Menu** - View weekly meals + ratings
-4. **Attendance** - Smart check-in/out
+3. **Mess Menu & Ratings** - Weekly menu and time-windowed ratings
+4. **Attendance** - Geofence-based attendance marking
 5. **Complaints** - Submit & track issues
 6. **Notices** - View announcements
-7. **Emergency** - SOS with location
-8. **Visitors** - Pre-register visitors
-9. **Payments** - Fee tracking
-10. **Laundry** - Schedule pickups
-11. **Food Ratings** - Rate meals (12-hour windows)
-12. **Profile** - Manage account
-13. **Notifications** - Push + in-app
-14. **Settings** - App preferences
-15. **QR Scanner** - Scan passes
-16. **Pass History** - View past passes
-17. **Attendance History** - Records
-18. **Payment Dues** - Pending fees
+7. **Emergency SOS** - SOS with location + emergency contacts
+8. **Food Ratings** - Rate meals (12-hour windows)
+9. **Notifications** - Push + in-app
+10. **Profile & Settings** - Manage account and preferences
+11. **QR Scanner** - Scan passes for validation
+12. **Pass History** - View past passes
+13. **Attendance History** - Records
 
 ### Parent Features (6)
 
 1. **Children Dashboard** - Linked students overview
 2. **Today's Attendance** - Real-time status
-3. **Pending Passes** - Approve/reject requests
-4. **Pass History** - Historical passes
-5. **Attendance History** - Records
+3. **Attendance History** - Records
+4. **Pending Passes** - Approve/reject requests
+5. **Pass History** - Historical passes
 6. **Notifications** - Gate pass alerts
 
-### Guard Features (3)
+### Guard Features (4)
 
 1. **QR Scanner** - Verify gate passes
 2. **Activity Logs** - Entry/exit history
-3. **Pass Verification** - Real-time validation
+3. **Students Outside** - Live list of students currently out
+4. **Recent Entries** - Students who returned today
 
-### Warden Features (3)
+### Warden Features (4)
 
 1. **Pass Management** - Approve/reject passes
-2. **Dashboard** - Hostel overview
-3. **Student Monitoring** - Track students outside
+2. **Pass History** - Review all gate passes
+3. **Student Management** - Student list + detail view
+4. **Attendance Marking** - Mark attendance for students
 
-### Admin Features (8)
+### Admin Features (4)
 
-1. **User Management** - CRUD all users
-2. **Parent Linking** - Link parents to students
-3. **System Config** - Geofence, timings
-4. **Complaint Management** - Resolve issues
-5. **Statistics** - System analytics
-6. **Notice Management** - Create announcements
-7. **Menu Management** - Update mess menu
-8. **Full Access** - All system data
+1. **User Management** - Manage users and roles
+2. **Parent Linking** - Link and unlink parents to students
+3. **System Config** - Geofence, attendance window, app limits
+4. **System Statistics** - Users, passes, attendance, complaints, notices
 
 ---
 
 ## 📡 API Architecture
 
-### API Endpoint Summary (80+)
+### API Endpoint Summary
 
-**Authentication** (5)
+**Authentication**
 
-- Register, Login, Profile, Change Password
+- Register, Login, Profile, Change Password, Push Token
 
-**Gate Pass** (8)
+**Gate Pass**
 
-- CRUD, Approve/Reject, QR Verify, Entry/Exit
+- Request, Approve/Reject, Validate, Entry/Exit, Logs, Students Out, Recent Entries
 
-**Parent Portal** (6)
+**Parent Portal**
 
-- Children, Attendance, Passes, Approvals
+- Children, Passes, Approvals, Attendance (today + history)
 
-**Mess & Ratings** (7)
+**Mess & Ratings**
 
-- Menu CRUD, Timings, Rate Meal, Stats
+- Menu, Timings, Rate Meal, Averages
 
-**Attendance** (4)
+**Attendance**
 
-- Mark, History, Stats
+- Mark, Today, History, Stats
 
-**Complaints** (5)
+**Complaints**
 
-- CRUD, Status Update, Resolve
+- Create, List, Status Update, Resolve
 
-**Notices** (5)
+**Notices**
 
-- CRUD operations
+- List, Create, Update, Delete
 
-**Notifications** (5)
+**Notifications**
 
-- Get, Read, Read All, Unread Count, Token
+- Get, Read, Read All, Unread Count, Delete
 
-**Emergency** (3)
+**Emergency**
 
-- SOS, Contacts, Add Contact
+- SOS, Contacts, Active, Acknowledge, Resolve
 
-**Visitors** (5)
+**Admin**
 
-- CRUD, Approve
+- Users, Parent Links, Config, Stats, Oversight
 
-**Payments** (3)
+**Testing**
 
-- History, Dues, Record
-
-**Laundry** (4)
-
-- Schedule, Status, History
-
-**Admin** (6)
-
-- Users, Link Parent, Stats, Config
-
-**Testing** (3)
-
-- Push Test, Health Check
+- Push tests (development only)
 
 ### API Response Format
 
@@ -478,25 +444,22 @@ HMS-Mobile/
 
 ## 🗄️ Database Architecture
 
-### MongoDB Collections (15)
+### MongoDB Collections (12)
 
-| Collection       | Purpose            | Key Fields                        |
-| ---------------- | ------------------ | --------------------------------- |
-| `users`          | All user accounts  | email, password, role, name       |
-| `gatepasses`     | Gate pass requests | student, status, from, to, qrCode |
-| `gatepasslogs`   | Entry/exit logs    | gatePass, type, timestamp, guard  |
-| `parentstudents` | Parent-child links | parent, student, status           |
-| `foodratings`    | Meal ratings       | user, mealType, rating, date      |
-| `messmenus`      | Weekly menu        | day, meals, timing                |
-| `attendances`    | Attendance records | user, date, status, location      |
-| `complaints`     | Complaints         | user, category, status, priority  |
-| `notices`        | Announcements      | title, content, priority          |
-| `notifications`  | Push notifications | user, type, message, read         |
-| `emergencies`    | SOS alerts         | user, location, timestamp         |
-| `visitors`       | Visitor records    | student, name, phone, purpose     |
-| `payments`       | Payment history    | user, amount, type, date          |
-| `laundries`      | Laundry requests   | user, items, status               |
-| `systemconfigs`  | System settings    | geofence, timings (singleton)     |
+| Collection       | Purpose            | Key Fields                              |
+| ---------------- | ------------------ | --------------------------------------- |
+| `users`          | All user accounts  | email, password, role, name             |
+| `gatepasses`     | Gate pass requests | user, status, fromDate, toDate, qrValue |
+| `gatepasslogs`   | Entry/exit logs    | gatePass, type, timestamp, guard        |
+| `parentstudents` | Parent-child links | parent, student, relationship, status   |
+| `foodratings`    | Meal ratings       | user, mealType, rating, date            |
+| `messmenus`      | Weekly menu        | day, meals, timings                     |
+| `attendances`    | Attendance records | user, date, location                    |
+| `complaints`     | Complaints         | user, category, status                  |
+| `notices`        | Announcements      | title, urgent, source                   |
+| `notifications`  | Push notifications | user, type, message, read               |
+| `emergencies`    | SOS alerts         | user, type, status, location            |
+| `systemconfigs`  | System settings    | geofence, attendanceWindow, appConfig   |
 
 ### Key Indexes
 
@@ -515,7 +478,6 @@ HMS-Mobile/
 - JWT tokens with expiry (7 days)
 - Secure password hashing (bcrypt, 10 rounds)
 - Token stored in expo-secure-store
-- Automatic token refresh
 
 ### Authorization
 
@@ -540,7 +502,7 @@ HMS-Mobile/
 ### Data Security
 
 - Password never returned in API
-- FCM server key in environment
+- Expo push tokens stored per user
 - Sensitive data in .env (gitignored)
 - MongoDB connection string secured
 
@@ -667,20 +629,14 @@ PORT=5000
 MONGODB_URI=mongodb://localhost:27017/hms
 JWT_SECRET=your-secret-key-min-32-chars
 JWT_EXPIRES_IN=7d
-FCM_SERVER_KEY=your-firebase-fcm-key
 REDIS_URL=redis://localhost:6379
-REDIS_ENABLED=false
-ALLOWED_ORIGINS=http://localhost:8081
+ALLOWED_ORIGINS=http://localhost:19006,http://localhost:8081
 ```
 
-**Frontend (app.json):**
+**Frontend (.env):**
 
-```json
-{
-  "extra": {
-    "apiUrl": "http://localhost:5000/api"
-  }
-}
+```env
+EXPO_PUBLIC_API_URL=http://localhost:5000/api
 ```
 
 ---
@@ -723,11 +679,11 @@ Activity Logged
 
 ### Push Notifications
 
-- **FCM Integration:** Firebase Cloud Messaging
-- **Channels:** HMS Notifications (high priority)
+- **Expo Push API:** Expo-hosted push delivery
+- **Tokens:** Stored per user via `/auth/push-token`
 - **Badge Counts:** Real-time unread tracking
 - **Types:** Gate pass, announcements, emergency
-- **Platform:** Android (iOS ready)
+- **Platform:** Android and iOS
 
 ### IST Timezone Handling
 

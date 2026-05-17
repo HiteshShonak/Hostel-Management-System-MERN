@@ -43,7 +43,6 @@ REST API for the IIIT Sonepat Hostel Management System, built with Node.js, Expr
 - JWT-based authentication
 - Role-based access control (Student, Parent, Guard, Warden, Admin)
 - Secure password hashing
-- Token refresh mechanism
 - Parent-student linking system
 
 ### Gate Pass Management
@@ -71,7 +70,6 @@ REST API for the IIIT Sonepat Hostel Management System, built with Node.js, Expr
 - Push notification delivery via HTTP
 - In-app notification center
 - Badge count management
-- Notification preferences
 
 ### Attendance System
 
@@ -79,22 +77,19 @@ REST API for the IIIT Sonepat Hostel Management System, built with Node.js, Expr
 - Real-time status updates
 - Parent visibility
 - Historical records
-- Stats and analytics
+- Monthly attendance stats
 
 ### Complaint Management
 
 - Category-based complaints
-- Priority levels
 - Status tracking (Pending/In Progress/Resolved)
-- Admin resolution workflow
-- Comment threads
+- Warden resolution workflow
 
 ### Notice Board
 
 - Announcement system
 - Priority-based display
-- Read status tracking
-- Admin management
+- Staff management (warden/mess staff/admin)
 
 ### Emergency Services
 
@@ -105,11 +100,11 @@ REST API for the IIIT Sonepat Hostel Management System, built with Node.js, Expr
 
 ### Additional Features
 
-- Visitor management
-- Laundry tracking
-- Payment history
-- Profile management
-- System configuration
+- Parent-student linking
+- System configuration (geofence, attendance window, app limits)
+- Emergency contact list
+- Entry/exit activity logs
+- Expo push notifications
 
 ## 🏗️ Project Structure
 
@@ -123,7 +118,7 @@ Backend/
 │   ├── config/
 │   │   └── db.ts                   # MongoDB connection
 │   │
-│   ├── controllers/                # Business logic (16 files)
+│   ├── controllers/                # Business logic (12 files)
 │   │   ├── auth.controller.ts      # Authentication (9KB)
 │   │   ├── gatepass.controller.ts  # Gate pass system (17KB)
 │   │   ├── admin.controller.ts     # Admin operations (30KB)
@@ -135,13 +130,10 @@ Backend/
 │   │   ├── notice.controller.ts    # Notices (4KB)
 │   │   ├── notification.controller.ts # Notifications (3KB)
 │   │   ├── emergency.controller.ts # Emergency SOS (3KB)
-│   │   ├── visitor.controller.ts   # Visitors (3KB)
-│   │   ├── payment.controller.ts   # Payments (2KB)
-│   │   ├── laundry.controller.ts   # Laundry (2KB)
 │   │   ├── test.controller.ts      # Testing endpoints (3KB)
 │   │   └── index.ts                # Controller exports
 │   │
-│   ├── models/                     # MongoDB schemas (15 files)
+│   ├── models/                     # MongoDB schemas (12 files)
 │   │   ├── User.ts                 # User model with roles
 │   │   ├── GatePass.ts             # Gate pass schema
 │   │   ├── GatePassLog.ts          # Entry/exit logs
@@ -153,12 +145,9 @@ Backend/
 │   │   ├── Notice.ts               # Announcements
 │   │   ├── Notification.ts         # Push notifications
 │   │   ├── Emergency.ts            # SOS records
-│   │   ├── Visitor.ts              # Visitor management
-│   │   ├── Payment.ts              # Payment history
-│   │   ├── Laundry.ts              # Laundry tracking
 │   │   └── SystemConfig.ts         # System settings
 │   │
-│   ├── routes/                     # API routes (16 files)
+│   ├── routes/                     # API routes (12 files)
 │   │   ├── auth.routes.ts
 │   │   ├── gatepass.routes.ts
 │   │   ├── admin.routes.ts
@@ -170,9 +159,6 @@ Backend/
 │   │   ├── notice.routes.ts
 │   │   ├── notification.routes.ts
 │   │   ├── emergency.routes.ts
-│   │   ├── visitor.routes.ts
-│   │   ├── payment.routes.ts
-│   │   ├── laundry.routes.ts
 │   │   ├── test.routes.ts
 │   │   └── index.ts
 │   │
@@ -208,8 +194,6 @@ Backend/
 │   │   ├── notice.schema.ts
 │   │   ├── messmenu.schema.ts
 │   │   ├── attendance.schema.ts
-│   │   ├── visitor.schema.ts
-│   │   ├── laundry.schema.ts
 │   │   └── common.schema.ts
 │   │
 │   ├── scripts/                    # Utility scripts (2 files)
@@ -269,19 +253,14 @@ MONGODB_URI=mongodb://localhost:27017/hms
 JWT_SECRET=your_jwt_secret_key_here
 JWT_EXPIRES_IN=7d
 
-# Expo Push Notifications (No additional config needed)
-# Push tokens are handled automatically by expo-notifications
+# Expo Push Notifications (Expo Push API)
+# Push tokens are handled by the client via /auth/push-token
 
 # Redis (Optional - for caching)
 REDIS_URL=redis://localhost:6379
-REDIS_ENABLED=false
 
 # Allowed Origins (CORS)
-ALLOWED_ORIGINS=http://localhost:8081,exp://192.168.1.1:8081
-
-# Rate Limiting
-RATE_LIMIT_WINDOW_MS=900000
-RATE_LIMIT_MAX_REQUESTS=100
+ALLOWED_ORIGINS=http://localhost:19006,http://localhost:8081
 ```
 
 ### Development
@@ -325,7 +304,8 @@ POST   /api/auth/register          # Register new user
 POST   /api/auth/login             # Login user
 GET    /api/auth/me                # Get current user (protected)
 PUT    /api/auth/profile           # Update profile (protected)
-POST   /api/auth/change-password   # Change password
+PUT    /api/auth/password          # Change password
+PUT    /api/auth/push-token        # Save Expo push token
 ```
 
 ### Gate Pass
@@ -333,127 +313,127 @@ POST   /api/auth/change-password   # Change password
 ```
 GET    /api/gatepass                    # Get user's gate passes
 GET    /api/gatepass/current            # Get active pass
-GET    /api/gatepass/:id                # Get specific pass
 POST   /api/gatepass                    # Request new pass
-PUT    /api/gatepass/:id/approve        # Approve pass (warden/admin)
-PUT    /api/gatepass/:id/reject         # Reject pass (warden/admin)
-POST   /api/gatepass/:id/verify         # Verify QR code (guard)
-GET    /api/gatepass/logs               # Get entry/exit logs (guard)
+GET    /api/gatepass/pending            # Pending passes (warden)
+GET    /api/gatepass/all                # All passes (warden)
+PUT    /api/gatepass/:id/approve        # Approve pass (warden)
+PUT    /api/gatepass/:id/reject         # Reject pass (warden)
+POST   /api/gatepass/validate           # Verify QR code (guard/warden)
+PUT    /api/gatepass/:id/exit           # Mark exit (guard/warden)
+PUT    /api/gatepass/:id/entry          # Mark entry (guard/warden)
+GET    /api/gatepass/students-out       # Students currently outside
+GET    /api/gatepass/recent-entries     # Recent entries today
+GET    /api/gatepass/logs               # Entry/exit logs
 ```
 
 ### Parent
 
 ```
-GET    /api/parent/children             # Get linked students
-POST   /api/parent/link                 # Link to student
-GET    /api/parent/pending-passes       # Get pending approval passes
-PUT    /api/parent/passes/:id/approve   # Approve gate pass
-PUT    /api/parent/passes/:id/reject    # Reject gate pass
-GET    /api/parent/attendance/:studentId # Get student attendance
+GET    /api/parent/children                     # Get linked students
+GET    /api/parent/pending-passes               # Get pending approval passes
+GET    /api/parent/passes                        # Get all child passes
+PUT    /api/parent/passes/:id/approve           # Approve gate pass
+PUT    /api/parent/passes/:id/reject            # Reject gate pass
+GET    /api/parent/today-attendance             # Today attendance (all children)
+GET    /api/parent/children/:studentId/attendance # Attendance history
 ```
 
 ### Mess Menu & Ratings
 
 ```
 GET    /api/messmenu                    # Get weekly menu
-GET    /api/messmenu/:day               # Get specific day menu
-PUT    /api/messmenu/:day               # Update menu (admin/mess staff)
-POST   /api/messmenu/timings            # Update meal timings (admin)
+PUT    /api/messmenu/timings            # Update meal timings (mess staff)
+PUT    /api/messmenu/:day               # Update day menu (mess staff)
 
-POST   /api/foodrating                  # Rate a meal
-GET    /api/foodrating/my               # Get my ratings
-GET    /api/foodrating/stats            # Get rating statistics
+POST   /api/food-rating                 # Rate a meal
+GET    /api/food-rating/average         # Get rating averages
+GET    /api/food-rating/my              # Get my ratings
+GET    /api/food-rating/my-ratings      # Alias for my ratings
 ```
 
 ### Complaints
 
 ```
 GET    /api/complaints                  # Get user's complaints
-GET    /api/complaints/:id              # Get specific complaint
 POST   /api/complaints                  # Submit complaint
-PUT    /api/complaints/:id/resolve      # Resolve complaint (admin)
-PUT    /api/complaints/:id/status       # Update status (admin)
+GET    /api/complaints/all              # All complaints (warden)
+PUT    /api/complaints/:id/resolve      # Resolve complaint (warden)
+PUT    /api/complaints/:id/status       # Update status (warden)
 ```
 
 ### Notices
 
 ```
 GET    /api/notices                     # Get all notices
-GET    /api/notices/:id                 # Get specific notice
-POST   /api/notices                     # Create notice (admin)
-PUT    /api/notices/:id                 # Update notice (admin)
-DELETE /api/notices/:id                 # Delete notice (admin)
+POST   /api/notices                     # Create notice (staff)
+PUT    /api/notices/:id                 # Update notice (staff)
+DELETE /api/notices/:id                 # Delete notice (staff)
 ```
 
 ### Attendance
 
 ```
 POST   /api/attendance/mark             # Mark attendance (student)
-GET    /api/attendance/my               # Get my attendance
+GET    /api/attendance                  # Get attendance history
+GET    /api/attendance/today            # Get today's status + geofence
 GET    /api/attendance/stats            # Get attendance stats
-GET    /api/attendance/history          # Get historical records
 ```
 
 ### Notifications
 
 ```
 GET    /api/notifications               # Get user notifications
+GET    /api/notifications/unread-count  # Get unread count
 PUT    /api/notifications/:id/read      # Mark as read
 PUT    /api/notifications/read-all      # Mark all as read
-GET    /api/notifications/unread-count  # Get unread count
-POST   /api/notifications/token         # Save Expo push token
+DELETE /api/notifications/:id           # Delete notification
 ```
 
 ### Emergency
 
 ```
-POST   /api/emergency/sos               # Send SOS alert
+POST   /api/emergency                   # Send SOS alert
+POST   /api/emergency/sos               # Alias for SOS
+GET    /api/emergency                   # Get emergency history
+GET    /api/emergency/history           # Alias for history
 GET    /api/emergency/contacts          # Get emergency contacts
-POST   /api/emergency/contacts          # Add contact (admin)
-```
-
-### Visitors
-
-```
-GET    /api/visitors                    # Get visitor history
-POST   /api/visitors                    # Register visitor
-GET    /api/visitors/pending            # Get pending approvals (guard)
-PUT    /api/visitors/:id/approve        # Approve visitor (guard)
-```
-
-### Payments
-
-```
-GET    /api/payments                    # Get payment history
-GET    /api/payments/dues               # Get pending dues
-POST   /api/payments                    # Record payment (admin)
-```
-
-### Laundry
-
-```
-GET    /api/laundry                     # Get laundry schedule
-POST   /api/laundry                     # Schedule pickup
-PUT    /api/laundry/:id/status          # Update status (admin)
+GET    /api/emergency/active            # Active alerts (warden)
+PUT    /api/emergency/:id/acknowledge   # Acknowledge alert (warden)
+PUT    /api/emergency/:id/resolve       # Resolve alert (warden)
 ```
 
 ### Admin
 
 ```
+GET    /api/admin/config                # Read system config
+PUT    /api/admin/config                # Update system config
+GET    /api/admin/system-stats          # System statistics (alias: /stats)
+POST   /api/admin/link-parent           # Link parent to student
+DELETE /api/admin/link-parent/:id       # Unlink parent from student
+GET    /api/admin/parent-links          # List parent-student links
 GET    /api/admin/users                 # Get all users
-GET    /api/admin/users/:id             # Get user details
+GET    /api/admin/user/:id/relations    # User relations
 PUT    /api/admin/users/:id/role        # Update user role
-GET    /api/admin/stats                 # Get system statistics
-GET    /api/admin/pending-approvals     # Get pending approvals
-POST   /api/admin/config                # Update system config
+DELETE /api/admin/users/:id             # Delete user
+GET    /api/admin/gate-passes           # All gate passes
+PUT    /api/admin/gate-passes/:id/approve # Force-approve pass
+DELETE /api/admin/gate-passes/:id       # Cancel pass
+GET    /api/admin/attendance            # Attendance oversight
+GET    /api/admin/notices               # All notices
+DELETE /api/admin/notices/:id           # Delete notice
+GET    /api/admin/complaints            # All complaints
+GET    /api/admin/warden/dashboard-stats # Warden dashboard stats
+GET    /api/admin/warden/students       # Warden student list
+GET    /api/admin/warden/students/:id   # Warden student detail
+POST   /api/admin/warden/mark-attendance/:studentId # Mark attendance (warden)
 ```
 
 ### Testing
 
 ```
-POST   /api/test/notification           # Send test push notification
-POST   /api/test/email                  # Send test email
-GET    /api/test/health                 # Health check
+POST   /api/test/push-to-me             # Send test push to self
+POST   /api/test/push-to-students       # Send test push to students
+GET    /api/test/push-status            # Push token status
 ```
 
 ## 🔐 Authentication Flow
@@ -475,7 +455,7 @@ GET    /api/test/health                 # Health check
 - `guard` - Gate pass verification
 - `warden` - Approval workflows
 - `admin` - Full system access
-- `mess-staff` - Menu management
+- `mess_staff` - Menu management
 
 **Protected Routes:**
 
@@ -519,13 +499,11 @@ Caches frequently accessed data:
 
 - Default: 100 requests per 15 minutes
 - Stricter limits on auth endpoints
-- Bypassed for trusted IPs (configurable)
 
 ### Push Notifications
 
 - Expo Push API integration (HTTP-based)
-- Automatic Expo push token management
-- Notification queuing for offline users
+- Expo push token updates via `/auth/push-token`
 - Badge count tracking
 - No Firebase/FCM setup required
 
@@ -537,7 +515,7 @@ Caches frequently accessed data:
 - **Input Validation** - Zod schemas
 - **SQL Injection Prevention** - Mongoose queries
 - **XSS Protection** - Input sanitization
-- **JWT Expiry** - Token refresh mechanism
+- **JWT Expiry** - Token expiration handling
 - **Password Hashing** - bcryptjs (salt rounds: 10)
 
 ## 📊 Error Handling

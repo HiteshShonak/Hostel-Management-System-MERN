@@ -33,39 +33,41 @@ _A mobile platform for day-to-day hostel operations_
 ### For Students
 
 - 🎫 **Digital Gate Passes** - Request, track, and validate passes with QR codes
-- 📍 **Smart Attendance** - Geofence-based attendance marking (7 PM - 8 PM)
-- 🍽️ **Mess Menu** - Weekly menu with ratings and feedback
-- 📢 **Notice Board** - Real-time notices from hostel admin
+- 📍 **Smart Attendance** - Geofence-based attendance with a configurable time window (default 7 PM - 10 PM IST)
+- 🍽️ **Mess Menu & Ratings** - Weekly menu with time-windowed meal ratings
+- 📢 **Notice Board** - Real-time notices from hostel staff
 - 🛠️ **Complaints** - Submit and track maintenance requests
-- 👥 **Visitor Management** - Pre-register visitors
+- 🚨 **Emergency SOS** - Send SOS with location and view emergency contacts
 - 🔔 **Push Notifications** - Real-time alerts and updates
 
 ### For Parents
 
-- 👨‍👩‍👧 **Child Monitoring** - View linked student activities
+- 👨‍👩‍👧 **Linked Children** - View linked student profiles
 - ✅ **Gate Pass Approval** - Two-tier approval (Parent → Warden)
-- 📊 **Attendance Tracking** - Daily attendance reports
-- 🚨 **Emergency Alerts** - Instant notifications
+- 📊 **Attendance Tracking** - Today status + history
+- 🧾 **Pass History** - Review past gate passes
+- 🔔 **Notifications** - Gate pass and alert updates
 
 ### For Guards
 
 - 📷 **QR Scanner** - Validate gate passes quickly
 - 📝 **Activity Logs** - Entry/exit tracking
-- 👥 **Real-time Dashboard** - Current pass status
+- 🚶 **Students Outside** - Live list of students currently out
+- ✅ **Recent Entries** - Return tracking for today
 
 ### For Wardens
 
-- 📊 **Dashboard** - Hostel statistics at a glance
 - ✓ **Pass Management** - Approve/reject gate passes
-- 📋 **Student Management** - View student records
-- 📢 **Notice Creation** - Broadcast announcements
+- 📋 **Student Management** - Student list, detail view, attendance marking
+- 📚 **Pass History** - Review all gate passes
+- 🚨 **Emergency Alerts** - View active SOS alerts
 
 ### For Admins
 
 - 👥 **User Management** - Create and manage all user types
 - 🔗 **Parent-Student Linking** - Link parent accounts
-- ⚙️ **System Configuration** - Geofence, attendance windows
-- 📈 **Analytics** - System-wide insights
+- ⚙️ **System Configuration** - Geofence, attendance windows, pass limits
+- 📊 **System Statistics** - Users, passes, attendance, complaints, notices
 
 ---
 
@@ -84,11 +86,11 @@ Technology Stack:
 └── Expo Secure Store (Token storage)
 
 Key Features:
-├── QR Code generation/scanning (expo-barcode-scanner)
+├── QR Code generation/scanning (expo-camera + react-native-qrcode-svg)
 ├── Geolocation (expo-location)
 ├── Push notifications (expo-notifications)
 ├── Dark/Light theme toggle
-└── Offline-first with React Query caching
+└── React Query caching
 ```
 
 ### Backend (API Server)
@@ -122,10 +124,10 @@ HMS-Mobile/
 │
 ├── Frontend/              # React Native Mobile App
 │   ├── app/              # Expo Router screens
-│   │   ├── (tabs)/      # Main tab navigation
+│   │   ├── admin/       # Admin screens
 │   │   ├── guard/       # Guard-specific screens
 │   │   ├── parent/      # Parent portal
-│   │   └── warden/      # Warden dashboard
+│   │   └── warden/      # Warden tools
 │   ├── components/       # Reusable UI components
 │   ├── lib/             # Core utilities
 │   │   ├── api.ts       # Axios instance
@@ -138,9 +140,9 @@ HMS-Mobile/
 │
 ├── Backend/              # Express API Server
 │   ├── src/
-│   │   ├── controllers/ # Request handlers (14 files)
-│   │   ├── models/      # MongoDB schemas (15 collections)
-│   │   ├── routes/      # API endpoints
+│   │   ├── controllers/ # Request handlers (12 files)
+│   │   ├── models/      # MongoDB schemas (12 collections)
+│   │   ├── routes/      # API endpoints (12 files)
 │   │   ├── middleware/  # Auth, validation, error handling
 │   │   ├── services/    # Business logic (JWT, notifications)
 │   │   ├── utils/       # Helpers (logger, cache, pagination)
@@ -325,7 +327,7 @@ curl -X POST https://your-backend/api/auth/login \
 | **Backend**  | ~5,755 lines      | Node.js, Express, TypeScript |
 | **Total**    | **~10,961 lines** | Production code              |
 
-### Database Collections (15 total)
+### Database Collections (12 total)
 
 - `users` - All user accounts (students, parents, staff)
 - `gatepasses` - Gate pass requests
@@ -335,9 +337,6 @@ curl -X POST https://your-backend/api/auth/login \
 - `complaints` - Maintenance complaints
 - `messmenus` - Weekly meal schedules
 - `foodratings` - Meal ratings
-- `visitors` - Visitor registrations
-- `payments` - Fee tracking
-- `laundries` - Laundry service
 - `emergencies` - SOS alerts
 - `notifications` - In-app notifications
 - `parentstudents` - Parent-child links
@@ -364,7 +363,7 @@ curl -X POST https://your-backend/api/auth/login \
 
 - ✅ **Mobile-First Design** - Optimized for students on the go
 - ✅ **Real-Time Updates** - Push notifications for instant alerts
-- ✅ **Offline Support** - React Query caching for offline access
+- ✅ **Smart Caching** - React Query caching for faster reloads
 - ✅ **Dark Mode** - System-aware theme switching
 - ✅ **Production-Ready** - PM2 cluster mode, Redis caching, structured logging
 - ✅ **Type-Safe** - Full TypeScript on frontend and backend
