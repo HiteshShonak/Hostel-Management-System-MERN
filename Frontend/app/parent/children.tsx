@@ -72,9 +72,7 @@ export default function ParentChildren() {
                                             {child.name.charAt(0).toUpperCase()}
                                         </Text>
                                     </View>
-                                    <View style={[styles.relationBadge, { backgroundColor: colors.primary }]}>
-                                        <Text style={styles.relationText}>{child.relationship}</Text>
-                                    </View>
+
                                 </View>
                                 <View style={styles.nameContainer}>
                                     <Text style={[styles.childName, { color: colors.text }]}>{child.name}</Text>
@@ -178,15 +176,7 @@ const styles = StyleSheet.create({
         borderWidth: 3,
     },
     avatarText: { fontSize: 28, fontWeight: '700', color: '#b45309' },
-    relationBadge: {
-        position: 'absolute',
-        bottom: -4,
-        right: -4,
-        paddingHorizontal: 8,
-        paddingVertical: 2,
-        borderRadius: 10,
-    },
-    relationText: { fontSize: 12, fontWeight: '600', color: 'white' },
+
     nameContainer: { flex: 1 },
     childName: { fontSize: 20, fontWeight: '700' },
     rollNo: { fontSize: 14, marginTop: 2 },
