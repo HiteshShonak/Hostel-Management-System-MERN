@@ -38,6 +38,7 @@ export const getChildren = asyncHandler(async (req: AuthRequest, res: Response) 
                 room: '$studentInfo.room',
                 hostel: '$studentInfo.hostel',
                 phone: '$studentInfo.phone',
+                year: '$studentInfo.year',
                 relationship: 1,
                 linkedAt: '$createdAt'
             }

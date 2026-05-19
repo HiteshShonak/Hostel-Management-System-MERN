@@ -153,7 +153,8 @@ export const getUserRelations = asyncHandler(async (req: AuthRequest, res: Respo
                     email: '$studentInfo.email',
                     rollNo: '$studentInfo.rollNo',
                     room: '$studentInfo.room',
-                    hostel: '$studentInfo.hostel'
+                    hostel: '$studentInfo.hostel',
+                    year: '$studentInfo.year'
                 }
             }
         }
@@ -183,7 +184,7 @@ export const getAllUsers = asyncHandler(async (req: AuthRequest, res: Response) 
 
     const [users, total] = await Promise.all([
         User.find(filter)
-            .select('name email rollNo room hostel phone role createdAt')
+            .select('name email rollNo room hostel phone role year createdAt')
             .sort({ createdAt: -1 })
             .skip(skip)
             .limit(limit),
@@ -612,7 +613,7 @@ export const getWardenStudentList = asyncHandler(async (req: AuthRequest, res: R
     // Get students with pagination
     const [students, total] = await Promise.all([
         User.find(searchFilter)
-            .select('name email rollNo room hostel phone avatar')
+            .select('name email rollNo room hostel phone avatar year')
             .sort({ name: 1 })
             .skip(skip)
             .limit(limit)

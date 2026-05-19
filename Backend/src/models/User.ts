@@ -12,6 +12,8 @@ const userSchema = new Schema<IUser>({
     phone: { type: String, required: true },
     avatar: { type: String, default: '' },
     role: { type: String, enum: ['student', 'admin', 'warden', 'mess_staff', 'guard', 'parent'], default: 'student' },
+    // academic year (1-4) — only relevant for students
+    year: { type: Number, min: 1, max: 4 },
     // link to parent if needed
     parentEmail: { type: String, lowercase: true },
     // for sending push notifs

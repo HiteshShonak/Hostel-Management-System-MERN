@@ -53,7 +53,7 @@ export const authService = {
         return response.data;
     },
 
-    updateProfile: async (data: { name?: string; phone?: string; room?: string }): Promise<User> => {
+    updateProfile: async (data: { name?: string; phone?: string; room?: string; year?: number }): Promise<User> => {
         const response = await api.put<User>('/auth/profile', data);
         return response.data;
     },
@@ -372,6 +372,7 @@ export interface ParentChild {
     room: string;
     hostel: string;
     phone: string;
+    year?: number; // Academic year (1-4) — only for students
     relationship: string;
     linkedAt: string;
 }
@@ -462,6 +463,7 @@ export interface AdminUser {
     hostel: string;
     phone: string;
     role: string;
+    year?: number; // Academic year (1-4) — only for students
     createdAt: string;
 }
 
@@ -555,6 +557,7 @@ export const adminService = {
             hostel: string;
             phone: string;
             avatar: string;
+            year?: number; // Academic year (1-4)
             markedAttendanceToday: boolean;
             isOut: boolean;
         }>;

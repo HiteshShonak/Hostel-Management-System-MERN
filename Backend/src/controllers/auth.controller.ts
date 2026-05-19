@@ -14,7 +14,7 @@ import { logger } from '../utils/logger';
 // register a new user
 // POST /api/auth/register
 export const register = asyncHandler(async (req: Request, res: Response) => {
-    const { name, email, password, rollNo, room, hostel, phone, role, parentEmail } = req.body;
+    const { name, email, password, rollNo, room, hostel, phone, role, parentEmail, year } = req.body;
 
     logger.debug('Register request', { name, email, rollNo, role, hasParentEmail: !!parentEmail });
 
@@ -33,6 +33,11 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
     const validRoles = ['student', 'warden', 'mess_staff', 'guard', 'admin', 'parent'];
     const userRole = validRoles.includes(role) ? role : 'student';
 
+    // year is required for students — Zod already validates this, but double-check here
+    if (userRole === 'student' && (year === undefined || year === null)) {
+        throw new ApiError(400, 'Academic year is required for students (1–4)');
+    }
+
     logger.debug('Creating user', { role: userRole });
 
     // Create user
@@ -45,6 +50,8 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
         hostel,
         phone,
         role: userRole,
+        // year is only saved for students
+        ...(userRole === 'student' && year !== undefined ? { year } : {}),
         parentEmail: parentEmail || undefined,
         avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=1d4ed8&color=fff`,
     });
@@ -107,6 +114,7 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
         hostel: user.hostel,
         phone: user.phone,
         role: user.role,
+        year: user.year,
         avatar: user.avatar,
         linkedData, // Include linking info if available
         token: generateToken(user._id.toString()),
@@ -155,6 +163,7 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
         hostel: user.hostel,
         phone: user.phone,
         role: user.role,
+        year: user.year,
         avatar: user.avatar,
         token: generateToken(user._id.toString()),
     };
@@ -177,11 +186,19 @@ export const getMe = asyncHandler(async (req: AuthRequest, res: Response) => {
 // update profile details
 // PUT /api/auth/profile
 export const updateProfile = asyncHandler(async (req: AuthRequest, res: Response) => {
-    const { name, phone, room } = req.body;
+    const { name, phone, room, year } = req.body;
+
+    // only build the update object with provided fields
+    const updateData: any = {};
+    if (name !== undefined) updateData.name = name;
+    if (phone !== undefined) updateData.phone = phone;
+    if (room !== undefined) updateData.room = room;
+    // year is only relevant for students
+    if (year !== undefined && req.user?.role === 'student') updateData.year = year;
 
     const user = await User.findByIdAndUpdate(
         req.user?._id,
-        { name, phone, room },
+        updateData,
         { new: true, runValidators: true }
     );
 

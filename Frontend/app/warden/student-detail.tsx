@@ -102,6 +102,15 @@ export default function StudentDetailScreen() {
                         <Text style={[styles.infoValue, { color: colors.text }]}>{student.rollNo}</Text>
                     </View>
                     <View style={[styles.infoCard, { backgroundColor: colors.card }]}>
+                        <Ionicons name="school" size={20} color={colors.primary} />
+                        <Text style={[styles.infoLabel, { color: colors.textSecondary }]}>Year</Text>
+                        <Text style={[styles.infoValue, { color: colors.text }]}>
+                            {student.year
+                                ? `${student.year}${student.year === 1 ? 'st' : student.year === 2 ? 'nd' : student.year === 3 ? 'rd' : 'th'} Year`
+                                : 'N/A'}
+                        </Text>
+                    </View>
+                    <View style={[styles.infoCard, { backgroundColor: colors.card }]}>
                         <Ionicons name="bed" size={20} color={colors.primary} />
                         <Text style={[styles.infoLabel, { color: colors.textSecondary }]}>Room</Text>
                         <Text style={[styles.infoValue, { color: colors.text }]}>{student.room}</Text>

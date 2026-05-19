@@ -166,6 +166,14 @@ export default function AdminUsers() {
                                         <Ionicons name="id-card" size={14} color={colors.textTertiary} />
                                         <Text style={[styles.detailText, { color: colors.textSecondary }]}>{user.rollNo}</Text>
                                     </View>
+                                    {user.role === 'student' && user.year && (
+                                        <View style={styles.detailItem}>
+                                            <Ionicons name="school" size={14} color={colors.textTertiary} />
+                                            <Text style={[styles.detailText, { color: colors.textSecondary }]}>
+                                                {user.year === 1 ? '1st' : user.year === 2 ? '2nd' : user.year === 3 ? '3rd' : '4th'} Year
+                                            </Text>
+                                        </View>
+                                    )}
                                     <View style={styles.detailItem}>
                                         <Ionicons name="home" size={14} color={colors.textTertiary} />
                                         <Text style={[styles.detailText, { color: colors.textSecondary }]}>Room {user.room}</Text>

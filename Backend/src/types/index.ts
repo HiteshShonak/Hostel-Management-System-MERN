@@ -13,6 +13,7 @@ export interface IUser extends Document {
     phone: string;
     avatar: string;
     role: 'student' | 'admin' | 'warden' | 'mess_staff' | 'guard' | 'parent';
+    year?: number; // Academic year (1-4) — only for students
     parentEmail?: string; // For auto-linking parents during student registration
     pushToken?: string; // Expo push token for notifications
     pushTokenUpdatedAt?: Date; // Track when token was last updated

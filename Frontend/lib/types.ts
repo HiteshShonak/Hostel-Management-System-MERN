@@ -11,6 +11,7 @@ export interface User {
     phone: string;
     avatar: string;
     role: UserRole;
+    year?: number; // Academic year (1-4) — only for students
     token?: string;
 }
 
@@ -29,6 +30,7 @@ export interface RegisterData {
     hostel: string;
     phone: string;
     role?: UserRole; // For testing different roles
+    year?: number; // Academic year (1-4) — only for students
     parentEmail?: string; // For student-parent auto-linking
 }
 

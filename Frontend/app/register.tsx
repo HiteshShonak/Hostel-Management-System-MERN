@@ -26,6 +26,7 @@ export default function RegisterPage() {
     const [phone, setPhone] = useState('');
     const [parentEmail, setParentEmail] = useState('');
     const [role, setRole] = useState<UserRole>('student');
+    const [year, setYear] = useState<number>(1);
     const [showPassword, setShowPassword] = useState(false);
 
     const registerMutation = useRegister();
@@ -41,6 +42,10 @@ export default function RegisterPage() {
         if (!isParent && (!rollNo || !room || !hostel)) {
             return;
         }
+        // year is required for students
+        if (isStudent && (!year || year < 1 || year > 4)) {
+            return;
+        }
 
         registerMutation.mutate(
             {
@@ -52,6 +57,8 @@ export default function RegisterPage() {
                 hostel: isParent ? 'N/A' : hostel,
                 phone,
                 role,
+                // only send year for students
+                ...(isStudent ? { year } : {}),
                 parentEmail: !isParent && parentEmail ? parentEmail : undefined,
             },
             {
@@ -173,6 +180,42 @@ export default function RegisterPage() {
                                 <TextInput style={[styles.input, { color: colors.text, backgroundColor: colors.card, borderColor: colors.border }]} placeholder="Enter hostel name" placeholderTextColor={colors.textTertiary} value={hostel} onChangeText={setHostel} />
                             </View>
 
+                            {/* Year picker — required for students */}
+                            {isStudent && (
+                                <View style={styles.inputGroup}>
+                                    <View style={styles.labelRow}>
+                                        <Text style={[styles.label, { color: colors.text }]}>Academic Year</Text>
+                                        <Text style={[styles.requiredBadge, { backgroundColor: isDark ? '#172554' : '#eff6ff', color: colors.primary }]}>Required</Text>
+                                    </View>
+                                    <View style={styles.yearContainer}>
+                                        {([1, 2, 3, 4] as const).map((y) => (
+                                            <Pressable
+                                                key={y}
+                                                style={[
+                                                    styles.yearButton,
+                                                    { backgroundColor: colors.card, borderColor: colors.border },
+                                                    year === y && { borderColor: colors.primary, backgroundColor: isDark ? 'rgba(29, 78, 216, 0.2)' : '#eff6ff' },
+                                                ]}
+                                                onPress={() => setYear(y)}
+                                            >
+                                                <Text style={[
+                                                    styles.yearText,
+                                                    { color: colors.textSecondary },
+                                                    year === y && { color: colors.primary, fontWeight: '700' },
+                                                ]}>
+                                                    {y === 1 ? '1st' : y === 2 ? '2nd' : y === 3 ? '3rd' : '4th'}
+                                                </Text>
+                                                <Text style={[
+                                                    styles.yearSubText,
+                                                    { color: colors.textTertiary },
+                                                    year === y && { color: colors.primary },
+                                                ]}>Year</Text>
+                                            </Pressable>
+                                        ))}
+                                    </View>
+                                </View>
+                            )}
+
                             <View style={styles.inputGroup}>
                                 <Text style={[styles.label, { color: colors.text }]}>Parent's Email (Optional)</Text>
                                 <TextInput
@@ -243,6 +286,8 @@ const styles = StyleSheet.create({
     errorText: { flex: 1 },
     inputGroup: { gap: 6 },
     label: { fontSize: 14, fontWeight: '500' },
+    labelRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+    requiredBadge: { fontSize: 11, fontWeight: '600', paddingHorizontal: 8, paddingVertical: 2, borderRadius: 6 },
     input: { borderWidth: 1, borderRadius: 12, paddingVertical: 12, paddingHorizontal: 16, fontSize: 16 },
     helperText: { fontSize: 12, marginTop: 4 },
     row: { flexDirection: 'row' },
@@ -252,6 +297,10 @@ const styles = StyleSheet.create({
     roleContainer: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
     roleButton: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, paddingVertical: 10, paddingHorizontal: 12, borderRadius: 12, borderWidth: 2, minWidth: '30%' },
     roleText: { fontSize: 13, fontWeight: '600' },
+    yearContainer: { flexDirection: 'row', gap: 8 },
+    yearButton: { flex: 1, alignItems: 'center', paddingVertical: 12, borderRadius: 12, borderWidth: 2 },
+    yearText: { fontSize: 16, fontWeight: '600' },
+    yearSubText: { fontSize: 11, marginTop: 2 },
     registerButton: { paddingVertical: 16, borderRadius: 12, alignItems: 'center', marginTop: 8 },
     registerButtonDisabled: { opacity: 0.7 },
     registerButtonText: { color: 'white', fontSize: 16, fontWeight: '600' },

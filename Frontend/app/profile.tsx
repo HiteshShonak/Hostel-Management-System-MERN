@@ -89,6 +89,13 @@ export default function ProfilePage() {
 
     const profileItems: Array<{ icon: string; label: string; value: string }> = [];
 
+    // helper to format year ordinal
+    const formatYear = (y?: number) => {
+        if (!y) return 'N/A';
+        const suffix = y === 1 ? 'st' : y === 2 ? 'nd' : y === 3 ? 'rd' : 'th';
+        return `${y}${suffix} Year`;
+    };
+
     // staff get employee id, students get roll number
     if (isStudent) {
         profileItems.push({ icon: 'keypad', label: 'Roll Number', value: user.rollNo || 'N/A' });
@@ -96,8 +103,9 @@ export default function ProfilePage() {
         profileItems.push({ icon: 'id-card', label: 'Employee ID', value: user.rollNo || 'N/A' });
     }
 
-    // only students have rooms
+    // only students have rooms and year
     if (isStudent) {
+        profileItems.push({ icon: 'school', label: 'Academic Year', value: formatYear(user.year) });
         profileItems.push({ icon: 'bed', label: 'Room Number', value: user.room || 'N/A' });
         profileItems.push({ icon: 'business', label: 'Hostel', value: user.hostel || 'N/A' });
     }

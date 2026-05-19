@@ -58,7 +58,7 @@ export const useUser = () => {
 export const useUpdateProfile = () => {
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: (data: { name?: string; phone?: string; room?: string }) =>
+        mutationFn: (data: { name?: string; phone?: string; room?: string; year?: number }) =>
             authService.updateProfile(data),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['user'] });

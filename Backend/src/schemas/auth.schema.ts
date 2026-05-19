@@ -21,8 +21,20 @@ export const registerSchema = z.object({
         hostel: z.string().min(1, 'Hostel name is required').max(100),
         phone: z.string().min(10, 'Phone number must be at least 10 digits').max(15),
         role: z.enum(['student', 'warden', 'mess_staff', 'guard', 'admin', 'parent']).optional(),
+        // Academic year (1-4) - required for students, ignored for other roles
+        year: z.number().int().min(1, 'Year must be between 1 and 4').max(4, 'Year must be between 1 and 4').optional(),
         // Optional parent email for auto-linking when student registers
         parentEmail: z.string().email('Invalid parent email').optional(),
+    }).superRefine((data, ctx) => {
+        // year is required when role is student (or when role is omitted, since student is the default)
+        const isStudent = !data.role || data.role === 'student';
+        if (isStudent && (data.year === undefined || data.year === null)) {
+            ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                message: 'Academic year is required for students (1–4)',
+                path: ['year'],
+            });
+        }
     }),
 });
 
@@ -38,6 +50,8 @@ export const updateProfileSchema = z.object({
         name: z.string().min(2).max(100).optional(),
         phone: z.string().min(10).max(15).optional(),
         room: z.string().min(1).max(20).optional(),
+        // Academic year can be updated by students
+        year: z.number().int().min(1).max(4).optional(),
     }),
 });
 

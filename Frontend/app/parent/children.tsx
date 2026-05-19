@@ -103,6 +103,20 @@ export default function ParentChildren() {
                                     </View>
                                 </View>
 
+                                {child.year && (
+                                    <View style={styles.detailItem}>
+                                        <View style={[styles.detailIcon, { backgroundColor: isDark ? '#052e16' : '#dcfce7' }]}>
+                                            <Ionicons name="school" size={18} color="#16a34a" />
+                                        </View>
+                                        <View>
+                                            <Text style={[styles.detailLabel, { color: colors.textTertiary }]}>Year</Text>
+                                            <Text style={[styles.detailValue, { color: colors.text }]}>
+                                                {child.year === 1 ? '1st' : child.year === 2 ? '2nd' : child.year === 3 ? '3rd' : '4th'} Year
+                                            </Text>
+                                        </View>
+                                    </View>
+                                )}
+
                                 <View style={styles.detailItem}>
                                     <View style={[styles.detailIcon, { backgroundColor: isDark ? '#14532d' : '#dcfce7' }]}>
                                         <Ionicons name="call" size={18} color="#16a34a" />

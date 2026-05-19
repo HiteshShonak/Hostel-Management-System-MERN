@@ -118,7 +118,7 @@ export default function WardenStudentsScreen() {
                                 <View style={styles.studentDetails}>
                                     <Text style={[styles.studentName, { color: colors.text }]}>{student.name}</Text>
                                     <Text style={[styles.studentMeta, { color: colors.textSecondary }]}>
-                                        {student.rollNo} • Room {student.room}
+                                        {student.rollNo} • Room {student.room}{student.year ? ` • ${student.year}${student.year === 1 ? 'st' : student.year === 2 ? 'nd' : student.year === 3 ? 'rd' : 'th'} Yr` : ''}
                                     </Text>
                                 </View>
                             </View>
