@@ -12,7 +12,7 @@ export interface IUser extends Document {
     hostel: string;
     phone: string;
     avatar: string;
-    role: 'student' | 'admin' | 'warden' | 'mess_staff' | 'guard' | 'parent';
+    role: 'student' | 'admin' | 'warden' | 'mess_staff' | 'guard' | 'parent' | 'helper';
     year?: number; // Academic year (1-4) — only for students
     parentEmail?: string; // For auto-linking parents during student registration
     pushToken?: string; // Expo push token for notifications

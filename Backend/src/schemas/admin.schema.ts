@@ -16,7 +16,7 @@ export const linkParentSchema = z.object({
 
 export const updateRoleSchema = z.object({
     body: z.object({
-        role: z.enum(['student', 'admin', 'warden', 'mess_staff', 'guard', 'parent'], {
+        role: z.enum(['student', 'admin', 'warden', 'mess_staff', 'guard', 'parent', 'helper'], {
             message: 'Invalid role specified',
         }),
     }),

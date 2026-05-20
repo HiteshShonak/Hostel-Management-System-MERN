@@ -20,7 +20,7 @@ export const registerSchema = z.object({
         room: z.string().min(1, 'Room number is required').max(20),
         hostel: z.string().min(1, 'Hostel name is required').max(100),
         phone: z.string().min(10, 'Phone number must be at least 10 digits').max(15),
-        role: z.enum(['student', 'warden', 'mess_staff', 'guard', 'admin', 'parent']).optional(),
+        role: z.enum(['student', 'warden', 'mess_staff', 'guard', 'admin', 'parent', 'helper']).optional(),
         // Academic year (1-4) - required for students, ignored for other roles
         year: z.number().int().min(1, 'Year must be between 1 and 4').max(4, 'Year must be between 1 and 4').optional(),
         // Optional parent email for auto-linking when student registers

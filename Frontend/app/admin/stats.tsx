@@ -62,6 +62,18 @@ export default function AdminStatsScreen() {
                             <Text style={[styles.statNumber, { color: isDark ? '#fdba74' : '#ea580c' }]}>{stats?.users?.byRole?.mess_staff || 0}</Text>
                             <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Mess Staff</Text>
                         </View>
+                        <View style={[styles.statBox, { backgroundColor: colors.backgroundSecondary }]}>
+                            <Text style={[styles.statNumber, { color: isDark ? '#67e8f9' : '#0891b2' }]}>{stats?.users?.byRole?.guard || 0}</Text>
+                            <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Guards</Text>
+                        </View>
+                        <View style={[styles.statBox, { backgroundColor: colors.backgroundSecondary }]}>
+                            <Text style={[styles.statNumber, { color: isDark ? '#e879f9' : '#a21caf' }]}>{stats?.users?.byRole?.admin || 0}</Text>
+                            <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Admins</Text>
+                        </View>
+                        <View style={[styles.statBox, { backgroundColor: colors.backgroundSecondary }]}>
+                            <Text style={[styles.statNumber, { color: isDark ? '#a5b4fc' : '#4338ca' }]}>{stats?.users?.byRole?.helper || 0}</Text>
+                            <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Helpers</Text>
+                        </View>
                     </View>
                 </View>
 

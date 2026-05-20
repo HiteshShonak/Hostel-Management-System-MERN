@@ -628,7 +628,7 @@ export const adminService = {
         users: {
             total: number;
             students: number;
-            byRole: { student: number; warden: number; parent: number; admin: number; guard: number; mess_staff: number }
+            byRole: { student: number; warden: number; parent: number; admin: number; guard: number; mess_staff: number; helper: number }
         };
         gatePasses: { total: number; approved: number; pending: number; rejected: number };
         attendance: { monthlyRecords: number; todayRecords: number; averagePercentage: number; totalStudents: number };
@@ -665,6 +665,80 @@ export const adminService = {
     }> => {
         const response = await api.get(`/gatepass/logs?page=${page}&limit=${limit}`);
         return response.data || { logs: [], pagination: { total: 0, page: 1, limit, hasNext: false } };
+    },
+};
+
+// ==================== HELPER SERVICES ====================
+
+export interface HelperRegisteredUser {
+    _id: string;
+    name: string;
+    email: string;
+    rollNo: string;
+    room: string;
+    hostel: string;
+    phone: string;
+    role: string;
+    year?: number;
+    avatar: string;
+    createdAt: string;
+    linkedData: any;
+    registeredBy: { _id: string; name: string; email: string };
+}
+
+export interface HelperUserSearchResult {
+    _id: string;
+    name: string;
+    email: string;
+    rollNo: string;
+    room: string;
+    hostel: string;
+    phone: string;
+    role: string;
+    year?: number;
+    avatar: string;
+    createdAt: string;
+}
+
+export const helperService = {
+    // Register a new user — no token returned
+    registerUser: async (data: {
+        name: string;
+        email: string;
+        password: string;
+        rollNo: string;
+        room: string;
+        hostel: string;
+        phone: string;
+        role: string;
+        year?: number;
+        parentEmail?: string;
+    }): Promise<HelperRegisteredUser> => {
+        const response = await api.post<HelperRegisteredUser>('/helper/register', data);
+        return response.data;
+    },
+
+    // Force-reset any user's password without their current password
+    resetUserPassword: async (userId: string, newPassword: string): Promise<{ userId: string; name: string; email: string; role: string }> => {
+        const response = await api.put(`/helper/users/${userId}/reset-password`, { newPassword });
+        return response.data;
+    },
+
+    // Search users by name/email/rollNo with optional role filter
+    searchUsers: async (params?: { search?: string; role?: string; page?: number; limit?: number }): Promise<{ users: HelperUserSearchResult[]; pagination: any }> => {
+        const qs = new URLSearchParams();
+        if (params?.search) qs.append('search', params.search);
+        if (params?.role) qs.append('role', params.role);
+        if (params?.page) qs.append('page', String(params.page));
+        if (params?.limit) qs.append('limit', String(params.limit));
+        const response = await api.get(`/helper/users?${qs.toString()}`);
+        return response.data || { users: [], pagination: {} };
+    },
+
+    // Get a single user by ID
+    getUser: async (userId: string): Promise<HelperUserSearchResult> => {
+        const response = await api.get<HelperUserSearchResult>(`/helper/users/${userId}`);
+        return response.data;
     },
 };
 

@@ -85,7 +85,7 @@ export default function ProfilePage() {
     // what to show depends on the role
     const isStudent = user.role === 'student';
     const isParent = user.role === 'parent';
-    const isStaff = ['warden', 'admin', 'guard', 'mess_staff'].includes(user.role);
+    const isStaff = ['warden', 'admin', 'guard', 'mess_staff', 'helper'].includes(user.role);
 
     const profileItems: Array<{ icon: string; label: string; value: string }> = [];
 

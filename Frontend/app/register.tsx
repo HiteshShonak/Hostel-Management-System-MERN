@@ -13,6 +13,7 @@ const ROLES: { value: UserRole; label: string; icon: string }[] = [
     { value: 'guard', label: 'Guard', icon: 'shield-checkmark' },
     { value: 'warden', label: 'Warden', icon: 'shield' },
     { value: 'mess_staff', label: 'Mess Staff', icon: 'restaurant' },
+    { value: 'helper', label: 'Helper', icon: 'person-add' },
 ];
 
 export default function RegisterPage() {

@@ -37,6 +37,13 @@ const guardNavItems = [
   { icon: 'person', label: 'Profile', href: '/profile' },
 ] as const;
 
+const helperNavItems = [
+  { icon: 'home', label: 'Home', href: '/' },
+  { icon: 'person-add', label: 'Register', href: '/helper/register-user' },
+  { icon: 'key', label: 'Reset Pwd', href: '/helper/reset-password' },
+  { icon: 'person', label: 'Profile', href: '/profile' },
+] as const;
+
 export function BottomNav() {
   const pathname = usePathname();
   const { user } = useAuth();
@@ -52,6 +59,8 @@ export function BottomNav() {
         return messStaffNavItems;
       case 'guard':
         return guardNavItems;
+      case 'helper':
+        return helperNavItems;
       default:
         return studentNavItems;
     }

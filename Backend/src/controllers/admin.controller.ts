@@ -198,7 +198,7 @@ export const getAllUsers = asyncHandler(async (req: AuthRequest, res: Response) 
 // change someone's role
 export const updateUserRole = asyncHandler(async (req: AuthRequest, res: Response) => {
     const { role } = req.body;
-    const validRoles = ['student', 'admin', 'warden', 'mess_staff', 'guard', 'parent'];
+    const validRoles = ['student', 'admin', 'warden', 'mess_staff', 'guard', 'parent', 'helper'];
 
     if (!validRoles.includes(role)) {
         throw new ApiError(400, 'Invalid role specified');
@@ -366,6 +366,7 @@ export const getSystemStats = asyncHandler(async (req: AuthRequest, res: Respons
         totalAdmins,
         totalGuards,
         totalMessStaff,
+        totalHelpers,
         totalPasses,
         approvedPasses,
         pendingPasses,
@@ -382,6 +383,7 @@ export const getSystemStats = asyncHandler(async (req: AuthRequest, res: Respons
         User.countDocuments({ role: 'admin' }),
         User.countDocuments({ role: 'guard' }),
         User.countDocuments({ role: 'mess_staff' }),
+        User.countDocuments({ role: 'helper' }),
         GatePass.countDocuments(),
         GatePass.countDocuments({ status: 'APPROVED' }),
         GatePass.countDocuments({ status: { $in: ['PENDING_PARENT', 'PENDING_WARDEN'] } }),
@@ -409,6 +411,7 @@ export const getSystemStats = asyncHandler(async (req: AuthRequest, res: Respons
                 admin: totalAdmins,
                 guard: totalGuards,
                 mess_staff: totalMessStaff,
+                helper: totalHelpers,
             },
         },
         gatePasses: {

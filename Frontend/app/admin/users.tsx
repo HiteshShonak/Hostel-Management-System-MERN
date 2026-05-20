@@ -7,7 +7,7 @@ import { useAdminUsers, useAdminUpdateRole } from '@/lib/hooks';
 import { useTheme } from '@/lib/theme-context';
 import { AdminUser } from '@/lib/services';
 
-const ROLES = ['student', 'parent', 'warden', 'mess_staff', 'guard', 'admin'];
+const ROLES = ['student', 'parent', 'warden', 'mess_staff', 'guard', 'admin', 'helper'];
 
 const getRoleColors = (isDark: boolean): Record<string, { bg: string; text: string; icon: string }> => ({
     student: { bg: isDark ? '#172554' : '#eff6ff', text: isDark ? '#93c5fd' : '#1d4ed8', icon: 'school' },
@@ -16,6 +16,7 @@ const getRoleColors = (isDark: boolean): Record<string, { bg: string; text: stri
     mess_staff: { bg: isDark ? '#052e16' : '#f0fdf4', text: isDark ? '#86efac' : '#166534', icon: 'restaurant' },
     guard: { bg: isDark ? '#0c4a6e' : '#e0f2fe', text: isDark ? '#7dd3fc' : '#0284c7', icon: 'eye' },
     admin: { bg: isDark ? '#3b0764' : '#f3e8ff', text: isDark ? '#d8b4fe' : '#7c3aed', icon: 'settings' },
+    helper: { bg: isDark ? '#1e1b4b' : '#eef2ff', text: isDark ? '#a5b4fc' : '#4338ca', icon: 'person-add' },
 });
 
 export default function AdminUsers() {

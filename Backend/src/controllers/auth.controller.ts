@@ -30,7 +30,7 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
     }
 
     // validate role (mostly for parents)
-    const validRoles = ['student', 'warden', 'mess_staff', 'guard', 'admin', 'parent'];
+    const validRoles = ['student', 'warden', 'mess_staff', 'guard', 'admin', 'parent', 'helper'];
     const userRole = validRoles.includes(role) ? role : 'student';
 
     // year is required for students — Zod already validates this, but double-check here

@@ -10,6 +10,7 @@ import foodRatingRoutes from './foodrating.routes';
 import notificationRoutes from './notification.routes';
 import adminRoutes from './admin.routes';
 import parentRoutes from './parent.routes';
+import helperRoutes from './helper.routes';
 import testRoutes from './test.routes';
 
 const router = Router();
@@ -25,6 +26,7 @@ router.use('/food-rating', foodRatingRoutes);
 router.use('/notifications', notificationRoutes);
 router.use('/admin', adminRoutes);
 router.use('/parent', parentRoutes);
+router.use('/helper', helperRoutes);
 router.use('/test', testRoutes);
 
 export default router;

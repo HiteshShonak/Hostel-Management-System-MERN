@@ -99,3 +99,16 @@ export const studentOnly = (req: AuthRequest, res: Response, next: NextFunction)
 
     next();
 };
+
+// Helper only (also allows admin)
+export const helperOnly = (req: AuthRequest, res: Response, next: NextFunction) => {
+    if (!req.user) {
+        throw new ApiError(401, 'Not authorized');
+    }
+
+    if (req.user.role !== 'helper' && req.user.role !== 'admin') {
+        throw new ApiError(403, 'Helper access required');
+    }
+
+    next();
+};
