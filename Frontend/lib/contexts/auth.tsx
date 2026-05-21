@@ -1,10 +1,10 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { router, useSegments, useRootNavigationState } from 'expo-router';
-import { useUser } from './hooks';
-import { getToken, saveToken, removeToken } from './api';
-import { User } from './types';
-import { registerForPushNotificationsAsync } from './notifications';
-import { authService } from './services';
+import { useUser } from '../hooks';
+import { getToken, saveToken, removeToken } from '../api';
+import { User } from '../types';
+import { registerForPushNotificationsAsync } from '../notifications';
+import { authService } from '../services';
 
 interface AuthContextType {
     user: User | null;
