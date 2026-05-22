@@ -2,46 +2,46 @@ import React from 'react';
 import { View, Text, Pressable, StyleSheet, Animated } from 'react-native';
 import { Link, usePathname } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { useAuth } from '@/lib/auth-context';
-import { useTheme } from '@/lib/theme-context';
+import { useAuth } from '@/lib/contexts/auth';
+import { useTheme } from '@/lib/contexts/theme';
 import { PRIMARY_COLOR } from '@/lib/constants';
 
 const studentNavItems = [
   { icon: 'home', label: 'Home', href: '/' },
-  { icon: 'qr-code', label: 'Gate Pass', href: '/gate-pass' },
-  { icon: 'restaurant', label: 'Mess', href: '/mess-menu' },
-  { icon: 'notifications', label: 'Notices', href: '/notices' },
-  { icon: 'person', label: 'Profile', href: '/profile' },
+  { icon: 'qr-code', label: 'Gate Pass', href: '/shared/gate-pass' },
+  { icon: 'restaurant', label: 'Mess', href: '/mess/mess-menu' },
+  { icon: 'notifications', label: 'Notices', href: '/shared/notices' },
+  { icon: 'person', label: 'Profile', href: '/shared/profile' },
 ] as const;
 
 const wardenNavItems = [
   { icon: 'home', label: 'Home', href: '/' },
-  { icon: 'scan', label: 'Scanner', href: '/qr-scanner' },
-  { icon: 'checkmark-done', label: 'Passes', href: '/gate-pass' },
-  { icon: 'notifications', label: 'Notices', href: '/notices' },
-  { icon: 'person', label: 'Profile', href: '/profile' },
+  { icon: 'scan', label: 'Scanner', href: '/shared/qr-scanner' },
+  { icon: 'checkmark-done', label: 'Passes', href: '/shared/gate-pass' },
+  { icon: 'notifications', label: 'Notices', href: '/shared/notices' },
+  { icon: 'person', label: 'Profile', href: '/shared/profile' },
 ] as const;
 
 const messStaffNavItems = [
   { icon: 'home', label: 'Home', href: '/' },
-  { icon: 'restaurant', label: 'Menu', href: '/mess-menu' },
-  { icon: 'star', label: 'Ratings', href: '/food-ratings' },
-  { icon: 'notifications', label: 'Notices', href: '/notices' },
-  { icon: 'person', label: 'Profile', href: '/profile' },
+  { icon: 'restaurant', label: 'Menu', href: '/mess/mess-menu' },
+  { icon: 'star', label: 'Ratings', href: '/shared/food-ratings' },
+  { icon: 'notifications', label: 'Notices', href: '/shared/notices' },
+  { icon: 'person', label: 'Profile', href: '/shared/profile' },
 ] as const;
 
 const guardNavItems = [
   { icon: 'home', label: 'Home', href: '/' },
-  { icon: 'scan', label: 'Scanner', href: '/qr-scanner' },
-  { icon: 'notifications', label: 'Notices', href: '/notices' },
-  { icon: 'person', label: 'Profile', href: '/profile' },
+  { icon: 'scan', label: 'Scanner', href: '/shared/qr-scanner' },
+  { icon: 'notifications', label: 'Notices', href: '/shared/notices' },
+  { icon: 'person', label: 'Profile', href: '/shared/profile' },
 ] as const;
 
 const helperNavItems = [
   { icon: 'home', label: 'Home', href: '/' },
   { icon: 'person-add', label: 'Register', href: '/helper/register-user' },
   { icon: 'key', label: 'Reset Pwd', href: '/helper/reset-password' },
-  { icon: 'person', label: 'Profile', href: '/profile' },
+  { icon: 'person', label: 'Profile', href: '/shared/profile' },
 ] as const;
 
 export function BottomNav() {

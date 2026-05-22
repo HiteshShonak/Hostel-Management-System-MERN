@@ -3,7 +3,7 @@ import { View, Text, Pressable, StyleSheet, ActivityIndicator } from 'react-nati
 import { Link } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useNotices } from '@/lib/hooks';
-import { useTheme } from '@/lib/theme-context';
+import { useTheme } from '@/lib/contexts/theme';
 import { formatRelativeTime } from '@/lib/utils';
 import { Badge } from '@/components/ui/Badge';
 
@@ -29,7 +29,7 @@ export function RecentNotices() {
         <View style={styles.container}>
             <View style={styles.header}>
                 <Text style={[styles.title, { color: colors.text }]}>Recent Notices</Text>
-                <Link href="/notices" asChild>
+                <Link href="/shared/notices" asChild>
                     <Pressable style={styles.viewAllBtn}>
                         <Text style={[styles.viewAllText, { color: colors.primary }]}>View All</Text>
                         <Ionicons name="chevron-forward" size={16} color={colors.primary} />

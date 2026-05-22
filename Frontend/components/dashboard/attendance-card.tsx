@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { useTheme } from '@/lib/theme-context';
+import { useTheme } from '@/lib/contexts/theme';
 import { useTodayAttendance } from '@/lib/hooks';
 
 export function AttendanceCard() {
@@ -40,7 +40,7 @@ export function AttendanceCard() {
                         borderColor: borderColor
                     }
                 ]}
-                onPress={() => router.push('/attendance')}
+                onPress={() => router.push('/student/attendance')}
             >
                 <View style={[styles.iconContainer, { backgroundColor: iconBg }]}>
                     <Ionicons

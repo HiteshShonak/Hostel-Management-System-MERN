@@ -4,7 +4,7 @@ import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useQuery } from '@tanstack/react-query';
 import { notificationService } from '@/lib/services';
-import { useTheme } from '@/lib/theme-context';
+import { useTheme } from '@/lib/contexts/theme';
 
 interface PageHeaderProps {
     title: string;
@@ -47,7 +47,7 @@ export function PageHeader({ title, showBack = true, showNotifications = true }:
             )}
             <Text style={[styles.title, { color: iconColor }]}>{title}</Text>
             {showNotifications ? (
-                <Pressable onPress={() => router.push('/notifications')} style={styles.bellButton}>
+                <Pressable onPress={() => router.push('/shared/notifications')} style={styles.bellButton}>
                     <Ionicons name="notifications-outline" size={24} color={iconColor} />
                     {typeof unreadCount === 'number' && unreadCount > 0 && (
                         <View style={styles.badge}>

@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
-import { useTheme } from '@/lib/theme-context';
+import { useTheme } from '@/lib/contexts/theme';
 import { useCurrentGatePass, useTodayAttendance } from '@/lib/hooks';
 
 const AUTO_MS = 2000;
@@ -33,7 +33,7 @@ function AttendanceSlide() {
 
     return (
         <Pressable style={[styles.card, { backgroundColor: bg, borderColor: border }]}
-            onPress={() => router.push('/attendance')}>
+            onPress={() => router.push('/student/attendance')}>
             <View style={[styles.icon, { backgroundColor: iconBg }]}>
                 <Ionicons name={marked ? 'checkmark-circle' : 'location'} size={28} color={accent} />
             </View>
@@ -64,7 +64,7 @@ function PassSlide({ pass, out }: { pass: any; out: boolean }) {
 
     return (
         <Pressable style={[styles.card, { backgroundColor: bg, borderColor: border }]}
-            onPress={() => router.push('/gate-pass')}>
+            onPress={() => router.push('/shared/gate-pass')}>
             <View style={[styles.icon, { backgroundColor: iconBg }]}>
                 <Ionicons name={out ? 'walk' : 'document-text'} size={28} color={accent} />
             </View>

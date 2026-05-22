@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { useTheme } from '@/lib/theme-context';
+import { useTheme } from '@/lib/contexts/theme';
 
 export function QuickActions() {
     const router = useRouter();
@@ -12,28 +12,28 @@ export function QuickActions() {
         {
             icon: 'qr-code',
             label: 'Gate Pass',
-            route: '/gate-pass',
+            route: '/shared/gate-pass',
             color: 'white',
             bg: '#3b82f6', // Blue
         },
         {
             icon: 'restaurant',
             label: 'Mess Menu',
-            route: '/mess-menu',
+            route: '/mess/mess-menu',
             color: 'white',
             bg: '#f97316', // Orange
         },
         {
             icon: 'warning',
             label: 'Complaints',
-            route: '/complaints',
+            route: '/shared/complaints',
             color: 'white',
             bg: '#f59e0b', // Amber
         },
         {
             icon: 'alert-circle',
             label: 'Emergency',
-            route: '/emergency',
+            route: '/shared/emergency',
             color: 'white',
             bg: '#ef4444', // Red
         }

@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
-import { useTheme } from '@/lib/theme-context';
+import { useTheme } from '@/lib/contexts/theme';
 import { useCurrentGatePass } from '@/lib/hooks';
 
 export function ActivePassCard() {
@@ -45,7 +45,7 @@ export function ActivePassCard() {
                         borderColor: borderColor,
                     },
                 ]}
-                onPress={() => router.push('/gate-pass')}
+                onPress={() => router.push('/shared/gate-pass')}
             >
                 <View style={[styles.iconContainer, { backgroundColor: iconBg }]}>
                     <Ionicons

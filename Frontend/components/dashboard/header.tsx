@@ -3,8 +3,8 @@ import { View, Text, Pressable, StyleSheet, ActivityIndicator } from 'react-nati
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useQuery } from '@tanstack/react-query';
-import { useAuth } from '@/lib/auth-context';
-import { useTheme } from '@/lib/theme-context';
+import { useAuth } from '@/lib/contexts/auth';
+import { useTheme } from '@/lib/contexts/theme';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/Avatar';
 import { notificationService } from '@/lib/services';
 import { getCurrentISTHour } from '@/lib/utils/date';
@@ -72,7 +72,7 @@ export function DashboardHeader() {
             {/* Notification Bell */}
             <Pressable
                 style={styles.notificationBtn}
-                onPress={() => router.push('/notifications')}
+                onPress={() => router.push('/shared/notifications')}
             >
                 <Ionicons name="notifications-outline" size={24} color={textColor} />
                 {typeof unreadCount === 'number' && unreadCount > 0 && (
