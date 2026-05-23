@@ -4,8 +4,8 @@ import { CameraView, useCameraPermissions } from 'expo-camera';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useValidateGatePass, useMarkExit, useMarkEntry } from '@/lib/hooks';
-import { useAuth } from '@/lib/auth-context';
-import { useTheme } from '@/lib/theme-context';
+import { useAuth } from '@/lib/contexts/auth';
+import { useTheme } from '@/lib/contexts/theme';
 import { GatePass, User } from '@/lib/types';
 
 type ScanResult = {

@@ -6,7 +6,7 @@ import { PageHeader } from '@/components/ui/PageHeader';
 import { BottomNav } from '@/components/ui/BottomNav';
 import { useUser, useTodayAttendance, useAttendanceStats, useMarkAttendance, useRefreshDashboard, useAttendanceHistory, useSystemConfig } from '@/lib/hooks';
 import { formatDateLong, formatTime, formatDateWithDay, getCurrentISTHour, formatHour, isWithinTimeWindow } from '@/lib/utils/date';
-import { useTheme } from '@/lib/theme-context';
+import { useTheme } from '@/lib/contexts/theme';
 
 export default function AttendancePage() {
     const { colors, isDark } = useTheme();

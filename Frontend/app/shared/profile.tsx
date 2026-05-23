@@ -5,8 +5,8 @@ import { router } from 'expo-router';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { BottomNav } from '@/components/ui/BottomNav';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/Avatar';
-import { useAuth } from '@/lib/auth-context';
-import { useTheme } from '@/lib/theme-context';
+import { useAuth } from '@/lib/contexts/auth';
+import { useTheme } from '@/lib/contexts/theme';
 import { authService } from '@/lib/services';
 import { useQueryClient } from '@tanstack/react-query';
 
@@ -45,7 +45,7 @@ export default function ProfilePage() {
         if (label === 'Logout') {
             handleLogout();
         } else if (label === 'Settings') {
-            router.push('/settings');
+            router.push('/shared/settings');
         }
     };
 

@@ -4,8 +4,8 @@ import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { BottomNav } from '@/components/ui/BottomNav';
-import { useAuth } from '@/lib/auth-context';
-import { useTheme } from '@/lib/theme-context';
+import { useAuth } from '@/lib/contexts/auth';
+import { useTheme } from '@/lib/contexts/theme';
 import { useChangePassword } from '@/lib/hooks';
 
 export default function SettingsPage() {

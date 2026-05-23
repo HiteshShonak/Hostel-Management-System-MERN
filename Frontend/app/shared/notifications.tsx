@@ -7,7 +7,7 @@ import { BottomNav } from '@/components/ui/BottomNav';
 import { LoadMore } from '@/components/ui/LoadMore';
 import { useNotifications, useMarkNotificationAsRead, useMarkAllNotificationsAsRead, useDeleteNotification, useRefreshDashboard } from '@/lib/hooks';
 import { AppNotification } from '@/lib/types';
-import { useTheme } from '@/lib/theme-context';
+import { useTheme } from '@/lib/contexts/theme';
 
 const getNotificationIcon = (type: string): string => {
     switch (type) {

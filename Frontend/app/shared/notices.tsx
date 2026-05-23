@@ -6,8 +6,8 @@ import { BottomNav } from '@/components/ui/BottomNav';
 import { Badge } from '@/components/ui/Badge';
 import { LoadMore } from '@/components/ui/LoadMore';
 import { useNotices, useCreateNotice, useDeleteNotice, useRefreshDashboard } from '@/lib/hooks';
-import { useAuth } from '@/lib/auth-context';
-import { useTheme } from '@/lib/theme-context';
+import { useAuth } from '@/lib/contexts/auth';
+import { useTheme } from '@/lib/contexts/theme';
 import { formatRelativeTime } from '@/lib/utils';
 import type { Notice } from '@/lib/types';
 

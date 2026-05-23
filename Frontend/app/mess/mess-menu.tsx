@@ -4,9 +4,9 @@ import { Ionicons } from '@expo/vector-icons';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { BottomNav } from '@/components/ui/BottomNav';
 import { useMessMenu, useUpdateMessMenu, useUpdateTimings, useFoodRatingAverage, useMyFoodRatings, useRateMeal, useRefreshDashboard } from '@/lib/hooks';
-import { useAuth } from '@/lib/auth-context';
-import { useTheme } from '@/lib/theme-context';
-import { TimeScrollPicker } from '@/components/TimeScrollPicker';
+import { useAuth } from '@/lib/contexts/auth';
+import { useTheme } from '@/lib/contexts/theme';
+import { TimeScrollPicker } from '@/components/ui/TimeScrollPicker';
 import type { MealType, DayType, MessTimings } from '@/lib/types';
 import { nowIST, getCurrentISTHour, formatHour, formatDateYMD } from '@/lib/utils/date';
 

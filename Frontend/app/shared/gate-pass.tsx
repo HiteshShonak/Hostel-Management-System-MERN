@@ -9,11 +9,11 @@ import { BottomNav } from '@/components/ui/BottomNav';
 import { Badge } from '@/components/ui/Badge';
 import { LoadMore } from '@/components/ui/LoadMore';
 import { useGatePasses, usePendingGatePasses, useRequestGatePass, useApproveGatePass, useRejectGatePass, useRefreshDashboard } from '@/lib/hooks';
-import { useAuth } from '@/lib/auth-context';
-import { useTheme } from '@/lib/theme-context';
+import { useAuth } from '@/lib/contexts/auth';
+import { useTheme } from '@/lib/contexts/theme';
 import { formatDate } from '@/lib/utils/date';
 import { GatePass, User } from '@/lib/types';
-import { getErrorMessage, getErrorTitle } from '@/lib/error-utils';
+import { getErrorMessage, getErrorTitle } from '@/lib/utils/error';
 
 export default function GatePassPage() {
     const { user } = useAuth();
@@ -193,7 +193,7 @@ export default function GatePassPage() {
                     {isWarden && (
                         <Pressable
                             style={[styles.scanBtn, { backgroundColor: isDark ? '#14532d' : '#dcfce7', borderColor: colors.success }]}
-                            onPress={() => router.push('/qr-scanner')}
+                            onPress={() => router.push('/shared/qr-scanner')}
                         >
                             <View style={[styles.scanBtnIcon, { backgroundColor: colors.card }]}>
                                 <Ionicons name="scan" size={28} color={colors.success} />
