@@ -4,7 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { BottomNav } from '@/components/ui/BottomNav';
 import { useParentPendingPasses, useParentApprovePass, useParentRejectPass } from '@/lib/hooks';
-import { useTheme } from '@/lib/theme-context';
+import { useTheme } from '@/lib/contexts/theme';
 
 export default function ParentPendingPasses() {
     const { colors, isDark } = useTheme();

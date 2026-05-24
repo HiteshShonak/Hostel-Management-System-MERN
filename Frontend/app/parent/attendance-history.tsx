@@ -5,7 +5,7 @@ import { PageHeader } from '@/components/ui/PageHeader';
 import { BottomNav } from '@/components/ui/BottomNav';
 import { useParentChildren, useParentChildAttendance } from '@/lib/hooks';
 import { useLocalSearchParams } from 'expo-router';
-import { useTheme } from '@/lib/theme-context';
+import { useTheme } from '@/lib/contexts/theme';
 
 export default function ParentAttendanceHistory() {
     const { colors, isDark } = useTheme();

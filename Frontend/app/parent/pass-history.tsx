@@ -4,7 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { BottomNav } from '@/components/ui/BottomNav';
 import { useParentAllPasses } from '@/lib/hooks';
-import { useTheme } from '@/lib/theme-context';
+import { useTheme } from '@/lib/contexts/theme';
 import { GatePass } from '@/lib/types';
 
 const STATUS_STYLES: Record<string, { bg: string; text: string; icon: string }> = {
