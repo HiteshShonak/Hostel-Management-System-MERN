@@ -5,7 +5,7 @@ import { router } from 'expo-router';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { BottomNav } from '@/components/ui/BottomNav';
 import { useAdminParentLinks, useAdminUnlinkParent } from '@/lib/hooks';
-import { useTheme } from '@/lib/theme-context';
+import { useTheme } from '@/lib/contexts/theme';
 import { ParentStudentLink } from '@/lib/services';
 
 export default function AdminParentLinks() {

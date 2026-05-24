@@ -5,7 +5,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useHelperResetPassword, useHelperSearchUsers } from '@/lib/hooks';
-import { useTheme } from '@/lib/theme-context';
+import { useTheme } from '@/lib/contexts/theme';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { HelperUserSearchResult } from '@/lib/services';
 
