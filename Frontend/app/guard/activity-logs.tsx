@@ -17,7 +17,7 @@ interface LogEntry {
     markedBy: { name: string; role: string };
 }
 
-import { useTheme } from '@/lib/theme-context';
+import { useTheme } from '@/lib/contexts/theme';
 
 export default function ActivityLogsScreen() {
     const { colors, isDark } = useTheme();

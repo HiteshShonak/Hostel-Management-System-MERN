@@ -6,7 +6,7 @@ import { BottomNav } from '@/components/ui/BottomNav';
 import { useQuery } from '@tanstack/react-query';
 import { gatePassService } from '@/lib/services';
 import { GatePass, User } from '@/lib/types';
-import { useTheme } from '@/lib/theme-context';
+import { useTheme } from '@/lib/contexts/theme';
 
 export default function PassHistoryScreen() {
     const { colors, isDark } = useTheme();

@@ -6,7 +6,7 @@ import { BottomNav } from '@/components/ui/BottomNav';
 import { useStudentsOut } from '@/lib/hooks';
 import { PRIMARY_COLOR } from '@/lib/constants';
 import { GatePass, User } from '@/lib/types';
-import { useTheme } from '@/lib/theme-context';
+import { useTheme } from '@/lib/contexts/theme';
 
 export default function StudentsOutScreen() {
     const { colors, isDark } = useTheme();

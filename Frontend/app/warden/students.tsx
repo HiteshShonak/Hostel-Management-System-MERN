@@ -5,8 +5,8 @@ import { router } from 'expo-router';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { BottomNav } from '@/components/ui/BottomNav';
 import { useWardenStudents, useWardenMarkAttendance } from '@/lib/hooks';
-import { getErrorMessage } from '@/lib/error-utils';
-import { useTheme } from '@/lib/theme-context';
+import { getErrorMessage } from '@/lib/utils/error';
+import { useTheme } from '@/lib/contexts/theme';
 
 export default function WardenStudentsScreen() {
     const { colors, isDark } = useTheme();
