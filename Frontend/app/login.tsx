@@ -3,9 +3,9 @@ import { View, Text, TextInput, Pressable, StyleSheet, ActivityIndicator, Keyboa
 import { Link, router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useLogin } from '@/lib/hooks';
-import { useAuth } from '@/lib/auth-context';
-import { getErrorMessage } from '@/lib/error-utils';
-import { useTheme } from '@/lib/theme-context';
+import { useAuth } from '@/lib/contexts/auth';
+import { getErrorMessage } from '@/lib/utils/error';
+import { useTheme } from '@/lib/contexts/theme';
 
 export default function LoginPage() {
     const { colors, isDark } = useTheme();

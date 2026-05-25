@@ -3,9 +3,9 @@ import { View, Text, TextInput, Pressable, StyleSheet, ActivityIndicator, Keyboa
 import { Link, router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useRegister } from '@/lib/hooks';
-import { useAuth } from '@/lib/auth-context';
+import { useAuth } from '@/lib/contexts/auth';
 import { UserRole } from '@/lib/types';
-import { useTheme } from '@/lib/theme-context';
+import { useTheme } from '@/lib/contexts/theme';
 
 const ROLES: { value: UserRole; label: string; icon: string }[] = [
     { value: 'student', label: 'Student', icon: 'school' },
