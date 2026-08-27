@@ -88,25 +88,6 @@ export const useParentRejectPass = () => {
     });
 };
 
-export const useParentTodayAttendance = () => {
-    return useQuery({
-        queryKey: queryKeys.parent.todayAttendance(),
-        queryFn: parentService.getTodayAttendance,
-        staleTime: 1000 * 60,
-        refetchInterval: 1000 * 60 * 2,
-        refetchOnMount: 'always',
-    });
-};
-
-export const useParentChildAttendance = (studentId: string, page: number = 1) => {
-    return useQuery({
-        queryKey: queryKeys.parent.childAttendance(studentId, page),
-        queryFn: () => parentService.getChildAttendance(studentId, page),
-        staleTime: 1000 * 60 * 10,
-        enabled: !!studentId,
-    });
-};
-
 export const usePrefetchParentData = () => {
     const queryClient = useQueryClient();
     return useCallback(() => {

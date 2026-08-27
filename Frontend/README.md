@@ -26,7 +26,7 @@ Mobile app for **IIIT Sonepat** hostel operations, built with React Native and E
 
 ### Device Features
 
-- **expo-camera** - QR code scanning, attendance verification
+- **expo-camera** - QR code scanning
 - **expo-notifications** - Push notifications (Expo Push API)
 - **expo-location** - Emergency location services
 - **expo-secure-store** - Secure token storage
@@ -54,7 +54,6 @@ Mobile app for **IIIT Sonepat** hostel operations, built with React Native and E
 - **Dashboard** - Quick access to all services
 - **Gate Pass** - Request and manage digital gate passes with QR codes
 - **Mess Menu & Ratings** - Weekly menu with time-restricted meal ratings
-- **Attendance** - Geofence-based attendance marking
 - **Complaints** - Submit and track complaints with categories
 - **Notices** - View hostel announcements
 - **Emergency** - Quick SOS with location sharing
@@ -65,8 +64,6 @@ Mobile app for **IIIT Sonepat** hostel operations, built with React Native and E
 ### Parent Features
 
 - **Children Dashboard** - View linked student's information
-- **Today's Attendance** - Real-time attendance status
-- **Attendance History** - Historical attendance records
 - **Pending Passes** - Approve/reject gate pass requests
 - **Pass History** - View past gate passes
 - **Notifications** - Alerts for gate pass requests
@@ -83,14 +80,13 @@ Mobile app for **IIIT Sonepat** hostel operations, built with React Native and E
 - **Pass Management** - Approve/reject gate passes
 - **Pass History** - Review all gate passes
 - **Student Management** - Student list + detail view
-- **Attendance Marking** - Mark attendance for students
 
 ### Admin Features
 
 - **User Management** - Manage users and roles
 - **Parent-Student Linking** - Link and unlink parent accounts
-- **System Configuration** - Geofence, attendance window, pass limits
-- **System Statistics** - Users, passes, attendance, complaints, notices
+- **System Configuration** - Geofence, pass limits
+- **System Statistics** - Users, passes, complaints, notices
 
 ## 🏗️ Project Structure
 
@@ -104,7 +100,6 @@ Frontend/
 │   │
 │   ├── gate-pass.tsx            # Gate pass management (28KB)
 │   ├── mess-menu.tsx            # Mess menu with ratings (39KB)
-│   ├── attendance.tsx           # Attendance tracking (15KB)
 │   ├── complaints.tsx           # Complaint system (19KB)
 │   ├── notices.tsx              # Notice board (18KB)
 │   ├── emergency.tsx            # Emergency SOS (16KB)
@@ -123,10 +118,8 @@ Frontend/
 │   │
 │   ├── parent/                  # Parent-only screens
 │   │   ├── children.tsx        # Linked students
-│   │   ├── today-attendance.tsx # Real-time attendance
 │   │   ├── pending-passes.tsx  # Pass approvals
 │   │   ├── pass-history.tsx    # Historical passes
-│   │   └── attendance-history.tsx # Attendance records
 │   │
 │   ├── guard/                   # Guard-only screens
 │   │   ├── activity-logs.tsx   # Entry/exit logs
@@ -300,13 +293,6 @@ Push notifications are automatically configured via Expo's native push service. 
 - Dynamic timing management
 - Staff can edit menu and timings
 
-### Attendance System
-
-- Smart check-in/check-out
-- Real-time tracking
-- Parent visibility
-- Historical records
-
 ### Notification System
 
 - Expo Push Notifications (native service)
@@ -339,11 +325,10 @@ API endpoints handled via `lib/services.ts`:
 - Gate passes (request/approve/validate/entry-exit)
 - Complaints (create/status/resolve)
 - Notices (read + staff create/update/delete)
-- Attendance (mark/today/stats/history)
 - Mess menu (read/update timings)
 - Food ratings (rate/average/my ratings)
 - Notifications (read/unread/mark/delete)
-- Parent portal (children/passes/attendance)
+- Parent portal (children/passes)
 - Admin (users/parent links/system config/stats)
 
 ## 📊 Key Technologies Explained

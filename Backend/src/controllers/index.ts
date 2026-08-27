@@ -7,5 +7,4 @@ export * from './notice.controller';
 export * from './complaint.controller';
 export * from './messmenu.controller';
 export * from './foodrating.controller';
-export * from './attendance.controller';
 export * from './emergency.controller';

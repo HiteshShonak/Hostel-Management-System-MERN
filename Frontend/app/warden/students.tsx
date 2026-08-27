@@ -4,8 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { BottomNav } from '@/components/ui/BottomNav';
-import { useWardenStudents, useWardenMarkAttendance } from '@/lib/hooks';
-import { getErrorMessage } from '@/lib/utils/error';
+import { useWardenStudents } from '@/lib/hooks';
 import { useTheme } from '@/lib/contexts/theme';
 
 export default function WardenStudentsScreen() {
@@ -16,7 +15,6 @@ export default function WardenStudentsScreen() {
     const [refreshing, setRefreshing] = useState(false);
 
     const { data, isLoading, refetch } = useWardenStudents(page, 20, debouncedSearch);
-    const markAttendanceMutation = useWardenMarkAttendance();
 
     const students = data?.students || [];
     const pagination = data?.pagination;
@@ -34,27 +32,6 @@ export default function WardenStudentsScreen() {
         setRefreshing(true);
         await refetch();
         setRefreshing(false);
-    };
-
-    const handleMarkAttendance = (studentId: string, studentName: string) => {
-        Alert.alert(
-            'Mark Attendance',
-            `Mark attendance for ${studentName}?`,
-            [
-                { text: 'Cancel', style: 'cancel' },
-                {
-                    text: 'Confirm',
-                    onPress: async () => {
-                        try {
-                            await markAttendanceMutation.mutateAsync(studentId);
-                            Alert.alert('Success', `Attendance marked for ${studentName}`);
-                        } catch (error: unknown) {
-                            Alert.alert('Error', getErrorMessage(error));
-                        }
-                    },
-                },
-            ]
-        );
     };
 
     return (
@@ -125,26 +102,16 @@ export default function WardenStudentsScreen() {
 
                             {/* Status Badges */}
                             <View style={styles.statusContainer}>
-                                {student.isOut && (
+                                {student.isOut ? (
                                     <View style={[styles.badge, { backgroundColor: isDark ? '#451a03' : '#fff7ed' }]}>
                                         <Ionicons name="walk" size={12} color="#f59e0b" />
                                         <Text style={[styles.outBadgeText, { color: '#f59e0b' }]}>Out</Text>
                                     </View>
-                                )}
-                                {student.markedAttendanceToday ? (
-                                    <View style={[styles.badge, { backgroundColor: isDark ? '#052e16' : '#f0fdf4' }]}>
-                                        <Ionicons name="checkmark" size={12} color={isDark ? '#86efac' : '#16a34a'} />
-                                        <Text style={[styles.presentBadgeText, { color: isDark ? '#86efac' : '#16a34a' }]}>Present</Text>
-                                    </View>
                                 ) : (
-                                    <Pressable
-                                        style={[styles.badge, { backgroundColor: isDark ? '#172554' : '#eff6ff' }]}
-                                        onPress={() => handleMarkAttendance(student._id, student.name)}
-                                        disabled={markAttendanceMutation.isPending}
-                                    >
-                                        <Ionicons name="add-circle" size={12} color={colors.primary} />
-                                        <Text style={[styles.markBadgeText, { color: colors.primary }]}>Mark</Text>
-                                    </Pressable>
+                                    <View style={[styles.badge, { backgroundColor: isDark ? '#052e16' : '#f0fdf4' }]}>
+                                        <Ionicons name="home" size={12} color={isDark ? '#86efac' : '#16a34a'} />
+                                        <Text style={[styles.presentBadgeText, { color: isDark ? '#86efac' : '#16a34a' }]}>Inside</Text>
+                                    </View>
                                 )}
                             </View>
                         </Pressable>

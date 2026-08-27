@@ -1,6 +1,5 @@
-// lib/services/admin.service.ts — Admin service and types
 import api from '../api';
-import { User, Attendance, GatePass } from '../types';
+import { User, GatePass } from '../types';
 
 export interface AdminUser {
     _id: string;
@@ -77,8 +76,6 @@ export const adminService = {
         totalStudents: number;
         studentsOut: number;
         studentsInside: number;
-        todayAttendance: number;
-        attendancePercentage: number;
         pendingPasses: number;
     }> => {
         const response = await api.get('/admin/warden/dashboard-stats');
@@ -96,7 +93,6 @@ export const adminService = {
             phone: string;
             avatar: string;
             year?: number;
-            markedAttendanceToday: boolean;
             isOut: boolean;
         }>;
         pagination: { total: number; page: number; limit: number; pages: number };
@@ -111,14 +107,6 @@ export const adminService = {
 
     getStudentDetail: async (studentId: string): Promise<{
         student: User;
-        attendance: {
-            markedToday: boolean;
-            todayRecord: Attendance | null;
-            monthlyRecords: Attendance[];
-            monthlyPercentage: number;
-            presentDays: number;
-            totalDays: number;
-        };
         passes: {
             recent: GatePass[];
             isCurrentlyOut: boolean;
@@ -129,17 +117,11 @@ export const adminService = {
         return response.data;
     },
 
-    wardenMarkAttendance: async (studentId: string): Promise<Attendance> => {
-        const response = await api.post<Attendance>(`/admin/warden/mark-attendance/${studentId}`);
-        return response.data;
-    },
-
     getSystemConfig: async (): Promise<{
         _id: string;
         hostelCoords: { latitude: number; longitude: number; name: string };
         geofenceRadiusMeters: number;
-        attendanceWindow: { enabled: boolean; startHour: number; endHour: number; timezone: string };
-        appConfig: { maxGatePassDays: number; maxPendingPasses: number; attendanceGracePeriod: number };
+        appConfig: { maxGatePassDays: number; maxPendingPasses: number };
         updatedAt: string;
     }> => {
         const response = await api.get('/admin/config');
@@ -149,8 +131,7 @@ export const adminService = {
     updateSystemConfig: async (config: {
         hostelCoords?: { latitude?: number; longitude?: number; name?: string };
         geofenceRadiusMeters?: number;
-        attendanceWindow?: { enabled?: boolean; startHour?: number; endHour?: number; timezone?: string };
-        appConfig?: { maxGatePassDays?: number; maxPendingPasses?: number; attendanceGracePeriod?: number };
+        appConfig?: { maxGatePassDays?: number; maxPendingPasses?: number };
     }): Promise<void> => {
         await api.put('/admin/config', config);
     },
@@ -162,7 +143,6 @@ export const adminService = {
             byRole: { student: number; warden: number; parent: number; admin: number; guard: number; mess_staff: number; helper: number }
         };
         gatePasses: { total: number; approved: number; pending: number; rejected: number };
-        attendance: { monthlyRecords: number; todayRecords: number; averagePercentage: number; totalStudents: number };
         notices: number;
         pendingComplaints: number;
     }> => {

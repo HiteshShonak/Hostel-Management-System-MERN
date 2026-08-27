@@ -11,7 +11,6 @@ import {
     updateUserRole,
     deleteUser,
     getAllGatePasses,
-    getAllAttendance,
     getSystemStats,
     adminCancelGatePass,
     adminForceApproveGatePass,
@@ -22,7 +21,6 @@ import {
     getWardenDashboardStats,
     getWardenStudentList,
     getStudentDetail,
-    wardenMarkAttendance,
     // Admin Config
     getSystemConfig,
     updateSystemConfig,
@@ -56,7 +54,6 @@ router.get('/warden/dashboard-stats', getWardenDashboardStats);
 // Student management for warden
 router.get('/warden/students', getWardenStudentList);
 router.get('/warden/students/:id', validate(userIdSchema), getStudentDetail);
-router.post('/warden/mark-attendance/:studentId', validate(studentIdSchema), wardenMarkAttendance);
 
 // ==================== PUBLIC CONFIG (any authenticated user can read) ====================
 // This MUST be before adminOnly so students/wardens/parents can read config
@@ -87,9 +84,6 @@ router.delete('/users/:id', validate(userIdSchema), deleteUser);
 router.get('/gate-passes', getAllGatePasses);
 router.delete('/gate-passes/:id', validate(gatePassIdSchema), adminCancelGatePass);
 router.put('/gate-passes/:id/approve', validate(gatePassIdSchema), adminForceApproveGatePass);
-
-// Attendance oversight
-router.get('/attendance', getAllAttendance);
 
 // Notices management (full control)
 router.get('/notices', getAllNotices);

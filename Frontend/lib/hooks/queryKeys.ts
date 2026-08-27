@@ -5,8 +5,6 @@ export const queryKeys = {
         children: () => [...queryKeys.parent.all, 'children'] as const,
         pendingPasses: () => [...queryKeys.parent.all, 'pending-passes'] as const,
         allPasses: (page?: number, studentId?: string) => [...queryKeys.parent.all, 'passes', { page, studentId }] as const,
-        todayAttendance: () => [...queryKeys.parent.all, 'today-attendance'] as const,
-        childAttendance: (studentId: string, page: number) => [...queryKeys.parent.all, 'attendance', studentId, page] as const,
     },
     admin: {
         all: ['admin'] as const,

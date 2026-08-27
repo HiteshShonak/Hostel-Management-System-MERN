@@ -1,4 +1,4 @@
-// handles all the admin stuff like users and linking parents
+// Admin & Warden controller for user management, parent-student relationships, system config, and oversight
 
 import { Response } from 'express';
 import { Types } from 'mongoose';
@@ -11,10 +11,10 @@ import { ApiResponse } from '../utils/ApiResponse';
 import { getPaginationParams, getPaginationMeta } from '../utils/pagination';
 import { getISTDate, toISTDate, getISTTime } from '../utils/timezone';
 
-// escape special regex chars to prevent ReDoS
+// Escape special regex characters to prevent ReDoS
 const escapeRegex = (str: string) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
-// links a parent to their kid
+// Link parent account to student account
 export const linkParentToStudent = asyncHandler(async (req: AuthRequest, res: Response) => {
     const { parentId, studentId, relationship } = req.body;
 
@@ -60,7 +60,7 @@ export const linkParentToStudent = asyncHandler(async (req: AuthRequest, res: Re
     return res.status(201).json(new ApiResponse(201, populatedLink, 'Parent-student link created successfully'));
 });
 
-// unlink parent and student
+// Unlink parent and student relationship
 export const unlinkParentFromStudent = asyncHandler(async (req: AuthRequest, res: Response) => {
     const link = await ParentStudent.findById(req.params.id);
 
@@ -75,7 +75,7 @@ export const unlinkParentFromStudent = asyncHandler(async (req: AuthRequest, res
     return res.status(200).json(new ApiResponse(200, null, 'Parent-student link removed successfully'));
 });
 
-// get all the connections
+// Retrieve all active parent-student links with pagination
 export const getAllParentLinks = asyncHandler(async (req: AuthRequest, res: Response) => {
     const { page, limit, skip } = getPaginationParams(req, 20);
 
@@ -94,7 +94,7 @@ export const getAllParentLinks = asyncHandler(async (req: AuthRequest, res: Resp
     return res.status(200).json(new ApiResponse(200, { links, pagination }, 'Parent-student links retrieved'));
 });
 
-// who is related to who
+// Retrieve parent-student relationships for a specific user ID
 export const getUserRelations = asyncHandler(async (req: AuthRequest, res: Response) => {
     const userId = req.params.id;
 
@@ -163,7 +163,7 @@ export const getUserRelations = asyncHandler(async (req: AuthRequest, res: Respo
     return res.status(200).json(new ApiResponse(200, { user, relations }, 'User relations retrieved'));
 });
 
-// get everyone so admin can pick
+// List all users with optional role and search filters
 export const getAllUsers = asyncHandler(async (req: AuthRequest, res: Response) => {
     const { page, limit, skip } = getPaginationParams(req, 20);
     const { role, search } = req.query;
@@ -195,7 +195,7 @@ export const getAllUsers = asyncHandler(async (req: AuthRequest, res: Response) 
     return res.status(200).json(new ApiResponse(200, { users, pagination }, 'Users retrieved'));
 });
 
-// change someone's role
+// Update a user's role
 export const updateUserRole = asyncHandler(async (req: AuthRequest, res: Response) => {
     const { role } = req.body;
     const validRoles = ['student', 'admin', 'warden', 'mess_staff', 'guard', 'parent', 'helper'];
@@ -220,7 +220,7 @@ export const updateUserRole = asyncHandler(async (req: AuthRequest, res: Respons
     }, 'User role updated successfully'));
 });
 
-// delete a user (admin power)
+// Permanently delete a user account and clean up related records
 export const deleteUser = asyncHandler(async (req: AuthRequest, res: Response) => {
     const user = await User.findById(req.params.id);
     if (!user) {
@@ -234,14 +234,13 @@ export const deleteUser = asyncHandler(async (req: AuthRequest, res: Response) =
 
     await User.findByIdAndDelete(req.params.id);
 
-    // clean up all related records
+    // Clean up all related records across collections
     const userId = req.params.id;
     await Promise.all([
         ParentStudent.deleteMany({ $or: [{ parent: userId }, { student: userId }] }),
         (await import('../models/GatePass')).default.deleteMany({ user: userId }),
         (await import('../models/GatePassLog')).default.deleteMany({ user: userId }),
         (await import('../models/Complaint')).default.deleteMany({ user: userId }),
-        (await import('../models/Attendance')).default.deleteMany({ user: userId }),
         (await import('../models/Notification')).default.deleteMany({ user: userId }),
         (await import('../models/Emergency')).default.deleteMany({ user: userId }),
         (await import('../models/FoodRating')).default.deleteMany({ user: userId }),
@@ -250,7 +249,7 @@ export const deleteUser = asyncHandler(async (req: AuthRequest, res: Response) =
     return res.status(200).json(new ApiResponse(200, null, 'User deleted successfully'));
 });
 
-// see all the gate passes
+// Retrieve all gate passes with status, student, and date filtering
 export const getAllGatePasses = asyncHandler(async (req: AuthRequest, res: Response) => {
     const { page, limit, skip } = getPaginationParams(req, 20);
     const { status, studentId, fromDate, toDate } = req.query;
@@ -287,74 +286,9 @@ export const getAllGatePasses = asyncHandler(async (req: AuthRequest, res: Respo
     return res.status(200).json(new ApiResponse(200, { passes, pagination, stats }, 'All gate passes retrieved'));
 });
 
-// check attendance for everyone
-export const getAllAttendance = asyncHandler(async (req: AuthRequest, res: Response) => {
-    const { page, limit, skip } = getPaginationParams(req, 50);
-    const { date, studentId, hostel } = req.query;
-
-    const Attendance = (await import('../models/Attendance')).default;
-
-    // Build filter with optional joins
-    const matchStage: any = {};
-    if (studentId) matchStage.user = new Types.ObjectId(studentId as string);
-    if (date) {
-        // Convert to IST timezone
-        const targetDate = toISTDate(new Date(date as string));
-        const nextDay = new Date(targetDate);
-        nextDay.setDate(nextDay.getDate() + 1);
-        matchStage.date = { $gte: targetDate, $lt: nextDay };
-    }
-
-    // Use aggregation for hostel filtering
-    const pipeline: any[] = [
-        { $match: matchStage },
-        { $lookup: { from: 'users', localField: 'user', foreignField: '_id', as: 'userInfo' } },
-        { $unwind: '$userInfo' },
-    ];
-
-    if (hostel) {
-        pipeline.push({ $match: { 'userInfo.hostel': hostel } });
-    }
-
-    pipeline.push(
-        { $sort: { markedAt: -1 } },
-        { $skip: skip },
-        { $limit: limit },
-        {
-            $project: {
-                _id: 1,
-                date: 1,
-                markedAt: 1,
-                location: 1,
-                user: {
-                    _id: '$userInfo._id',
-                    name: '$userInfo.name',
-                    rollNo: '$userInfo.rollNo',
-                    room: '$userInfo.room',
-                    hostel: '$userInfo.hostel',
-                }
-            }
-        }
-    );
-
-    const attendance = await Attendance.aggregate(pipeline);
-    const total = await Attendance.countDocuments(matchStage);
-
-    const pagination = getPaginationMeta(total, page, limit);
-    return res.status(200).json(new ApiResponse(200, { attendance, pagination }, 'All attendance records retrieved'));
-});
-
-// get all the stats for the dashboard
+// Retrieve system-wide statistics for the admin dashboard
 export const getSystemStats = asyncHandler(async (req: AuthRequest, res: Response) => {
-    // Use IST for today
-    const today = getISTDate();
-
-    const startOfMonth = new Date(today);
-    startOfMonth.setUTCDate(1);
-    startOfMonth.setUTCHours(0, 0, 0, 0);
-
     const GatePass = (await import('../models/GatePass')).default;
-    const Attendance = (await import('../models/Attendance')).default;
     const Notice = (await import('../models/Notice')).default;
     const Complaint = (await import('../models/Complaint')).default;
 
@@ -371,8 +305,6 @@ export const getSystemStats = asyncHandler(async (req: AuthRequest, res: Respons
         approvedPasses,
         pendingPasses,
         rejectedPasses,
-        monthlyAttendance,
-        todayAttendance,
         totalNotices,
         pendingComplaints,
     ] = await Promise.all([
@@ -388,17 +320,9 @@ export const getSystemStats = asyncHandler(async (req: AuthRequest, res: Respons
         GatePass.countDocuments({ status: 'APPROVED' }),
         GatePass.countDocuments({ status: { $in: ['PENDING_PARENT', 'PENDING_WARDEN'] } }),
         GatePass.countDocuments({ status: 'REJECTED' }),
-        Attendance.countDocuments({ date: { $gte: startOfMonth } }),
-        Attendance.countDocuments({ date: today }),
         Notice.countDocuments(),
         Complaint.countDocuments({ status: 'Pending' }),
     ]);
-
-    const daysInMonth = today.getUTCDate();
-    const expectedRecords = totalStudents * daysInMonth;
-    const averagePercentage = expectedRecords > 0
-        ? Math.round((monthlyAttendance / expectedRecords) * 100)
-        : 0;
 
     return res.status(200).json(new ApiResponse(200, {
         users: {
@@ -420,18 +344,12 @@ export const getSystemStats = asyncHandler(async (req: AuthRequest, res: Respons
             pending: pendingPasses,
             rejected: rejectedPasses,
         },
-        attendance: {
-            monthlyRecords: monthlyAttendance,
-            todayRecords: todayAttendance,
-            averagePercentage: averagePercentage,
-            totalStudents: totalStudents,
-        },
         notices: totalNotices,
         pendingComplaints: pendingComplaints,
     }, 'System statistics retrieved'));
 });
 
-// admin can cancel any pass
+// Cancel / reject any gate pass (admin override)
 export const adminCancelGatePass = asyncHandler(async (req: AuthRequest, res: Response) => {
     const GatePass = (await import('../models/GatePass')).default;
 
@@ -448,7 +366,7 @@ export const adminCancelGatePass = asyncHandler(async (req: AuthRequest, res: Re
     return res.status(200).json(new ApiResponse(200, pass, 'Gate pass cancelled by admin'));
 });
 
-// admin override to approve a pass
+// Force approve a gate pass with QR code generation (admin override)
 export const adminForceApproveGatePass = asyncHandler(async (req: AuthRequest, res: Response) => {
     const GatePass = (await import('../models/GatePass')).default;
     const { v4: uuidv4 } = await import('uuid');
@@ -471,7 +389,7 @@ export const adminForceApproveGatePass = asyncHandler(async (req: AuthRequest, r
     return res.status(200).json(new ApiResponse(200, pass, 'Gate pass force-approved by admin'));
 });
 
-// see every notice
+// Retrieve all notices with pagination and filtering
 export const getAllNotices = asyncHandler(async (req: AuthRequest, res: Response) => {
     const { page, limit, skip } = getPaginationParams(req, 20);
     const { source, urgent, search } = req.query;
@@ -502,7 +420,7 @@ export const getAllNotices = asyncHandler(async (req: AuthRequest, res: Response
     return res.status(200).json(new ApiResponse(200, { notices, pagination }, 'All notices retrieved'));
 });
 
-// nuke a notice  
+// Delete a notice by ID (admin only)
 export const adminDeleteNotice = asyncHandler(async (req: AuthRequest, res: Response) => {
     const Notice = (await import('../models/Notice')).default;
 
@@ -516,7 +434,7 @@ export const adminDeleteNotice = asyncHandler(async (req: AuthRequest, res: Resp
     return res.status(200).json(new ApiResponse(200, null, 'Notice deleted by admin'));
 });
 
-// see what people are complaining about
+// Retrieve all complaints with pagination and status/category filters
 export const getAllComplaints = asyncHandler(async (req: AuthRequest, res: Response) => {
     const { page, limit, skip } = getPaginationParams(req, 20);
     const { status, category } = req.query;
@@ -540,21 +458,16 @@ export const getAllComplaints = asyncHandler(async (req: AuthRequest, res: Respo
     return res.status(200).json(new ApiResponse(200, { complaints, pagination }, 'All complaints retrieved'));
 });
 
-// ==================== WARDEN STUFF ====================
+// ==================== WARDEN CONTROLLERS ====================
 
-// stats for the warden dashboard
+// Retrieve live headcount and pending pass statistics for Warden Dashboard
 export const getWardenDashboardStats = asyncHandler(async (req: AuthRequest, res: Response) => {
-    // Use IST for today
-    const today = getISTDate();
-
-    const Attendance = (await import('../models/Attendance')).default;
     const GatePass = (await import('../models/GatePass')).default;
 
     // Run all queries in parallel using aggregation
     const [
         totalStudents,
         studentsOutCount,
-        todayAttendanceCount,
         pendingPassesCount,
     ] = await Promise.all([
         // Total students
@@ -569,35 +482,24 @@ export const getWardenDashboardStats = asyncHandler(async (req: AuthRequest, res
             ]
         }),
 
-        // Today's attendance count
-        Attendance.countDocuments({ date: today }),
-
         // Pending passes (PENDING_PARENT or PENDING_WARDEN)
         GatePass.countDocuments({ status: { $in: ['PENDING_PARENT', 'PENDING_WARDEN'] } }),
     ]);
 
     const studentsInside = totalStudents - studentsOutCount;
-    const attendancePercentage = totalStudents > 0
-        ? Math.round((todayAttendanceCount / totalStudents) * 100)
-        : 0;
 
     return res.status(200).json(new ApiResponse(200, {
         totalStudents,
         studentsOut: studentsOutCount,
         studentsInside,
-        todayAttendance: todayAttendanceCount,
-        attendancePercentage,
         pendingPasses: pendingPassesCount,
     }, 'Warden dashboard stats retrieved'));
 });
 
-// student list with status
+// List students with live inside/outside status for Warden
 export const getWardenStudentList = asyncHandler(async (req: AuthRequest, res: Response) => {
     const { page, limit, skip } = getPaginationParams(req, 20);
     const { search } = req.query;
-
-    // Use IST for today
-    const today = getISTDate();
 
     // Build search filter
     const searchFilter: Record<string, unknown> = { role: 'student' };
@@ -610,7 +512,6 @@ export const getWardenStudentList = asyncHandler(async (req: AuthRequest, res: R
         ];
     }
 
-    const Attendance = (await import('../models/Attendance')).default;
     const GatePass = (await import('../models/GatePass')).default;
 
     // Get students with pagination
@@ -624,27 +525,22 @@ export const getWardenStudentList = asyncHandler(async (req: AuthRequest, res: R
         User.countDocuments(searchFilter),
     ]);
 
-    // Get today's attendance and active passes for these students
+    // Get active passes for these students
     const studentIds = students.map(s => s._id);
 
-    const [todayAttendance, activePasses] = await Promise.all([
-        Attendance.find({ user: { $in: studentIds }, date: today }).select('user').lean(),
-        GatePass.find({
-            user: { $in: studentIds },
-            status: 'APPROVED',
-            exitTime: { $exists: true },
-            entryTime: { $exists: false },
-        }).select('user').lean(),
-    ]);
+    const activePasses = await GatePass.find({
+        user: { $in: studentIds },
+        status: 'APPROVED',
+        exitTime: { $exists: true },
+        entryTime: { $exists: false },
+    }).select('user').lean();
 
-    // Create lookup sets
-    const attendanceSet = new Set(todayAttendance.map(a => a.user.toString()));
+    // Create lookup set
     const outSet = new Set(activePasses.map(p => p.user.toString()));
 
     // Enrich students with status
     const enrichedStudents = students.map(student => ({
         ...student,
-        markedAttendanceToday: attendanceSet.has(student._id.toString()),
         isOut: outSet.has(student._id.toString()),
     }));
 
@@ -652,7 +548,7 @@ export const getWardenStudentList = asyncHandler(async (req: AuthRequest, res: R
     return res.status(200).json(new ApiResponse(200, { students: enrichedStudents, pagination }, 'Students retrieved'));
 });
 
-// detailed look at a student
+// Get detailed profile and recent gate passes for a specific student
 export const getStudentDetail = asyncHandler(async (req: AuthRequest, res: Response) => {
     const studentId = req.params.id;
 
@@ -661,23 +557,12 @@ export const getStudentDetail = asyncHandler(async (req: AuthRequest, res: Respo
         throw new ApiError(404, 'Student not found');
     }
 
-    // Use IST for today
-    const today = getISTDate();
-    const monthStart = new Date(today);
-    monthStart.setUTCDate(1);
-    monthStart.setUTCHours(0, 0, 0, 0);
-
-    const Attendance = (await import('../models/Attendance')).default;
     const GatePass = (await import('../models/GatePass')).default;
 
     const [
-        todayAttendance,
-        monthlyAttendance,
         recentPasses,
         activePass,
     ] = await Promise.all([
-        Attendance.findOne({ user: studentId, date: today }),
-        Attendance.find({ user: studentId, date: { $gte: monthStart } }).sort({ date: -1 }).limit(31),
         GatePass.find({ user: studentId }).sort({ createdAt: -1 }).limit(10),
         GatePass.findOne({
             user: studentId,
@@ -687,21 +572,8 @@ export const getStudentDetail = asyncHandler(async (req: AuthRequest, res: Respo
         }),
     ]);
 
-    const daysInMonth = today.getUTCDate();
-    const attendancePercentage = daysInMonth > 0
-        ? Math.round((monthlyAttendance.length / daysInMonth) * 100)
-        : 0;
-
     return res.status(200).json(new ApiResponse(200, {
         student,
-        attendance: {
-            markedToday: !!todayAttendance,
-            todayRecord: todayAttendance,
-            monthlyRecords: monthlyAttendance,
-            monthlyPercentage: attendancePercentage,
-            presentDays: monthlyAttendance.length,
-            totalDays: daysInMonth,
-        },
         passes: {
             recent: recentPasses,
             isCurrentlyOut: !!activePass,
@@ -710,47 +582,9 @@ export const getStudentDetail = asyncHandler(async (req: AuthRequest, res: Respo
     }, 'Student detail retrieved'));
 });
 
-// warden marking attendance manually
-export const wardenMarkAttendance = asyncHandler(async (req: AuthRequest, res: Response) => {
-    const studentId = req.params.studentId;
+// ==================== SYSTEM CONFIGURATION ====================
 
-    // Validate student exists
-    const student = await User.findById(studentId);
-    if (!student || student.role !== 'student') {
-        throw new ApiError(404, 'Student not found');
-    }
-
-    // Use IST for today
-    const today = getISTDate();
-
-    const Attendance = (await import('../models/Attendance')).default;
-
-    // Check if already marked
-    const existing = await Attendance.findOne({ user: studentId, date: today });
-    if (existing) {
-        throw new ApiError(409, 'Attendance already marked for this student today');
-    }
-
-    // Create attendance record with warden info
-    const attendance = await Attendance.create({
-        user: studentId,
-        date: today,
-        markedAt: new Date(),
-        markedByWarden: req.user?._id,
-        location: {
-            latitude: 0,
-            longitude: 0,
-            distanceFromHostel: 0,
-            manualEntry: true,
-        },
-    });
-
-    return res.status(201).json(new ApiResponse(201, attendance, `Attendance marked for ${student.name}`));
-});
-
-// ==================== CONFIG STUFF ====================
-
-// get the system config
+// Retrieve singleton system configuration
 export const getSystemConfig = asyncHandler(async (req: AuthRequest, res: Response) => {
     const SystemConfig = (await import('../models/SystemConfig')).default;
 
@@ -763,9 +597,9 @@ export const getSystemConfig = asyncHandler(async (req: AuthRequest, res: Respon
     return res.status(200).json(new ApiResponse(200, config, 'System configuration retrieved'));
 });
 
-// change the settings
+// Update system configuration settings
 export const updateSystemConfig = asyncHandler(async (req: AuthRequest, res: Response) => {
-    const { hostelCoords, geofenceRadiusMeters, attendanceWindow, appConfig, emergencyContacts } = req.body;
+    const { hostelCoords, geofenceRadiusMeters, appConfig, emergencyContacts } = req.body;
 
     const SystemConfig = (await import('../models/SystemConfig')).default;
     const { logger } = await import('../utils/logger');
@@ -800,25 +634,6 @@ export const updateSystemConfig = asyncHandler(async (req: AuthRequest, res: Res
         config.geofenceRadiusMeters = geofenceRadiusMeters;
     }
 
-    if (attendanceWindow) {
-        if (attendanceWindow.enabled !== undefined && attendanceWindow.enabled !== config.attendanceWindow.enabled) {
-            changes.push(`attendanceWindow.enabled: ${config.attendanceWindow.enabled} → ${attendanceWindow.enabled}`);
-            config.attendanceWindow.enabled = attendanceWindow.enabled;
-        }
-        if (attendanceWindow.startHour !== undefined && attendanceWindow.startHour !== config.attendanceWindow.startHour) {
-            changes.push(`attendanceWindow.startHour: ${config.attendanceWindow.startHour} → ${attendanceWindow.startHour}`);
-            config.attendanceWindow.startHour = attendanceWindow.startHour;
-        }
-        if (attendanceWindow.endHour !== undefined && attendanceWindow.endHour !== config.attendanceWindow.endHour) {
-            changes.push(`attendanceWindow.endHour: ${config.attendanceWindow.endHour} → ${attendanceWindow.endHour}`);
-            config.attendanceWindow.endHour = attendanceWindow.endHour;
-        }
-        if (attendanceWindow.timezone && attendanceWindow.timezone !== config.attendanceWindow.timezone) {
-            changes.push(`attendanceWindow.timezone: "${config.attendanceWindow.timezone}" → "${attendanceWindow.timezone}"`);
-            config.attendanceWindow.timezone = attendanceWindow.timezone;
-        }
-    }
-
     if (appConfig) {
         if (appConfig.maxGatePassDays !== undefined && appConfig.maxGatePassDays !== config.appConfig.maxGatePassDays) {
             changes.push(`appConfig.maxGatePassDays: ${config.appConfig.maxGatePassDays} → ${appConfig.maxGatePassDays}`);
@@ -827,10 +642,6 @@ export const updateSystemConfig = asyncHandler(async (req: AuthRequest, res: Res
         if (appConfig.maxPendingPasses !== undefined && appConfig.maxPendingPasses !== config.appConfig.maxPendingPasses) {
             changes.push(`appConfig.maxPendingPasses: ${config.appConfig.maxPendingPasses} → ${appConfig.maxPendingPasses}`);
             config.appConfig.maxPendingPasses = appConfig.maxPendingPasses;
-        }
-        if (appConfig.attendanceGracePeriod !== undefined && appConfig.attendanceGracePeriod !== config.appConfig.attendanceGracePeriod) {
-            changes.push(`appConfig.attendanceGracePeriod: ${config.appConfig.attendanceGracePeriod} → ${appConfig.attendanceGracePeriod}`);
-            config.appConfig.attendanceGracePeriod = appConfig.attendanceGracePeriod;
         }
     }
 

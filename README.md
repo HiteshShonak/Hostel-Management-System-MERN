@@ -22,7 +22,7 @@ _A mobile platform for day-to-day hostel operations_
 <br/>
 
 > Built with ❤️ for **Indian Institute of Information Technology, Sonepat**
-> featuring QR gate passes, GPS attendance, mess management, emergency SOS & real-time notifications.
+> featuring QR gate passes, mess management, emergency SOS & real-time notifications.
 
 </div>
 
@@ -33,7 +33,6 @@ _A mobile platform for day-to-day hostel operations_
 ### For Students
 
 - 🎫 **Digital Gate Passes** - Request, track, and validate passes with QR codes
-- 📍 **Smart Attendance** - Geofence-based attendance with a configurable time window (default 7 PM - 10 PM IST)
 - 🍽️ **Mess Menu & Ratings** - Weekly menu with time-windowed meal ratings
 - 📢 **Notice Board** - Real-time notices from hostel staff
 - 🛠️ **Complaints** - Submit and track maintenance requests
@@ -44,7 +43,6 @@ _A mobile platform for day-to-day hostel operations_
 
 - 👨‍👩‍👧 **Linked Children** - View linked student profiles
 - ✅ **Gate Pass Approval** - Two-tier approval (Parent → Warden)
-- 📊 **Attendance Tracking** - Today status + history
 - 🧾 **Pass History** - Review past gate passes
 - 🔔 **Notifications** - Gate pass and alert updates
 
@@ -58,7 +56,7 @@ _A mobile platform for day-to-day hostel operations_
 ### For Wardens
 
 - ✓ **Pass Management** - Approve/reject gate passes
-- 📋 **Student Management** - Student list, detail view, attendance marking
+- 📋 **Student Management** - Student list, detail view
 - 📚 **Pass History** - Review all gate passes
 - 🚨 **Emergency Alerts** - View active SOS alerts
 
@@ -66,8 +64,8 @@ _A mobile platform for day-to-day hostel operations_
 
 - 👥 **User Management** - Create and manage all user types
 - 🔗 **Parent-Student Linking** - Link parent accounts
-- ⚙️ **System Configuration** - Geofence, attendance windows, pass limits
-- 📊 **System Statistics** - Users, passes, attendance, complaints, notices
+- ⚙️ **System Configuration** - Geofence, pass limits
+- 📊 **System Statistics** - Users, passes, complaints, notices
 
 ---
 
@@ -332,7 +330,6 @@ curl -X POST https://your-backend/api/auth/login \
 - `users` - All user accounts (students, parents, staff)
 - `gatepasses` - Gate pass requests
 - `gatepasslogs` - Entry/exit activity
-- `attendance` - Daily attendance records
 - `notices` - Notice board posts
 - `complaints` - Maintenance complaints
 - `messmenus` - Weekly meal schedules
@@ -354,7 +351,6 @@ curl -X POST https://your-backend/api/auth/login \
 ✅ **XSS Protection** - Input sanitization middleware  
 ✅ **CORS Whitelisting** - Configurable allowed origins  
 ✅ **Helmet Security** - HTTP headers hardening  
-✅ **Geofencing** - Location-based attendance verification  
 ✅ **QR Code Security** - Unique codes for gate pass validation
 
 ---

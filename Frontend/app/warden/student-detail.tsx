@@ -4,14 +4,13 @@ import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, router } from 'expo-router';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { BottomNav } from '@/components/ui/BottomNav';
-import { useStudentDetail, useWardenMarkAttendance } from '@/lib/hooks';
+import { useStudentDetail } from '@/lib/hooks';
 import { useTheme } from '@/lib/contexts/theme';
 
 export default function StudentDetailScreen() {
     const { colors, isDark } = useTheme();
     const { id } = useLocalSearchParams<{ id: string }>();
-    const { data, isLoading, refetch } = useStudentDetail(id || '');
-    const markAttendanceMutation = useWardenMarkAttendance();
+    const { data, isLoading } = useStudentDetail(id || '');
 
     if (isLoading || !data) {
         return (
@@ -25,35 +24,7 @@ export default function StudentDetailScreen() {
         );
     }
 
-    const { student, attendance, passes } = data;
-
-    const handleMarkAttendance = () => {
-        if (attendance.markedToday) {
-            Alert.alert('Already Marked', 'Attendance is already marked for today.');
-            return;
-        }
-
-        Alert.alert(
-            'Mark Attendance',
-            `Mark attendance for ${student.name}?`,
-            [
-                { text: 'Cancel', style: 'cancel' },
-                {
-                    text: 'Confirm',
-                    onPress: async () => {
-                        try {
-                            await markAttendanceMutation.mutateAsync(student._id);
-                            Alert.alert('Success', 'Attendance marked successfully');
-                            refetch();
-                        } catch (error: unknown) {
-                            const message = error instanceof Error ? error.message : 'Failed to mark attendance';
-                            Alert.alert('Error', message);
-                        }
-                    },
-                },
-            ]
-        );
-    };
+    const { student, passes } = data;
 
     const formatDate = (dateStr: string) => {
         return new Date(dateStr).toLocaleDateString('en-IN', {
@@ -124,61 +95,6 @@ export default function StudentDetailScreen() {
                         <Ionicons name="call" size={20} color={colors.primary} />
                         <Text style={[styles.infoLabel, { color: colors.textSecondary }]}>Phone</Text>
                         <Text style={[styles.infoValue, { color: colors.text }]}>{student.phone}</Text>
-                    </View>
-                </View>
-
-                {/* Attendance Section */}
-                <View style={[styles.section, { backgroundColor: colors.card }]}>
-                    <View style={styles.sectionHeader}>
-                        <Text style={[styles.sectionTitle, { color: colors.text }]}>Attendance This Month</Text>
-                        {!attendance.markedToday && (
-                            <Pressable
-                                style={[styles.markBtn, { backgroundColor: colors.primary }]}
-                                onPress={handleMarkAttendance}
-                                disabled={markAttendanceMutation.isPending}
-                            >
-                                <Ionicons name="add-circle" size={16} color="white" />
-                                <Text style={styles.markBtnText}>Mark Today</Text>
-                            </Pressable>
-                        )}
-                    </View>
-
-                    <View style={styles.attendanceStats}>
-                        <View style={styles.attendanceStat}>
-                            <Text style={[styles.attendanceNumber, { color: isDark ? '#86efac' : '#16a34a' }]}>{attendance.presentDays}</Text>
-                            <Text style={[styles.attendanceLabel, { color: colors.textSecondary }]}>Present</Text>
-                        </View>
-                        <View style={styles.attendanceStat}>
-                            <Text style={[styles.attendanceNumber, { color: isDark ? '#fca5a5' : '#dc2626' }]}>
-                                {attendance.totalDays - attendance.presentDays}
-                            </Text>
-                            <Text style={[styles.attendanceLabel, { color: colors.textSecondary }]}>Absent</Text>
-                        </View>
-                        <View style={styles.attendanceStat}>
-                            <Text style={[styles.attendanceNumber, { color: colors.primary }]}>
-                                {attendance.monthlyPercentage}%
-                            </Text>
-                            <Text style={[styles.attendanceLabel, { color: colors.textSecondary }]}>Percentage</Text>
-                        </View>
-                    </View>
-
-                    {/* Today's Status */}
-                    <View style={[styles.todayStatus, attendance.markedToday ? (
-                        isDark ? { backgroundColor: '#052e16' } : { backgroundColor: '#f0fdf4' }
-                    ) : (
-                        isDark ? { backgroundColor: '#451a03' } : { backgroundColor: '#fef2f2' }
-                    )]}>
-                        <Ionicons
-                            name={attendance.markedToday ? 'checkmark-circle' : 'close-circle'}
-                            size={20}
-                            color={attendance.markedToday ? (isDark ? '#86efac' : '#16a34a') : (isDark ? '#fca5a5' : '#dc2626')}
-                        />
-                        <Text style={[
-                            styles.todayStatusText,
-                            { color: attendance.markedToday ? (isDark ? '#86efac' : '#16a34a') : (isDark ? '#fca5a5' : '#dc2626') }
-                        ]}>
-                            {attendance.markedToday ? 'Attendance marked today' : 'Not marked today'}
-                        </Text>
                     </View>
                 </View>
 
@@ -297,40 +213,7 @@ const styles = StyleSheet.create({
         padding: 16,
         marginBottom: 16,
     },
-    sectionHeader: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginBottom: 12,
-    },
-    sectionTitle: { fontSize: 16, fontWeight: '600' },
-    markBtn: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        paddingHorizontal: 12,
-        paddingVertical: 6,
-        borderRadius: 8,
-        gap: 4,
-    },
-    markBtnText: { fontSize: 13, fontWeight: '600', color: 'white' },
-
-    // Attendance
-    attendanceStats: {
-        flexDirection: 'row',
-        justifyContent: 'space-around',
-        marginBottom: 12,
-    },
-    attendanceStat: { alignItems: 'center' },
-    attendanceNumber: { fontSize: 28, fontWeight: '700' },
-    attendanceLabel: { fontSize: 13, marginTop: 2 },
-    todayStatus: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        padding: 12,
-        borderRadius: 10,
-        gap: 8,
-    },
-    todayStatusText: { fontSize: 14, fontWeight: '500' },
+    sectionTitle: { fontSize: 16, fontWeight: '600', marginBottom: 12 },
 
     // Passes
     activePass: {

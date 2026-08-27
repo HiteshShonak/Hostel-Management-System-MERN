@@ -1,5 +1,5 @@
 // SystemConfig model - Singleton document for dynamic system settings
-// Allows admin to update hostel coordinates, attendance windows, etc.
+// Allows admin to update hostel coordinates, app limits, emergency contacts, etc.
 
 import mongoose, { Schema } from 'mongoose';
 
@@ -11,16 +11,9 @@ export interface ISystemConfig {
         name: string;
     };
     geofenceRadiusMeters: number;
-    attendanceWindow: {
-        enabled: boolean;
-        startHour: number;
-        endHour: number;
-        timezone: string;
-    };
     appConfig: {
         maxGatePassDays: number;
         maxPendingPasses: number;
-        attendanceGracePeriod: number;
     };
     emergencyContacts: Array<{
         name: string;
@@ -39,16 +32,9 @@ const systemConfigSchema = new Schema<ISystemConfig>({
         name: { type: String, default: 'Main Hostel Building' },
     },
     geofenceRadiusMeters: { type: Number, default: 50 },
-    attendanceWindow: {
-        enabled: { type: Boolean, default: true },
-        startHour: { type: Number, default: 19 },
-        endHour: { type: Number, default: 22 },
-        timezone: { type: String, default: 'Asia/Kolkata' },
-    },
     appConfig: {
         maxGatePassDays: { type: Number, default: 14 },
         maxPendingPasses: { type: Number, default: 3 },
-        attendanceGracePeriod: { type: Number, default: 5 },
     },
     emergencyContacts: {
         type: [{

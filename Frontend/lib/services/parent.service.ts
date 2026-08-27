@@ -31,19 +31,6 @@ export interface PendingGatePass {
     };
 }
 
-export interface ChildAttendance {
-    student: {
-        _id: string;
-        name: string;
-        rollNo: string;
-        room: string;
-        hostel: string;
-    };
-    relationship: string;
-    markedToday: boolean;
-    attendanceTime?: string;
-}
-
 export const parentService = {
     getChildren: async (): Promise<ParentChild[]> => {
         const response = await api.get<ParentChild[]>('/parent/children');
@@ -70,15 +57,5 @@ export const parentService = {
     rejectPass: async (passId: string, reason?: string): Promise<any> => {
         const response = await api.put(`/parent/passes/${passId}/reject`, { reason });
         return response.data;
-    },
-
-    getTodayAttendance: async (): Promise<ChildAttendance[]> => {
-        const response = await api.get<ChildAttendance[]>('/parent/today-attendance');
-        return response.data || [];
-    },
-
-    getChildAttendance: async (studentId: string, page: number = 1, limit: number = 30): Promise<{ attendance: any[]; pagination: any; todayMarked: boolean; todayAttendance: any }> => {
-        const response = await api.get(`/parent/children/${studentId}/attendance?page=${page}&limit=${limit}`);
-        return response.data || { attendance: [], pagination: {}, todayMarked: false, todayAttendance: null };
     },
 };

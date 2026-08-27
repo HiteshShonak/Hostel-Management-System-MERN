@@ -100,20 +100,6 @@ export interface IComplaint extends Document {
     createdAt: Date;
 }
 
-// Attendance Types
-export interface IAttendance extends Document {
-    user: Types.ObjectId;
-    date: Date;
-    markedAt: Date;
-    markedByWarden?: Types.ObjectId; // If marked manually by warden
-    location?: {
-        latitude: number;
-        longitude: number;
-        distanceFromHostel?: number; // Distance in meters at time of marking
-        manualEntry?: boolean; // True if marked by warden
-    };
-}
-
 // Emergency Types
 export interface IEmergency extends Document {
     user: Types.ObjectId;

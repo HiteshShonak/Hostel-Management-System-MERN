@@ -103,24 +103,6 @@ export default function AdminStatsScreen() {
                     </View>
                 </View>
 
-                {/* Attendance Section */}
-                <View style={[styles.section, { backgroundColor: colors.card }]}>
-                    <View style={styles.sectionHeader}>
-                        <Ionicons name="checkmark-circle" size={22} color={isDark ? '#86efac' : '#16a34a'} />
-                        <Text style={[styles.sectionTitle, { color: colors.text }]}>Attendance</Text>
-                    </View>
-                    <View style={styles.statsGrid}>
-                        <View style={[styles.statBox, { backgroundColor: colors.backgroundSecondary }]}>
-                            <Text style={[styles.statNumber, { color: colors.primary }]}>{stats?.attendance?.monthlyRecords || 0}</Text>
-                            <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Monthly Records</Text>
-                        </View>
-                        <View style={[styles.statBox, { backgroundColor: colors.backgroundSecondary }]}>
-                            <Text style={[styles.statNumber, { color: isDark ? '#86efac' : '#16a34a' }]}>{stats?.attendance?.averagePercentage || 0}%</Text>
-                            <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Average %</Text>
-                        </View>
-                    </View>
-                </View>
-
                 {/* Other Stats */}
                 <View style={[styles.section, { backgroundColor: colors.card }]}>
                     <View style={styles.sectionHeader}>

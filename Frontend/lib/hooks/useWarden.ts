@@ -27,13 +27,3 @@ export const useStudentDetail = (studentId: string) => {
         staleTime: 1000 * 60,
     });
 };
-
-export const useWardenMarkAttendance = () => {
-    const queryClient = useQueryClient();
-    return useMutation({
-        mutationFn: (studentId: string) => adminService.wardenMarkAttendance(studentId),
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['warden'] });
-        },
-    });
-};

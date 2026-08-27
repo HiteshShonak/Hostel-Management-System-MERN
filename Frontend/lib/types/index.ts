@@ -6,6 +6,5 @@ export * from './notices';
 export * from './mess';
 export * from './food-ratings';
 export * from './complaints';
-export * from './attendance';
 export * from './emergency';
 export * from './notifications';

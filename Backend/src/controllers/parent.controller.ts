@@ -1,11 +1,9 @@
-// src/controllers/parent.controller.ts
-// parent stuff - checking on kids and approving passes
+// Parent controller for viewing linked students and managing gate pass approvals
 
 import { Response } from 'express';
 import { Types } from 'mongoose';
 import ParentStudent from '../models/ParentStudent';
 import GatePass from '../models/GatePass';
-import Attendance from '../models/Attendance';
 import { AuthRequest } from '../types';
 import { asyncHandler } from '../utils/asyncHandler';
 import { ApiError } from '../utils/ApiError';
@@ -14,7 +12,7 @@ import { getPaginationParams, getPaginationMeta } from '../utils/pagination';
 import { getISTDate } from '../utils/timezone';
 import { createNotification } from '../services/notification.service';
 
-// see all my kids
+// Retrieve all students linked to the authenticated parent
 export const getChildren = asyncHandler(async (req: AuthRequest, res: Response) => {
     const parentId = req.user?._id;
 
@@ -48,7 +46,7 @@ export const getChildren = asyncHandler(async (req: AuthRequest, res: Response) 
     return res.status(200).json(new ApiResponse(200, children, 'Children retrieved successfully'));
 });
 
-// passes waiting for me to say yes
+// Retrieve gate passes awaiting parent approval
 export const getPendingPasses = asyncHandler(async (req: AuthRequest, res: Response) => {
     const parentId = req.user?._id;
 
@@ -109,7 +107,7 @@ export const getPendingPasses = asyncHandler(async (req: AuthRequest, res: Respo
     return res.status(200).json(new ApiResponse(200, pendingPasses, 'Pending passes retrieved'));
 });
 
-// full history of passes for my kids
+// Retrieve all gate passes for linked students with pagination
 export const getAllChildrenPasses = asyncHandler(async (req: AuthRequest, res: Response) => {
     const parentId = req.user?._id;
     const { page, limit, skip } = getPaginationParams(req, 20);
@@ -181,7 +179,7 @@ export const getAllChildrenPasses = asyncHandler(async (req: AuthRequest, res: R
     return res.status(200).json(new ApiResponse(200, { passes, pagination }, 'Gate passes retrieved'));
 });
 
-// say yes to a pass
+// Approve a student's gate pass (advances status to PENDING_WARDEN)
 export const approvePass = asyncHandler(async (req: AuthRequest, res: Response) => {
     const parentId = req.user?._id;
     const passId = req.params.id;
@@ -238,7 +236,7 @@ export const approvePass = asyncHandler(async (req: AuthRequest, res: Response) 
     return res.status(200).json(new ApiResponse(200, pass, 'Gate pass approved by parent'));
 });
 
-// say no to a pass
+// Reject a student's gate pass with an optional reason
 export const rejectPass = asyncHandler(async (req: AuthRequest, res: Response) => {
     const parentId = req.user?._id;
     const passId = req.params.id;
@@ -283,99 +281,3 @@ export const rejectPass = asyncHandler(async (req: AuthRequest, res: Response) =
     return res.status(200).json(new ApiResponse(200, pass, 'Gate pass rejected'));
 });
 
-// check if they went to class or not
-export const getChildAttendance = asyncHandler(async (req: AuthRequest, res: Response) => {
-    const parentId = req.user?._id;
-    const { studentId } = req.params;
-    const { page, limit, skip } = getPaginationParams(req, 30);
-
-    // Verify parent is linked to this student
-    const link = await ParentStudent.findOne({
-        parent: parentId,
-        student: studentId,
-        status: 'active'
-    });
-
-    if (!link) {
-        throw new ApiError(403, 'You are not authorized to view this student\'s attendance');
-    }
-
-    const [attendance, total] = await Promise.all([
-        Attendance.find({ user: studentId })
-            .sort({ date: -1 })
-            .skip(skip)
-            .limit(limit),
-        Attendance.countDocuments({ user: studentId })
-    ]);
-
-    // Check today's attendance (use IST)
-    const today = getISTDate();
-    const todayAttendance = await Attendance.findOne({
-        user: studentId,
-        date: { $gte: today }
-    });
-
-    const pagination = getPaginationMeta(total, page, limit);
-    return res.status(200).json(new ApiResponse(200, {
-        attendance,
-        pagination,
-        todayMarked: !!todayAttendance,
-        todayAttendance
-    }, 'Attendance retrieved'));
-});
-
-// did they go today?
-export const getTodayAttendance = asyncHandler(async (req: AuthRequest, res: Response) => {
-    const parentId = req.user?._id;
-
-    // Use IST for today's date
-    const today = getISTDate();
-
-    const result = await ParentStudent.aggregate([
-        { $match: { parent: new Types.ObjectId(parentId), status: 'active' } },
-        {
-            $lookup: {
-                from: 'users',
-                localField: 'student',
-                foreignField: '_id',
-                as: 'studentInfo'
-            }
-        },
-        { $unwind: '$studentInfo' },
-        {
-            $lookup: {
-                from: 'attendances',
-                let: { studentId: '$student' },
-                pipeline: [
-                    {
-                        $match: {
-                            $expr: {
-                                $and: [
-                                    { $eq: ['$user', '$$studentId'] },
-                                    { $gte: ['$date', today] }
-                                ]
-                            }
-                        }
-                    }
-                ],
-                as: 'todayAttendance'
-            }
-        },
-        {
-            $project: {
-                student: {
-                    _id: '$studentInfo._id',
-                    name: '$studentInfo.name',
-                    rollNo: '$studentInfo.rollNo',
-                    room: '$studentInfo.room',
-                    hostel: '$studentInfo.hostel'
-                },
-                relationship: 1,
-                markedToday: { $gt: [{ $size: '$todayAttendance' }, 0] },
-                attendanceTime: { $arrayElemAt: ['$todayAttendance.markedAt', 0] }
-            }
-        }
-    ]);
-
-    return res.status(200).json(new ApiResponse(200, result, 'Today\'s attendance retrieved'));
-});

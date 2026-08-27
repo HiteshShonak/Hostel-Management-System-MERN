@@ -71,14 +71,6 @@ REST API for the IIIT Sonepat Hostel Management System, built with Node.js, Expr
 - In-app notification center
 - Badge count management
 
-### Attendance System
-
-- Daily attendance tracking
-- Real-time status updates
-- Parent visibility
-- Historical records
-- Monthly attendance stats
-
 ### Complaint Management
 
 - Category-based complaints
@@ -101,7 +93,7 @@ REST API for the IIIT Sonepat Hostel Management System, built with Node.js, Expr
 ### Additional Features
 
 - Parent-student linking
-- System configuration (geofence, attendance window, app limits)
+- System configuration (geofence, app limits)
 - Emergency contact list
 - Entry/exit activity logs
 - Expo push notifications
@@ -125,7 +117,6 @@ Backend/
 │   │   ├── parent.controller.ts    # Parent features (13KB)
 │   │   ├── foodrating.controller.ts # Meal ratings (4KB)
 │   │   ├── messmenu.controller.ts  # Menu management (4KB)
-│   │   ├── attendance.controller.ts # Attendance (6KB)
 │   │   ├── complaint.controller.ts # Complaints (4KB)
 │   │   ├── notice.controller.ts    # Notices (4KB)
 │   │   ├── notification.controller.ts # Notifications (3KB)
@@ -140,7 +131,6 @@ Backend/
 │   │   ├── ParentStudent.ts        # Parent-student links
 │   │   ├── FoodRating.ts           # Meal ratings
 │   │   ├── MessMenu.ts             # Weekly menu
-│   │   ├── Attendance.ts           # Attendance records
 │   │   ├── Complaint.ts            # Complaint system
 │   │   ├── Notice.ts               # Announcements
 │   │   ├── Notification.ts         # Push notifications
@@ -154,7 +144,6 @@ Backend/
 │   │   ├── parent.routes.ts
 │   │   ├── foodrating.routes.ts
 │   │   ├── messmenu.routes.ts
-│   │   ├── attendance.routes.ts
 │   │   ├── complaint.routes.ts
 │   │   ├── notice.routes.ts
 │   │   ├── notification.routes.ts
@@ -193,7 +182,6 @@ Backend/
 │   │   ├── complaint.schema.ts
 │   │   ├── notice.schema.ts
 │   │   ├── messmenu.schema.ts
-│   │   ├── attendance.schema.ts
 │   │   └── common.schema.ts
 │   │
 │   ├── scripts/                    # Utility scripts (2 files)
@@ -334,8 +322,6 @@ GET    /api/parent/pending-passes               # Get pending approval passes
 GET    /api/parent/passes                        # Get all child passes
 PUT    /api/parent/passes/:id/approve           # Approve gate pass
 PUT    /api/parent/passes/:id/reject            # Reject gate pass
-GET    /api/parent/today-attendance             # Today attendance (all children)
-GET    /api/parent/children/:studentId/attendance # Attendance history
 ```
 
 ### Mess Menu & Ratings
@@ -368,15 +354,6 @@ GET    /api/notices                     # Get all notices
 POST   /api/notices                     # Create notice (staff)
 PUT    /api/notices/:id                 # Update notice (staff)
 DELETE /api/notices/:id                 # Delete notice (staff)
-```
-
-### Attendance
-
-```
-POST   /api/attendance/mark             # Mark attendance (student)
-GET    /api/attendance                  # Get attendance history
-GET    /api/attendance/today            # Get today's status + geofence
-GET    /api/attendance/stats            # Get attendance stats
 ```
 
 ### Notifications
@@ -418,14 +395,12 @@ DELETE /api/admin/users/:id             # Delete user
 GET    /api/admin/gate-passes           # All gate passes
 PUT    /api/admin/gate-passes/:id/approve # Force-approve pass
 DELETE /api/admin/gate-passes/:id       # Cancel pass
-GET    /api/admin/attendance            # Attendance oversight
 GET    /api/admin/notices               # All notices
 DELETE /api/admin/notices/:id           # Delete notice
 GET    /api/admin/complaints            # All complaints
 GET    /api/admin/warden/dashboard-stats # Warden dashboard stats
 GET    /api/admin/warden/students       # Warden student list
 GET    /api/admin/warden/students/:id   # Warden student detail
-POST   /api/admin/warden/mark-attendance/:studentId # Mark attendance (warden)
 ```
 
 ### Testing

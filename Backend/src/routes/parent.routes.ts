@@ -8,14 +8,12 @@ import {
     getAllChildrenPasses,
     approvePass,
     rejectPass,
-    getChildAttendance,
-    getTodayAttendance,
 } from '../controllers/parent.controller';
 import { protect } from '../middleware/auth.middleware';
 import { parentOnly } from '../middleware/role.middleware';
 import { generalLimiter } from '../middleware/rateLimit.middleware';
 import { validate } from '../middleware/validate.middleware';
-import { passIdSchema, rejectPassSchema, studentIdSchema } from '../schemas/parent.schema';
+import { passIdSchema, rejectPassSchema } from '../schemas/parent.schema';
 
 const router = Router();
 
@@ -32,9 +30,5 @@ router.get('/pending-passes', getPendingPasses);
 router.get('/passes', getAllChildrenPasses);
 router.put('/passes/:id/approve', validate(passIdSchema), approvePass);
 router.put('/passes/:id/reject', validate(rejectPassSchema), rejectPass);
-
-// Attendance
-router.get('/today-attendance', getTodayAttendance);
-router.get('/children/:studentId/attendance', validate(studentIdSchema), getChildAttendance);
 
 export default router;

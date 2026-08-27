@@ -9,7 +9,7 @@ export function ActivePassCard() {
     const { colors, isDark } = useTheme();
     const { data } = useCurrentGatePass();
 
-    // don't show anything if no active pass
+    // Render nothing if there is no active pass
     if (!data?.pass) return null;
 
     const { pass, isCurrentlyOut } = data;
@@ -18,7 +18,7 @@ export function ActivePassCard() {
     const returnTime = toDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     const returnDate = toDate.toLocaleDateString([], { month: 'short', day: 'numeric' });
 
-    // theme colors matching attendance card pattern
+    // Dynamic accent styling based on pass state (outside vs approved)
     const themeColor = isCurrentlyOut
         ? (isDark ? '#fb923c' : '#ea580c')
         : (isDark ? '#60a5fa' : '#2563eb');

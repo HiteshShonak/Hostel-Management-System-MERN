@@ -31,12 +31,6 @@ const ERROR_MESSAGES: Record<string, string> = {
     'Past date': 'Start date cannot be in the past.',
     'End before start': 'End time must be after start time.',
 
-    // Attendance errors
-    'Already marked': 'Attendance has already been marked for today.',
-    'Outside attendance window': 'Attendance can only be marked during the designated time window.',
-    'Too far from hostel': 'You are too far from the hostel to mark attendance.',
-    'Location required': 'Please enable location services to mark attendance.',
-
     // Network errors
     'Network Error': 'Unable to connect. Please check your internet connection.',
     'timeout': 'Request timed out. Please try again.',

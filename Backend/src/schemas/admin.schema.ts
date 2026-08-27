@@ -41,16 +41,9 @@ export const updateSystemConfigSchema = z.object({
             name: z.string().min(1).max(200).optional(),
         }).optional(),
         geofenceRadiusMeters: z.number().min(10).max(5000).optional(),
-        attendanceWindow: z.object({
-            enabled: z.boolean().optional(),
-            startHour: z.number().int().min(0).max(23).optional(),
-            endHour: z.number().int().min(0).max(23).optional(),
-            timezone: z.string().min(1).max(100).optional(),
-        }).optional(),
         appConfig: z.object({
             maxGatePassDays: z.number().int().min(1).max(90).optional(),
             maxPendingPasses: z.number().int().min(1).max(10).optional(),
-            attendanceGracePeriod: z.number().int().min(0).max(60).optional(),
         }).optional(),
         emergencyContacts: z.array(z.object({
             name: z.string().min(1).max(100),

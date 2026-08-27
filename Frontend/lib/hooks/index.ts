@@ -7,7 +7,6 @@ export * from './useNotices';
 export * from './useMess';
 export * from './useFoodRatings';
 export * from './useComplaints';
-export * from './useAttendance';
 export * from './useEmergency';
 export * from './useNotifications';
 export * from './useParent';
