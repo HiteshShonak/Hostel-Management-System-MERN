@@ -6,12 +6,12 @@ import { useLogin } from '@/lib/hooks';
 import { useAuth } from '@/lib/contexts/auth';
 import { getErrorMessage } from '@/lib/utils/error';
 import { useTheme } from '@/lib/contexts/theme';
+import { PasswordInput } from '@/components/forms';
 
 export default function LoginPage() {
     const { colors, isDark } = useTheme();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [showPassword, setShowPassword] = useState(false);
 
     const loginMutation = useLogin();
     const { signIn } = useAuth();
@@ -34,7 +34,10 @@ export default function LoginPage() {
     };
 
     return (
-        <KeyboardAvoidingView style={[styles.container, { backgroundColor: colors.background }]} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+        <KeyboardAvoidingView
+            style={[styles.container, { backgroundColor: colors.background }]}
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        >
             <ScrollView contentContainerStyle={styles.scrollContent}>
                 <View style={styles.header}>
                     <View style={[styles.logoContainer, { backgroundColor: isDark ? 'rgba(29, 78, 216, 0.2)' : 'rgba(29, 78, 216, 0.1)' }]}>
@@ -48,7 +51,9 @@ export default function LoginPage() {
                     {loginMutation.isError && (
                         <View style={[styles.errorBox, { backgroundColor: isDark ? '#450a0a' : '#fef2f2', borderColor: isDark ? '#7f1d1d' : '#fecaca' }]}>
                             <Ionicons name="alert-circle" size={20} color={isDark ? '#fca5a5' : '#ef4444'} />
-                            <Text style={[styles.errorText, { color: isDark ? '#fca5a5' : '#dc2626' }]}>{getErrorMessage(loginMutation.error)}</Text>
+                            <Text style={[styles.errorText, { color: isDark ? '#fca5a5' : '#dc2626' }]}>
+                                {getErrorMessage(loginMutation.error)}
+                            </Text>
                         </View>
                     )}
 
@@ -70,20 +75,12 @@ export default function LoginPage() {
 
                     <View style={styles.inputGroup}>
                         <Text style={[styles.label, { color: colors.text }]}>Password</Text>
-                        <View style={[styles.inputContainer, { backgroundColor: colors.card, borderColor: colors.border }]}>
-                            <Ionicons name="lock-closed-outline" size={20} color={colors.textSecondary} style={styles.inputIcon} />
-                            <TextInput
-                                style={[styles.input, { color: colors.text }]}
-                                placeholder="Enter your password"
-                                placeholderTextColor={colors.textTertiary}
-                                value={password}
-                                onChangeText={setPassword}
-                                secureTextEntry={!showPassword}
-                            />
-                            <Pressable onPress={() => setShowPassword(!showPassword)} style={styles.eyeIcon}>
-                                <Ionicons name={showPassword ? 'eye-off-outline' : 'eye-outline'} size={20} color={colors.textSecondary} />
-                            </Pressable>
-                        </View>
+                        <PasswordInput
+                            value={password}
+                            onChangeText={setPassword}
+                            placeholder="Enter your password"
+                            showLeftIcon
+                        />
                     </View>
 
                     <Pressable
@@ -102,7 +99,7 @@ export default function LoginPage() {
                         <Text style={[styles.registerText, { color: colors.textSecondary }]}>Don't have an account? </Text>
                         <Link href="/register" asChild>
                             <Pressable>
-                                <Text style={[styles.registerLinkText, { color: colors.primary }]}>Register</Text>
+                                <Text style={[styles.loginLinkText, { color: colors.primary }]}>Register</Text>
                             </Pressable>
                         </Link>
                     </View>
@@ -127,11 +124,10 @@ const styles = StyleSheet.create({
     inputContainer: { flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderRadius: 12 },
     inputIcon: { paddingLeft: 16 },
     input: { flex: 1, paddingVertical: 14, paddingHorizontal: 12, fontSize: 16 },
-    eyeIcon: { paddingRight: 16 },
     loginButton: { paddingVertical: 16, borderRadius: 12, alignItems: 'center' },
     loginButtonDisabled: { opacity: 0.7 },
     loginButtonText: { color: 'white', fontSize: 16, fontWeight: '600' },
     registerLink: { flexDirection: 'row', justifyContent: 'center', marginTop: 16 },
     registerText: {},
-    registerLinkText: { fontWeight: '600' },
+    loginLinkText: { fontWeight: '600' },
 });

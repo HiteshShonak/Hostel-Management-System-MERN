@@ -6,15 +6,7 @@ import { useRegister } from '@/lib/hooks';
 import { useAuth } from '@/lib/contexts/auth';
 import { UserRole } from '@/lib/types';
 import { useTheme } from '@/lib/contexts/theme';
-
-const ROLES: { value: UserRole; label: string; icon: string }[] = [
-    { value: 'student', label: 'Student', icon: 'school' },
-    { value: 'parent', label: 'Parent', icon: 'people' },
-    { value: 'guard', label: 'Guard', icon: 'shield-checkmark' },
-    { value: 'warden', label: 'Warden', icon: 'shield' },
-    { value: 'mess_staff', label: 'Mess Staff', icon: 'restaurant' },
-    { value: 'helper', label: 'Helper', icon: 'person-add' },
-];
+import { RoleSelectGrid, AcademicYearPicker, PasswordInput } from '@/components/forms';
 
 export default function RegisterPage() {
     const { colors, isDark } = useTheme();
@@ -28,7 +20,6 @@ export default function RegisterPage() {
     const [parentEmail, setParentEmail] = useState('');
     const [role, setRole] = useState<UserRole>('student');
     const [year, setYear] = useState<number>(1);
-    const [showPassword, setShowPassword] = useState(false);
 
     const registerMutation = useRegister();
     const { signIn } = useAuth();
@@ -43,7 +34,6 @@ export default function RegisterPage() {
         if (!isParent && (!rollNo || !room || !hostel)) {
             return;
         }
-        // year is required for students
         if (isStudent && (!year || year < 1 || year > 4)) {
             return;
         }
@@ -58,7 +48,6 @@ export default function RegisterPage() {
                 hostel: isParent ? 'N/A' : hostel,
                 phone,
                 role,
-                // only send year for students
                 ...(isStudent ? { year } : {}),
                 parentEmail: !isParent && parentEmail ? parentEmail : undefined,
             },
@@ -77,7 +66,10 @@ export default function RegisterPage() {
     };
 
     return (
-        <KeyboardAvoidingView style={[styles.container, { backgroundColor: colors.background }]} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+        <KeyboardAvoidingView
+            style={[styles.container, { backgroundColor: colors.background }]}
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        >
             <ScrollView contentContainerStyle={styles.scrollContent}>
                 <View style={styles.header}>
                     <Pressable onPress={() => router.back()} style={styles.backButton}>
@@ -111,56 +103,43 @@ export default function RegisterPage() {
                     )}
 
                     {/* Role Selector */}
-                    <View style={styles.inputGroup}>
-                        <Text style={[styles.label, { color: colors.text }]}>Role (For Testing)</Text>
-                        <View style={styles.roleContainer}>
-                            {ROLES.map((r) => (
-                                <Pressable
-                                    key={r.value}
-                                    style={[
-                                        styles.roleButton,
-                                        { backgroundColor: colors.card, borderColor: colors.border },
-                                        role === r.value && { borderColor: colors.primary, backgroundColor: isDark ? 'rgba(29, 78, 216, 0.2)' : '#eff6ff' },
-                                    ]}
-                                    onPress={() => setRole(r.value)}
-                                >
-                                    <Ionicons
-                                        name={r.icon as any}
-                                        size={20}
-                                        color={role === r.value ? colors.primary : colors.textSecondary}
-                                    />
-                                    <Text
-                                        style={[
-                                            styles.roleText,
-                                            { color: colors.textSecondary },
-                                            role === r.value && { color: colors.primary },
-                                        ]}
-                                    >
-                                        {r.label}
-                                    </Text>
-                                </Pressable>
-                            ))}
-                        </View>
-                    </View>
+                    <RoleSelectGrid
+                        selectedRole={role}
+                        onSelectRole={setRole}
+                        label="Role (For Testing)"
+                    />
 
                     <View style={styles.inputGroup}>
                         <Text style={[styles.label, { color: colors.text }]}>Full Name</Text>
-                        <TextInput style={[styles.input, { color: colors.text, backgroundColor: colors.card, borderColor: colors.border }]} placeholder="Enter your full name" placeholderTextColor={colors.textTertiary} value={name} onChangeText={setName} />
+                        <TextInput
+                            style={[styles.input, { color: colors.text, backgroundColor: colors.card, borderColor: colors.border }]}
+                            placeholder="Enter your full name"
+                            placeholderTextColor={colors.textTertiary}
+                            value={name}
+                            onChangeText={setName}
+                        />
                     </View>
 
                     <View style={styles.inputGroup}>
                         <Text style={[styles.label, { color: colors.text }]}>Email</Text>
-                        <TextInput style={[styles.input, { color: colors.text, backgroundColor: colors.card, borderColor: colors.border }]} placeholder="Enter your email" placeholderTextColor={colors.textTertiary} value={email} onChangeText={setEmail} keyboardType="email-address" autoCapitalize="none" />
+                        <TextInput
+                            style={[styles.input, { color: colors.text, backgroundColor: colors.card, borderColor: colors.border }]}
+                            placeholder="Enter your email"
+                            placeholderTextColor={colors.textTertiary}
+                            value={email}
+                            onChangeText={setEmail}
+                            keyboardType="email-address"
+                            autoCapitalize="none"
+                        />
                     </View>
 
                     <View style={styles.inputGroup}>
                         <Text style={[styles.label, { color: colors.text }]}>Password</Text>
-                        <View style={[styles.passwordContainer, { backgroundColor: colors.card, borderColor: colors.border }]}>
-                            <TextInput style={[styles.passwordInput, { color: colors.text }]} placeholder="Create password" placeholderTextColor={colors.textTertiary} value={password} onChangeText={setPassword} secureTextEntry={!showPassword} />
-                            <Pressable onPress={() => setShowPassword(!showPassword)} style={styles.eyeIcon}>
-                                <Ionicons name={showPassword ? 'eye-off-outline' : 'eye-outline'} size={20} color={colors.textSecondary} />
-                            </Pressable>
-                        </View>
+                        <PasswordInput
+                            value={password}
+                            onChangeText={setPassword}
+                            placeholder="Create password"
+                        />
                     </View>
 
                     {!isParent && (
@@ -168,53 +147,43 @@ export default function RegisterPage() {
                             <View style={styles.row}>
                                 <View style={[styles.inputGroup, { flex: 1 }]}>
                                     <Text style={[styles.label, { color: colors.text }]}>{isStudent ? 'Roll No' : 'Employee ID'}</Text>
-                                    <TextInput style={[styles.input, { color: colors.text, backgroundColor: colors.card, borderColor: colors.border }]} placeholder={isStudent ? 'BT2401' : 'EMP001'} placeholderTextColor={colors.textTertiary} value={rollNo} onChangeText={setRollNo} />
+                                    <TextInput
+                                        style={[styles.input, { color: colors.text, backgroundColor: colors.card, borderColor: colors.border }]}
+                                        placeholder={isStudent ? 'BT2401' : 'EMP001'}
+                                        placeholderTextColor={colors.textTertiary}
+                                        value={rollNo}
+                                        onChangeText={setRollNo}
+                                    />
                                 </View>
                                 <View style={[styles.inputGroup, { flex: 1, marginLeft: 12 }]}>
                                     <Text style={[styles.label, { color: colors.text }]}>Room</Text>
-                                    <TextInput style={[styles.input, { color: colors.text, backgroundColor: colors.card, borderColor: colors.border }]} placeholder="A-106" placeholderTextColor={colors.textTertiary} value={room} onChangeText={setRoom} />
+                                    <TextInput
+                                        style={[styles.input, { color: colors.text, backgroundColor: colors.card, borderColor: colors.border }]}
+                                        placeholder="A-106"
+                                        placeholderTextColor={colors.textTertiary}
+                                        value={room}
+                                        onChangeText={setRoom}
+                                    />
                                 </View>
                             </View>
 
                             <View style={styles.inputGroup}>
                                 <Text style={[styles.label, { color: colors.text }]}>Hostel</Text>
-                                <TextInput style={[styles.input, { color: colors.text, backgroundColor: colors.card, borderColor: colors.border }]} placeholder="Enter hostel name" placeholderTextColor={colors.textTertiary} value={hostel} onChangeText={setHostel} />
+                                <TextInput
+                                    style={[styles.input, { color: colors.text, backgroundColor: colors.card, borderColor: colors.border }]}
+                                    placeholder="Enter hostel name"
+                                    placeholderTextColor={colors.textTertiary}
+                                    value={hostel}
+                                    onChangeText={setHostel}
+                                />
                             </View>
 
-                            {/* Year picker — required for students */}
+                            {/* Academic Year Picker */}
                             {isStudent && (
-                                <View style={styles.inputGroup}>
-                                    <View style={styles.labelRow}>
-                                        <Text style={[styles.label, { color: colors.text }]}>Academic Year</Text>
-                                        <Text style={[styles.requiredBadge, { backgroundColor: isDark ? '#172554' : '#eff6ff', color: colors.primary }]}>Required</Text>
-                                    </View>
-                                    <View style={styles.yearContainer}>
-                                        {([1, 2, 3, 4] as const).map((y) => (
-                                            <Pressable
-                                                key={y}
-                                                style={[
-                                                    styles.yearButton,
-                                                    { backgroundColor: colors.card, borderColor: colors.border },
-                                                    year === y && { borderColor: colors.primary, backgroundColor: isDark ? 'rgba(29, 78, 216, 0.2)' : '#eff6ff' },
-                                                ]}
-                                                onPress={() => setYear(y)}
-                                            >
-                                                <Text style={[
-                                                    styles.yearText,
-                                                    { color: colors.textSecondary },
-                                                    year === y && { color: colors.primary, fontWeight: '700' },
-                                                ]}>
-                                                    {y === 1 ? '1st' : y === 2 ? '2nd' : y === 3 ? '3rd' : '4th'}
-                                                </Text>
-                                                <Text style={[
-                                                    styles.yearSubText,
-                                                    { color: colors.textTertiary },
-                                                    year === y && { color: colors.primary },
-                                                ]}>Year</Text>
-                                            </Pressable>
-                                        ))}
-                                    </View>
-                                </View>
+                                <AcademicYearPicker
+                                    selectedYear={year}
+                                    onSelectYear={setYear}
+                                />
                             )}
 
                             <View style={styles.inputGroup}>
@@ -246,7 +215,14 @@ export default function RegisterPage() {
 
                     <View style={styles.inputGroup}>
                         <Text style={[styles.label, { color: colors.text }]}>Phone</Text>
-                        <TextInput style={[styles.input, { color: colors.text, backgroundColor: colors.card, borderColor: colors.border }]} placeholder="+91 98765 43210" placeholderTextColor={colors.textTertiary} value={phone} onChangeText={setPhone} keyboardType="phone-pad" />
+                        <TextInput
+                            style={[styles.input, { color: colors.text, backgroundColor: colors.card, borderColor: colors.border }]}
+                            placeholder="+91 98765 43210"
+                            placeholderTextColor={colors.textTertiary}
+                            value={phone}
+                            onChangeText={setPhone}
+                            keyboardType="phone-pad"
+                        />
                     </View>
 
                     <Pressable
@@ -287,21 +263,9 @@ const styles = StyleSheet.create({
     errorText: { flex: 1 },
     inputGroup: { gap: 6 },
     label: { fontSize: 14, fontWeight: '500' },
-    labelRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-    requiredBadge: { fontSize: 11, fontWeight: '600', paddingHorizontal: 8, paddingVertical: 2, borderRadius: 6 },
     input: { borderWidth: 1, borderRadius: 12, paddingVertical: 12, paddingHorizontal: 16, fontSize: 16 },
     helperText: { fontSize: 12, marginTop: 4 },
     row: { flexDirection: 'row' },
-    passwordContainer: { flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderRadius: 12 },
-    passwordInput: { flex: 1, paddingVertical: 12, paddingHorizontal: 16, fontSize: 16 },
-    eyeIcon: { paddingRight: 16 },
-    roleContainer: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
-    roleButton: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, paddingVertical: 10, paddingHorizontal: 12, borderRadius: 12, borderWidth: 2, minWidth: '30%' },
-    roleText: { fontSize: 13, fontWeight: '600' },
-    yearContainer: { flexDirection: 'row', gap: 8 },
-    yearButton: { flex: 1, alignItems: 'center', paddingVertical: 12, borderRadius: 12, borderWidth: 2 },
-    yearText: { fontSize: 16, fontWeight: '600' },
-    yearSubText: { fontSize: 11, marginTop: 2 },
     registerButton: { paddingVertical: 16, borderRadius: 12, alignItems: 'center', marginTop: 8 },
     registerButtonDisabled: { opacity: 0.7 },
     registerButtonText: { color: 'white', fontSize: 16, fontWeight: '600' },
