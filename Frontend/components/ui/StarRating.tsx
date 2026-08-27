@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { View, Pressable } from 'react-native';
+import { View, Pressable, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { cn } from '@/lib/utils';
 
 interface StarRatingProps {
     initialRating?: number;
@@ -24,7 +23,7 @@ export function StarRating({
     const iconSize = size === 'sm' ? 16 : 20;
 
     return (
-        <View className="flex-row items-center gap-1">
+        <View style={styles.container}>
             {[1, 2, 3, 4, 5].map((value) => (
                 <Pressable key={value} onPress={() => handlePress(value)}>
                     <Ionicons
@@ -37,3 +36,11 @@ export function StarRating({
         </View>
     );
 }
+
+const styles = StyleSheet.create({
+    container: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 4,
+    },
+});

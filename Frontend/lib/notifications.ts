@@ -1,6 +1,9 @@
 import * as Notifications from 'expo-notifications';
 import * as Device from 'expo-device';
+import Constants, { ExecutionEnvironment } from 'expo-constants';
 import { Platform } from 'react-native';
+
+const isExpoGo = Constants.executionEnvironment === ExecutionEnvironment.StoreClient;
 
 // Configure notifications handler
 Notifications.setNotificationHandler({
@@ -14,6 +17,12 @@ Notifications.setNotificationHandler({
 });
 
 export async function registerForPushNotificationsAsync() {
+    // Remote push notifications were removed from the Expo Go client in SDK 53+
+    // Standalone APK and Development Builds use native FCM and work normally
+    if (isExpoGo && Platform.OS === 'android') {
+        return undefined;
+    }
+
     let token;
 
     if (Platform.OS === 'android') {
@@ -35,15 +44,16 @@ export async function registerForPushNotificationsAsync() {
             finalStatus = status;
         }
         if (finalStatus !== 'granted') {
-            alert('Failed to get push token for push notification!');
-            return;
+            return undefined;
         }
-        // Get Expo push token
-        token = (await Notifications.getExpoPushTokenAsync({
-            projectId: 'd0ca44c9-b72a-424f-88e5-ff0c4a1938b1'
-        })).data;
-    } else {
-        // Silent fail for simulator/emulator
+        try {
+            // Get Expo push token
+            token = (await Notifications.getExpoPushTokenAsync({
+                projectId: Constants.expoConfig?.extra?.eas?.projectId || 'd0ca44c9-b72a-424f-88e5-ff0c4a1938b1'
+            })).data;
+        } catch (error) {
+            console.warn('Could not register push token:', error);
+        }
     }
 
     return token;

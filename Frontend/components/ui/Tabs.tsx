@@ -1,6 +1,5 @@
 import React, { createContext, useContext, useState } from 'react';
-import { View, Text, Pressable, ViewProps } from 'react-native';
-import { cn } from '@/lib/utils';
+import { View, Text, Pressable, ViewProps, StyleSheet, StyleProp, ViewStyle, TextStyle } from 'react-native';
 
 interface TabsContextType {
     value: string;
@@ -22,6 +21,7 @@ interface TabsProps extends ViewProps {
     value?: string;
     onValueChange?: (value: string) => void;
     children: React.ReactNode;
+    style?: StyleProp<ViewStyle>;
 }
 
 export function Tabs({
@@ -29,7 +29,7 @@ export function Tabs({
     value: controlledValue,
     onValueChange,
     children,
-    className,
+    style,
     ...props
 }: TabsProps) {
     const [uncontrolledValue, setUncontrolledValue] = useState(defaultValue);
@@ -42,7 +42,7 @@ export function Tabs({
 
     return (
         <TabsContext.Provider value={{ value, onValueChange: handleValueChange }}>
-            <View className={cn('flex flex-col gap-2', className)} {...props}>
+            <View style={[styles.tabs, style]} {...props}>
                 {children}
             </View>
         </TabsContext.Provider>
@@ -51,17 +51,12 @@ export function Tabs({
 
 interface TabsListProps extends ViewProps {
     children: React.ReactNode;
+    style?: StyleProp<ViewStyle>;
 }
 
-export function TabsList({ children, className, ...props }: TabsListProps) {
+export function TabsList({ children, style, ...props }: TabsListProps) {
     return (
-        <View
-            className={cn(
-                'flex-row items-center justify-center rounded-lg bg-muted p-1',
-                className
-            )}
-            {...props}
-        >
+        <View style={[styles.tabsList, style]} {...props}>
             {children}
         </View>
     );
@@ -70,29 +65,21 @@ export function TabsList({ children, className, ...props }: TabsListProps) {
 interface TabsTriggerProps {
     value: string;
     children: React.ReactNode;
-    className?: string;
+    style?: StyleProp<ViewStyle>;
+    textStyle?: StyleProp<TextStyle>;
 }
 
-export function TabsTrigger({ value, children, className }: TabsTriggerProps) {
+export function TabsTrigger({ value, children, style, textStyle }: TabsTriggerProps) {
     const { value: selectedValue, onValueChange } = useTabsContext();
     const isActive = selectedValue === value;
 
     return (
         <Pressable
             onPress={() => onValueChange(value)}
-            className={cn(
-                'flex-1 items-center justify-center rounded-md px-3 py-2',
-                isActive ? 'bg-background shadow-sm' : 'bg-transparent',
-                className
-            )}
+            style={[styles.tabsTrigger, isActive && styles.tabsTriggerActive, style]}
         >
             {typeof children === 'string' ? (
-                <Text
-                    className={cn(
-                        'text-sm font-medium',
-                        isActive ? 'text-foreground' : 'text-muted-foreground'
-                    )}
-                >
+                <Text style={[styles.tabsTriggerText, isActive && styles.tabsTriggerTextActive, textStyle]}>
                     {children}
                 </Text>
             ) : (
@@ -105,9 +92,10 @@ export function TabsTrigger({ value, children, className }: TabsTriggerProps) {
 interface TabsContentProps extends ViewProps {
     value: string;
     children: React.ReactNode;
+    style?: StyleProp<ViewStyle>;
 }
 
-export function TabsContent({ value, children, className, ...props }: TabsContentProps) {
+export function TabsContent({ value, children, style, ...props }: TabsContentProps) {
     const { value: selectedValue } = useTabsContext();
 
     if (value !== selectedValue) {
@@ -115,8 +103,52 @@ export function TabsContent({ value, children, className, ...props }: TabsConten
     }
 
     return (
-        <View className={cn('flex-1', className)} {...props}>
+        <View style={[styles.tabsContent, style]} {...props}>
             {children}
         </View>
     );
 }
+
+const styles = StyleSheet.create({
+    tabs: {
+        flexDirection: 'column',
+        gap: 8,
+    },
+    tabsList: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderRadius: 8,
+        backgroundColor: '#f1f5f9',
+        padding: 4,
+    },
+    tabsTrigger: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderRadius: 6,
+        paddingHorizontal: 12,
+        paddingVertical: 8,
+        backgroundColor: 'transparent',
+    },
+    tabsTriggerActive: {
+        backgroundColor: '#ffffff',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.1,
+        shadowRadius: 2,
+        elevation: 2,
+    },
+    tabsTriggerText: {
+        fontSize: 14,
+        fontWeight: '500',
+        color: '#64748b',
+    },
+    tabsTriggerTextActive: {
+        color: '#0f172a',
+        fontWeight: '600',
+    },
+    tabsContent: {
+        flex: 1,
+    },
+});
