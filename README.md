@@ -1,10 +1,10 @@
 <div align="center">
 
-# 🏨 HMS - Hostel Management System
+# 🏨 HMS - Smart Hostel Management System
 
 ### IIIT Sonepat
 
-_A mobile platform for day-to-day hostel operations_
+_A modern full-stack mobile platform for day-to-day hostel operations_
 
 [![React Native](https://img.shields.io/badge/React%20Native-0.81-61DAFB?style=flat-square&logo=react&logoColor=white)](https://reactnative.dev/)
 [![Expo SDK](https://img.shields.io/badge/Expo_SDK-54.0-000020?style=flat-square&logo=expo&logoColor=white)](https://expo.dev/)
@@ -21,387 +21,94 @@ _A mobile platform for day-to-day hostel operations_
 
 <br/>
 
-> Built with ❤️ for **Indian Institute of Information Technology, Sonepat**
-> featuring QR gate passes, mess management, emergency SOS & real-time notifications.
+> Built with ❤️ for **Indian Institute of Information Technology, Sonepat**  
+> Featuring QR gate passes, mess menu & ratings, emergency SOS & push notifications.
 
 </div>
 
 ---
 
-## 📱 Features
+## 📱 Features by Role
 
-### For Students
-
-- 🎫 **Digital Gate Passes** - Request, track, and validate passes with QR codes
-- 🍽️ **Mess Menu & Ratings** - Weekly menu with time-windowed meal ratings
-- 📢 **Notice Board** - Real-time notices from hostel staff
-- 🛠️ **Complaints** - Submit and track maintenance requests
-- 🚨 **Emergency SOS** - Send SOS with location and view emergency contacts
-- 🔔 **Push Notifications** - Real-time alerts and updates
-
-### For Parents
-
-- 👨‍👩‍👧 **Linked Children** - View linked student profiles
-- ✅ **Gate Pass Approval** - Two-tier approval (Parent → Warden)
-- 🧾 **Pass History** - Review past gate passes
-- 🔔 **Notifications** - Gate pass and alert updates
-
-### For Guards
-
-- 📷 **QR Scanner** - Validate gate passes quickly
-- 📝 **Activity Logs** - Entry/exit tracking
-- 🚶 **Students Outside** - Live list of students currently out
-- ✅ **Recent Entries** - Return tracking for today
-
-### For Wardens
-
-- ✓ **Pass Management** - Approve/reject gate passes
-- 📋 **Student Management** - Student list, detail view
-- 📚 **Pass History** - Review all gate passes
-- 🚨 **Emergency Alerts** - View active SOS alerts
-
-### For Admins
-
-- 👥 **User Management** - Create and manage all user types
-- 🔗 **Parent-Student Linking** - Link parent accounts
-- ⚙️ **System Configuration** - Geofence, pass limits
-- 📊 **System Statistics** - Users, passes, complaints, notices
+| Role | Key Capabilities |
+| :--- | :--- |
+| 🎓 **Students** | • Digital QR Gate Passes with geofence validation<br/>• Mess weekly menu with serving hour scheduler & meal ratings<br/>• In-app notice board & maintenance complaints tracker<br/>• 3-second hold-to-trigger Emergency SOS with live location |
+| 👨‍👩‍👧 **Parents** | • Linked student profiles & gate pass approval workflow<br/>• Historical gate pass logs & status updates |
+| 🛡️ **Guards** | • Real-time camera QR scanner with instant entry/exit validation<br/>• Live student tracking (currently outside hostel vs returned today) |
+| 📋 **Wardens** | • Two-tier gate pass approvals & full pass history<br/>• Student directory & active emergency SOS incident management |
+| ⚙️ **Admins** | • User access management & role assignment<br/>• Parent-student account linking & system geofence configurations |
 
 ---
 
-## 🏗️ Architecture
+## 🏗️ Architecture & Tech Stack
 
-### Frontend (Mobile App)
-
-```
-Technology Stack:
-├── React Native 0.81.5
-├── Expo SDK 54
-├── Expo Router (File-based routing)
-├── TypeScript 5.9
-├── TanStack Query (State management)
-├── Axios (HTTP client)
-└── Expo Secure Store (Token storage)
-
-Key Features:
-├── QR Code generation/scanning (expo-camera + react-native-qrcode-svg)
-├── Geolocation (expo-location)
-├── Push notifications (expo-notifications)
-├── Dark/Light theme toggle
-└── React Query caching
-```
-
-### Backend (API Server)
-
-```
-Technology Stack:
-├── Node.js 18+
-├── Express 4.21
-├── MongoDB (Mongoose 8.9)
-├── Redis (ioredis) - Caching
-├── TypeScript 5.9
-├── JWT (jsonwebtoken)
-└── PM2 (Process management)
-
-Security:
-├── Helmet (HTTP headers)
-├── CORS (Origin whitelisting)
-├── Rate limiting (express-rate-limit)
-├── Input sanitization
-├── bcrypt (Password hashing)
-├── Expo Push Notifications
-└── Zod (Schema validation)
-```
-
----
-
-## 📂 Project Structure
-
-```
+```text
 HMS-Mobile/
+├── Frontend/           # React Native (Expo SDK 54, Expo Router, TypeScript)
+│   ├── app/           # Role-based screens (student, parent, warden, guard, admin)
+│   ├── components/    # Modular UI components (<180 lines/file)
+│   └── lib/           # API clients, TanStack Query hooks, Contexts, Types
 │
-├── Frontend/              # React Native Mobile App
-│   ├── app/              # Expo Router screens
-│   │   ├── admin/       # Admin screens
-│   │   ├── guard/       # Guard-specific screens
-│   │   ├── parent/      # Parent portal
-│   │   └── warden/      # Warden tools
-│   ├── components/       # Reusable UI components
-│   ├── lib/             # Core utilities
-│   │   ├── api.ts       # Axios instance
-│   │   ├── hooks.ts     # React Query hooks
-│   │   ├── services.ts  # API service layer
-│   │   └── types.ts     # TypeScript types
-│   ├── app.json         # Expo configuration
-│   ├── eas.json         # EAS Build configuration
-│   └── package.json
-│
-├── Backend/              # Express API Server
-│   ├── src/
-│   │   ├── controllers/ # Request handlers (12 files)
-│   │   ├── models/      # MongoDB schemas (12 collections)
-│   │   ├── routes/      # API endpoints (12 files)
-│   │   ├── middleware/  # Auth, validation, error handling
-│   │   ├── services/    # Business logic (JWT, notifications)
-│   │   ├── utils/       # Helpers (logger, cache, pagination)
-│   │   ├── schemas/     # Zod validation schemas
-│   │   └── types/       # TypeScript interfaces
-│   ├── dist/            # Compiled JavaScript (production)
-│   ├── ecosystem.config.js  # PM2 configuration
-│   ├── .env             # Environment variables
-│   └── package.json
-│
-└── Documentation.md      # Detailed project documentation
+└── Backend/            # Node.js + Express + TypeScript
+    ├── src/controllers# Business logic & request handlers
+    ├── src/models     # Mongoose schemas (Users, GatePasses, Mess, SOS, Notices)
+    ├── src/routes     # REST API routes with Zod validation
+    └── src/middleware # Auth (JWT), rate limiting, helmet, input sanitization
 ```
 
 ---
 
-## 🚀 Quick Start
+## ⚡ Quick Start
 
 ### Prerequisites
+- **Node.js** 18+ & **npm**
+- **MongoDB** (Local instance or MongoDB Atlas)
+- **Redis** (Optional caching layer)
+- **Expo Go** app on iOS / Android (for physical device testing)
 
-- **Node.js** 18+ ([Download](https://nodejs.org/))
-- **MongoDB** 5+ (Local or [MongoDB Atlas](https://www.mongodb.com/cloud/atlas))
-- **Redis** 6+ (Optional but recommended)
-- **Git** ([Download](https://git-scm.com/))
-- **Expo CLI** (will be installed automatically)
-
-### Backend Setup
-
-```bash
-# 1. Clone repository
-git clone <repository-url>
-cd HMS-Mobile/Backend
-
-# 2. Install dependencies
-npm install
-
-# 3. Configure environment
-cp .env.example .env
-# Edit .env with your values:
-#   - MONGODB_URI (your MongoDB connection)
-#   - JWT_SECRET (generate with: node -e "console.log(require('crypto').randomBytes(64).toString('hex'))")
-#   - REDIS_URL (if using Redis)
-
-# 4. Run development server
-npm run dev
-
-# Server starts at http://localhost:5000
-# Health check: http://localhost:5000/health
-```
-
-### Frontend Setup
-
-```bash
-# 1. Navigate to frontend
-cd ../Frontend
-
-# 2. Install dependencies
-npm install
-
-# 3. Configure API URL
-# Edit .env file:
-EXPO_PUBLIC_API_URL=http://YOUR_LOCAL_IP:5000/api
-# Note: Use your computer's local IP (not localhost) for physical device testing
-
-# 4. Start Expo
-npx expo start
-
-# Options:
-# - Press 'a' for Android emulator
-# - Press 'i' for iOS simulator (Mac only)
-# - Scan QR code with Expo Go app on your phone
-```
-
----
-
-## 🔧 Environment Variables
-
-### Backend `.env`
-
-```env
-# Server
-PORT=5000
-NODE_ENV=development
-
-# MongoDB
-MONGODB_URI=mongodb://localhost:27017/hms
-# Or MongoDB Atlas: mongodb+srv://username:password@cluster.mongodb.net/database
-
-# JWT
-JWT_SECRET=your-super-secret-key-CHANGE-THIS
-JWT_EXPIRES_IN=7d
-
-# Redis (optional)
-REDIS_URL=redis://localhost:6379
-
-# CORS (production domains)
-ALLOWED_ORIGINS=https://yourdomain.com
-```
-
-### Frontend `.env`
-
-```env
-# API Configuration
-EXPO_PUBLIC_API_URL=http://192.168.1.33:5000/api
-
-# For production:
-# EXPO_PUBLIC_API_URL=https://your-backend-domain.com/api
-```
-
----
-
-## 📦 Building for Production
-
-### Android APK
-
-```bash
-# 1. Install EAS CLI
-npm install -g eas-cli
-
-# 2. Login to Expo
-eas login
-
-# 3. Build APK
-cd Frontend
-eas build --platform android --profile preview
-
-# Wait 15-20 minutes -> Download APK -> Share with users
-```
-
-### iOS IPA (Requires Mac + Apple Developer Account)
-
-```bash
-# Build for TestFlight
-cd Frontend
-eas build --platform ios --profile preview
-
-# Submit to App Store
-eas submit --platform ios
-```
-
-### Backend Deployment (Render)
-
-**Already deployed at:** `https://hostel-management-system-backend-jde3.onrender.com`
-
-**To deploy your own:**
-
-1. Create account at [render.com](https://render.com)
-2. Connect GitHub repository
-3. Add environment variables
-4. Deploy with one click
-
----
-
-## 🧪 Testing
-
-### Backend Tests
-
+### 1. Backend Setup
 ```bash
 cd Backend
-npm test          # Run all tests
-npm run test:watch # Watch mode
+npm install
+cp .env.example .env
+npm run dev
+# Server running at http://localhost:5000 (Health check: /health)
 ```
 
-### API Testing
-
+### 2. Frontend Setup
 ```bash
-# Health Check
-curl https://hostel-management-system-backend-jde3.onrender.com/health
-
-# Login
-curl -X POST https://your-backend/api/auth/login \
-  -H "Content-Type: application/json" \
-  -d '{"email":"student@test.com","password":"password123"}'
+cd ../Frontend
+npm install
+cp .env.example .env
+# Set EXPO_PUBLIC_API_URL=http://<YOUR_LOCAL_IP>:5000/api in Frontend/.env
+npx expo start
+# Scan QR code with Expo Go app or press 'a' for Android emulator
 ```
 
----
-
-## 📊 Project Statistics
-
-| Component    | Files             | Lines of Code                |
-| ------------ | ----------------- | ---------------------------- |
-| **Frontend** | ~5,206 lines      | React Native, TypeScript     |
-| **Backend**  | ~5,755 lines      | Node.js, Express, TypeScript |
-| **Total**    | **~10,961 lines** | Production code              |
-
-### Database Collections (12 total)
-
-- `users` - All user accounts (students, parents, staff)
-- `gatepasses` - Gate pass requests
-- `gatepasslogs` - Entry/exit activity
-- `notices` - Notice board posts
-- `complaints` - Maintenance complaints
-- `messmenus` - Weekly meal schedules
-- `foodratings` - Meal ratings
-- `emergencies` - SOS alerts
-- `notifications` - In-app notifications
-- `parentstudents` - Parent-child links
-- `systemconfigs` - System settings
+### 3. Verification & Quality Checks
+```bash
+# Type check Frontend & Backend
+cd Frontend && npx tsc --noEmit
+cd ../Backend && npx tsc --noEmit
+```
 
 ---
 
 ## 🔒 Security Features
 
-✅ **JWT Authentication** - Secure token-based auth  
-✅ **Password Hashing** - bcrypt with salt rounds  
-✅ **Role-Based Access Control** - Student, Parent, Guard, Warden, Admin  
-✅ **Rate Limiting** - Protect against brute force (3 tiers)  
-✅ **Input Validation** - Zod schemas for all endpoints  
-✅ **XSS Protection** - Input sanitization middleware  
-✅ **CORS Whitelisting** - Configurable allowed origins  
-✅ **Helmet Security** - HTTP headers hardening  
-✅ **QR Code Security** - Unique codes for gate pass validation
-
----
-
-## 🌟 Key Highlights
-
-- ✅ **Mobile-First Design** - Optimized for students on the go
-- ✅ **Real-Time Updates** - Push notifications for instant alerts
-- ✅ **Smart Caching** - React Query caching for faster reloads
-- ✅ **Dark Mode** - System-aware theme switching
-- ✅ **Production-Ready** - PM2 cluster mode, Redis caching, structured logging
-- ✅ **Type-Safe** - Full TypeScript on frontend and backend
-- ✅ **Scalable Architecture** - Supports 1000+ concurrent users
+- 🔐 **JWT Authentication & RBAC**: Strict role-based endpoint protection (Student, Parent, Guard, Warden, Admin).
+- 🛡️ **Defensive Headers & Sanitization**: Helmet HTTP protection, CORS domain whitelisting, and XSS input sanitization.
+- ⏱️ **Rate Limiting**: Multi-tiered protection against brute-force and DDoS attempts.
+- 📱 **QR Cryptographic Validation**: Tamper-proof, single-use gate pass verification.
 
 ---
 
 ## 📚 Documentation
 
-- **[Documentation.md](Documentation.md)** - Full project breakdown
-- **[Backend API Documentation](Backend/API_DOCUMENTATION.md)** - API endpoints reference
-- **[Deployment Guide](deployment_guide.md)** - Production deployment steps
-- **[Build Testing Guide](build_testing_guide.md)** - APK/IPA build instructions
-
----
-
-## 🛠️ Development
-
-### Running Locally
-
-```bash
-# Terminal 1 - Backend
-cd Backend
-npm run dev
-# Server at http://localhost:5000
-
-# Terminal 2 - Frontend
-cd Frontend
-npx expo start
-# Scan QR with Expo Go app
-```
-
-### Code Quality
-
-```bash
-# Backend build check
-cd Backend
-npm run build
-
-# TypeScript check
-npx tsc --noEmit
-```
+- **[Full Documentation](Documentation.md)** - Comprehensive architectural deep-dive
+- **[Backend API Reference](Backend/API_DOCUMENTATION.md)** - REST API endpoints & payload schemas
+- **[Deployment Guide](deployment_guide.md)** - Production cloud deployment steps
+- **[Build & Testing Guide](build_testing_guide.md)** - EAS standalone APK/IPA compilation
 
 ---
 
@@ -413,27 +120,12 @@ npx tsc --noEmit
 4. Push to branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
----
-
-## 📄 License
-
-This project is licensed under the MIT License.
+For the full setup instructions, environment configuration, testing requirements, and Git guidelines, please see the **[Contribution Guide (CONTRIBUTING.md)](CONTRIBUTING.md)**.
 
 ---
 
-## 👥 Team
+## 📄 License & Credits
 
-Developed at **Indian Institute of Information Technology, Sonepat (IIIT Sonepat)**
+Distributed under the **MIT License**. See `LICENSE` for more information.
 
----
-
-## 🆘 Support
-
-For issues or questions:
-
-- Check [Documentation.md](Documentation.md)
-- Review API docs
-- Open an issue on the GitHub repository
-- Contact the team at IIIT Sonepat
-
-**Built with ❤️ at IIIT Sonepat for smarter hostel management**
+Developed with ❤️ at **Indian Institute of Information Technology, Sonepat (IIIT Sonepat)**.
