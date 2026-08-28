@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { StatusPillBadge } from '@/components/ui/StatusPillBadge';
 import { useTheme } from '@/lib/contexts/theme';
 import { LogEntry } from './useActivityLogsController';
 
@@ -30,11 +31,7 @@ export function ActivityLogCard({ log, isLast, formatTime, getTimeAgo }: Activit
                 {/* Header */}
                 <View style={styles.logHeader}>
                     <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-                        <View style={[styles.actionBadge, { backgroundColor: isExit ? '#fff7ed' : '#f0fdf4' }]}>
-                            <Text style={[styles.actionText, { color: isExit ? '#f59e0b' : '#16a34a' }]}>
-                                {isExit ? '← OUT' : '→ IN'}
-                            </Text>
-                        </View>
+                        <StatusPillBadge status={isExit ? 'OUT' : 'IN'} size="sm" />
                         {log.isLate && !isExit && (
                             <View style={[styles.lateBadge, { backgroundColor: '#fff7ed' }]}>
                                 <Ionicons name="time" size={10} color="#ea580c" />

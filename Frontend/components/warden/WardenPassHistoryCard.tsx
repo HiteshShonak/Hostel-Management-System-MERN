@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { StatusPillBadge } from '@/components/ui/StatusPillBadge';
 import { useTheme } from '@/lib/contexts/theme';
 import { GatePass, User } from '@/lib/types';
 import { StatusStyle } from './usePassHistoryController';
@@ -29,11 +30,11 @@ export function WardenPassHistoryCard({ pass, statusColors, formatDate }: Warden
                         {user?.rollNo || ''} • Room {user?.room || 'N/A'}
                     </Text>
                 </View>
-                <View style={[styles.statusBadge, { backgroundColor: statusColors.bg }]}>
-                    <Text style={[styles.statusText, { color: statusColors.text }]}>
-                        {pass.status.replace('_', ' ')}
-                    </Text>
-                </View>
+                <StatusPillBadge
+                    status={pass.status}
+                    bg={statusColors.bg}
+                    color={statusColors.text}
+                />
             </View>
 
             <View style={[styles.passDetails, { borderTopColor: colors.cardBorder }]}>

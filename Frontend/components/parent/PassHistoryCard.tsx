@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { StatusPillBadge } from '@/components/ui/StatusPillBadge';
 import { useTheme } from '@/lib/contexts/theme';
 import { formatTime, formatDate } from '@/lib/utils';
 
@@ -28,12 +29,12 @@ export function PassHistoryCard({ pass, statusStyle }: PassHistoryCardProps) {
                         </Text>
                     </View>
                 </View>
-                <View style={[styles.statusBadge, { backgroundColor: statusStyle.bg }]}>
-                    <Ionicons name={statusStyle.icon as any} size={14} color={statusStyle.text} />
-                    <Text style={[styles.statusText, { color: statusStyle.text }]}>
-                        {pass.status.replace('_', ' ')}
-                    </Text>
-                </View>
+                <StatusPillBadge
+                    status={pass.status}
+                    bg={statusStyle?.bg}
+                    color={statusStyle?.text}
+                    icon={statusStyle?.icon as any}
+                />
             </View>
 
             <View style={styles.passDetails}>

@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { Badge } from '@/components/ui/Badge';
+import { StatusPillBadge } from '@/components/ui/StatusPillBadge';
 import { useTheme } from '@/lib/contexts/theme';
 import type { GatePass, User } from '@/lib/types';
 import { formatTime, formatDate } from '@/lib/utils';
@@ -30,28 +30,6 @@ export function GatePassCard({
     const { colors, isDark } = useTheme();
     const passUser = typeof pass.user === 'object' && pass.user ? (pass.user as User) : null;
 
-    const getStatusColor = (status: string) => {
-        switch (status) {
-            case 'APPROVED': return 'success';
-            case 'REJECTED': return 'destructive';
-            case 'PENDING_PARENT':
-            case 'PENDING_WARDEN':
-            case 'PENDING':
-                return 'warning';
-            default: return 'secondary';
-        }
-    };
-
-    const getStatusLabel = (status: string) => {
-        switch (status) {
-            case 'PENDING_PARENT': return 'Pending Parent';
-            case 'PENDING_WARDEN': return 'Pending Warden';
-            case 'APPROVED': return 'Approved';
-            case 'REJECTED': return 'Rejected';
-            default: return status;
-        }
-    };
-
     return (
         <View style={[styles.card, { backgroundColor: colors.card, borderColor: colors.cardBorder }]}>
             {/* Card Header */}
@@ -63,9 +41,7 @@ export function GatePassCard({
                     <Text style={[styles.passReason, { color: colors.text }]}>{pass.reason}</Text>
                     <Text style={[styles.passId, { color: colors.textTertiary }]}>#{pass._id.slice(-6).toUpperCase()}</Text>
                 </View>
-                <Badge variant={getStatusColor(pass.status) as any}>
-                    <Text style={{ color: 'white' }}>{getStatusLabel(pass.status)}</Text>
-                </Badge>
+                <StatusPillBadge status={pass.status} />
             </View>
 
             {/* Warden View: Student Info */}

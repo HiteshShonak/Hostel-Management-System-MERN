@@ -1,7 +1,8 @@
 import React from 'react';
-import { View, Text, TextInput, ScrollView, Pressable, StyleSheet } from 'react-native';
+import { View, TextInput, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@/lib/contexts/theme';
+import { SegmentedFilterTabs, FilterTabItem } from '@/components/ui/SegmentedFilterTabs';
 import { ADMIN_ROLES } from './useAdminUsersController';
 
 interface AdminUserFiltersProps {
@@ -19,8 +20,22 @@ export function AdminUserFilters({
 }: AdminUserFiltersProps) {
     const { colors } = useTheme();
 
+    const roleTabs: FilterTabItem<string>[] = [
+        { id: 'ALL', label: 'All' },
+        ...ADMIN_ROLES.map((role) => ({
+            id: role,
+            label: role.replace('_', ' '),
+        })),
+    ];
+
+    const activeTab = roleFilter || 'ALL';
+
+    const handleSelectTab = (tabId: string) => {
+        onSelectRoleFilter(tabId === 'ALL' || tabId === roleFilter ? null : tabId);
+    };
+
     return (
-        <>
+        <View style={styles.container}>
             {/* Search Box */}
             <View style={[styles.searchBox, { backgroundColor: colors.card }]}>
                 <Ionicons name="search" size={20} color={colors.textTertiary} />
@@ -34,53 +49,18 @@ export function AdminUserFilters({
             </View>
 
             {/* Role Filter Chips */}
-            <ScrollView
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                style={styles.filterScroll}
-                contentContainerStyle={styles.filterContainer}
-            >
-                <Pressable
-                    style={[styles.filterChip, { backgroundColor: colors.card }, !roleFilter && styles.filterChipActive]}
-                    onPress={() => onSelectRoleFilter(null)}
-                >
-                    <Text style={[styles.filterText, { color: colors.textSecondary }, !roleFilter && styles.filterTextActive]}>
-                        All
-                    </Text>
-                </Pressable>
-                {ADMIN_ROLES.map((role) => (
-                    <Pressable
-                        key={role}
-                        style={[
-                            styles.filterChip,
-                            { backgroundColor: colors.card },
-                            roleFilter === role && styles.filterChipActive,
-                        ]}
-                        onPress={() => onSelectRoleFilter(roleFilter === role ? null : role)}
-                    >
-                        <Text
-                            style={[
-                                styles.filterText,
-                                { color: colors.textSecondary },
-                                roleFilter === role && styles.filterTextActive,
-                            ]}
-                        >
-                            {role.replace('_', ' ')}
-                        </Text>
-                    </Pressable>
-                ))}
-            </ScrollView>
-        </>
+            <SegmentedFilterTabs
+                tabs={roleTabs}
+                activeTab={activeTab}
+                onSelectTab={handleSelectTab}
+                activeColor="#7c3aed"
+            />
+        </View>
     );
 }
 
 const styles = StyleSheet.create({
+    container: { marginBottom: 8 },
     searchBox: { flexDirection: 'row', alignItems: 'center', borderRadius: 12, paddingHorizontal: 16, marginBottom: 12, gap: 12 },
     searchInput: { flex: 1, paddingVertical: 14, fontSize: 15 },
-    filterScroll: { marginBottom: 16 },
-    filterContainer: { gap: 8 },
-    filterChip: { paddingHorizontal: 16, paddingVertical: 8, borderRadius: 20 },
-    filterChipActive: { backgroundColor: '#7c3aed' },
-    filterText: { fontSize: 13, fontWeight: '500', textTransform: 'capitalize' },
-    filterTextActive: { color: 'white' },
 });

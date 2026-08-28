@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { Badge } from '@/components/ui/Badge';
+import { StatusPillBadge } from '@/components/ui/StatusPillBadge';
 import { useTheme } from '@/lib/contexts/theme';
 import { formatRelativeTime } from '@/lib/utils';
 import type { Complaint, User } from '@/lib/types';
@@ -22,14 +22,6 @@ export function ComplaintCard({
     const { colors, isDark } = useTheme();
     const complaintUser = typeof complaint.user === 'object' && complaint.user ? (complaint.user as User) : null;
 
-    const getStatusVariant = (status: string) => {
-        switch (status) {
-            case 'Resolved': return 'success';
-            case 'In Progress': return 'warning';
-            default: return 'secondary';
-        }
-    };
-
     const getCategoryIcon = (category: string): keyof typeof Ionicons.glyphMap => {
         switch (category) {
             case 'Plumbing': return 'water';
@@ -45,9 +37,7 @@ export function ComplaintCard({
                 <View style={[styles.categoryIcon, { backgroundColor: isDark ? colors.background : '#f5f5f5' }]}>
                     <Ionicons name={getCategoryIcon(complaint.category)} size={18} color={colors.textSecondary} />
                 </View>
-                <Badge variant={getStatusVariant(complaint.status) as any}>
-                    <Text style={{ color: 'white', fontSize: 13 }}>{complaint.status}</Text>
-                </Badge>
+                <StatusPillBadge status={complaint.status} />
             </View>
 
             {isWarden && complaintUser && (

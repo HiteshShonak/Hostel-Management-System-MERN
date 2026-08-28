@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { StatusPillBadge } from '@/components/ui/StatusPillBadge';
 import { useTheme } from '@/lib/contexts/theme';
 import type { PendingGatePass } from '@/lib/services';
 
@@ -43,9 +44,7 @@ export function PendingPassCard({
                         </Text>
                     </View>
                 </View>
-                <View style={[styles.pendingBadge, { backgroundColor: isDark ? '#422006' : '#fef3c7' }]}>
-                    <Text style={[styles.pendingText, { color: isDark ? '#fbbf24' : '#b45309' }]}>Pending</Text>
-                </View>
+                <StatusPillBadge status="PENDING" label="Pending" />
             </View>
 
             <View style={styles.passDetails}>
