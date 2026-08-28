@@ -1,16 +1,44 @@
 import React from 'react';
-import { View, Text, StyleSheet, Pressable } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { router } from 'expo-router';
+import { View, Text, StyleSheet } from 'react-native';
 import { useTheme } from '@/lib/contexts/theme';
 import { usePendingGatePasses, useActiveAlerts } from '@/lib/hooks';
 import { AdminDashboardBanner, AdminStatsGrid } from '@/components/admin';
+import { DashboardActionGrid, DashboardActionItem } from '@/components/ui/DashboardActionCard';
 
-// Admin dashboard component
 export function AdminDashboard() {
-    const { colors, isDark } = useTheme();
+    const { isDark } = useTheme();
     const { data: pendingPasses } = usePendingGatePasses();
     const { data: activeAlerts } = useActiveAlerts();
+
+    const administrationActions: DashboardActionItem[] = [
+        { icon: 'people', label: 'Users', route: '/admin/users', color: '#7c3aed', bg: isDark ? '#3b0764' : '#f3e8ff' },
+        { icon: 'link', label: 'Link Parents', route: '/admin/link-parent', color: '#b45309', bg: isDark ? '#451a03' : '#fef3c7' },
+        { icon: 'git-network', label: 'View Links', route: '/admin/parent-links', color: '#16a34a', bg: isDark ? '#052e16' : '#dcfce7' },
+    ];
+
+    const gatePassActions: DashboardActionItem[] = [
+        { icon: 'walk', label: 'Outside', route: '/guard/students-out', color: '#f59e0b', bg: isDark ? '#431407' : '#fff7ed' },
+        { icon: 'enter', label: 'Entries', route: '/guard/recent-entries', color: '#16a34a', bg: isDark ? '#052e16' : '#f0fdf4' },
+        { icon: 'footsteps', label: 'Logs', route: '/guard/activity-logs', color: '#4f46e5', bg: isDark ? '#1e1b4b' : '#e0e7ff' },
+    ];
+
+    const communicationActions: DashboardActionItem[] = [
+        { icon: 'megaphone', label: 'Notices', route: '/shared/notices', color: '#d97706', bg: isDark ? '#451a03' : '#fef3c7' },
+        { icon: 'alert-circle', label: 'SOS Alerts', route: '/shared/emergency', color: '#dc2626', bg: isDark ? '#450a0a' : '#fef2f2' },
+        { icon: 'chatbox-ellipses', label: 'Complaints', route: '/shared/complaints', color: '#16a34a', bg: isDark ? '#052e16' : '#f0fdf4' },
+    ];
+
+    const messActions: DashboardActionItem[] = [
+        { icon: 'restaurant', label: 'Mess Menu', route: '/mess/mess-menu', color: '#16a34a', bg: isDark ? '#052e16' : '#f0fdf4' },
+    ];
+
+    const systemActions: DashboardActionItem[] = [
+        { icon: 'stats-chart', label: 'Statistics', route: '/admin/stats', color: '#4f46e5', bg: isDark ? '#1e1b4b' : '#e0e7ff' },
+        { icon: 'settings', label: 'Config', route: '/admin/config', color: '#db2777', bg: isDark ? '#831843' : '#fce7f3' },
+        { icon: 'people', label: 'Students', route: '/warden/students', color: '#16a34a', bg: isDark ? '#052e16' : '#dcfce7' },
+    ];
+
+    const titleColor = isDark ? '#a78bfa' : '#4c1d95';
 
     return (
         <View style={styles.adminContent}>
@@ -23,107 +51,24 @@ export function AdminDashboard() {
             />
 
             {/* Administration section */}
-            <Text style={[styles.adminSectionTitle, { color: isDark ? '#a78bfa' : '#4c1d95' }]}>Administration</Text>
-            <View style={styles.adminGrid}>
-                <Pressable style={[styles.adminCard, { backgroundColor: colors.card }]} onPress={() => router.push('/admin/users')}>
-                    <View style={[styles.adminCardIcon, { backgroundColor: isDark ? '#3b0764' : '#f3e8ff' }]}>
-                        <Ionicons name="people" size={24} color="#7c3aed" />
-                    </View>
-                    <Text style={[styles.adminCardLabel, { color: colors.text }]}>Users</Text>
-                </Pressable>
-                <Pressable style={[styles.adminCard, { backgroundColor: colors.card }]} onPress={() => router.push('/admin/link-parent')}>
-                    <View style={[styles.adminCardIcon, { backgroundColor: isDark ? '#451a03' : '#fef3c7' }]}>
-                        <Ionicons name="link" size={24} color="#b45309" />
-                    </View>
-                    <Text style={[styles.adminCardLabel, { color: colors.text }]}>Link Parents</Text>
-                </Pressable>
-                <Pressable style={[styles.adminCard, { backgroundColor: colors.card }]} onPress={() => router.push('/admin/parent-links')}>
-                    <View style={[styles.adminCardIcon, { backgroundColor: isDark ? '#052e16' : '#dcfce7' }]}>
-                        <Ionicons name="git-network" size={24} color="#16a34a" />
-                    </View>
-                    <Text style={[styles.adminCardLabel, { color: colors.text }]}>View Links</Text>
-                </Pressable>
-            </View>
+            <Text style={[styles.adminSectionTitle, { color: titleColor }]}>Administration</Text>
+            <DashboardActionGrid actions={administrationActions} variant="grid-3" />
 
             {/* Gate Pass Management */}
-            <Text style={[styles.adminSectionTitle, { color: isDark ? '#a78bfa' : '#4c1d95' }]}>Gate Pass Management</Text>
-            <View style={styles.adminGrid}>
-                <Pressable style={[styles.adminCard, { backgroundColor: colors.card }]} onPress={() => router.push('/guard/students-out')}>
-                    <View style={[styles.adminCardIcon, { backgroundColor: isDark ? '#431407' : '#fff7ed' }]}>
-                        <Ionicons name="walk" size={24} color="#f59e0b" />
-                    </View>
-                    <Text style={[styles.adminCardLabel, { color: colors.text }]}>Outside</Text>
-                </Pressable>
-                <Pressable style={[styles.adminCard, { backgroundColor: colors.card }]} onPress={() => router.push('/guard/recent-entries')}>
-                    <View style={[styles.adminCardIcon, { backgroundColor: isDark ? '#052e16' : '#f0fdf4' }]}>
-                        <Ionicons name="enter" size={24} color="#16a34a" />
-                    </View>
-                    <Text style={[styles.adminCardLabel, { color: colors.text }]}>Entries</Text>
-                </Pressable>
-                <Pressable style={[styles.adminCard, { backgroundColor: colors.card }]} onPress={() => router.push('/guard/activity-logs')}>
-                    <View style={[styles.adminCardIcon, { backgroundColor: isDark ? '#1e1b4b' : '#e0e7ff' }]}>
-                        <Ionicons name="footsteps" size={24} color="#4f46e5" />
-                    </View>
-                    <Text style={[styles.adminCardLabel, { color: colors.text }]}>Logs</Text>
-                </Pressable>
-            </View>
+            <Text style={[styles.adminSectionTitle, { color: titleColor }]}>Gate Pass Management</Text>
+            <DashboardActionGrid actions={gatePassActions} variant="grid-3" />
 
             {/* Communication */}
-            <Text style={[styles.adminSectionTitle, { color: isDark ? '#a78bfa' : '#4c1d95' }]}>Communication</Text>
-            <View style={styles.adminGrid}>
-                <Pressable style={[styles.adminCard, { backgroundColor: colors.card }]} onPress={() => router.push('/shared/notices')}>
-                    <View style={[styles.adminCardIcon, { backgroundColor: isDark ? '#451a03' : '#fef3c7' }]}>
-                        <Ionicons name="megaphone" size={24} color="#d97706" />
-                    </View>
-                    <Text style={[styles.adminCardLabel, { color: colors.text }]}>Notices</Text>
-                </Pressable>
-                <Pressable style={[styles.adminCard, { backgroundColor: colors.card }]} onPress={() => router.push('/shared/emergency')}>
-                    <View style={[styles.adminCardIcon, { backgroundColor: isDark ? '#450a0a' : '#fef2f2' }]}>
-                        <Ionicons name="alert-circle" size={24} color="#dc2626" />
-                    </View>
-                    <Text style={[styles.adminCardLabel, { color: colors.text }]}>SOS Alerts</Text>
-                </Pressable>
-                <Pressable style={[styles.adminCard, { backgroundColor: colors.card }]} onPress={() => router.push('/shared/complaints')}>
-                    <View style={[styles.adminCardIcon, { backgroundColor: isDark ? '#052e16' : '#f0fdf4' }]}>
-                        <Ionicons name="chatbox-ellipses" size={24} color="#16a34a" />
-                    </View>
-                    <Text style={[styles.adminCardLabel, { color: colors.text }]}>Complaints</Text>
-                </Pressable>
-            </View>
+            <Text style={[styles.adminSectionTitle, { color: titleColor }]}>Communication</Text>
+            <DashboardActionGrid actions={communicationActions} variant="grid-3" />
 
             {/* Mess Management */}
-            <Text style={[styles.adminSectionTitle, { color: isDark ? '#a78bfa' : '#4c1d95' }]}>Mess Management</Text>
-            <View style={styles.adminGrid}>
-                <Pressable style={[styles.adminCard, { backgroundColor: colors.card }]} onPress={() => router.push('/mess/mess-menu')}>
-                    <View style={[styles.adminCardIcon, { backgroundColor: isDark ? '#052e16' : '#f0fdf4' }]}>
-                        <Ionicons name="restaurant" size={24} color="#16a34a" />
-                    </View>
-                    <Text style={[styles.adminCardLabel, { color: colors.text }]}>Mess Menu</Text>
-                </Pressable>
-            </View>
+            <Text style={[styles.adminSectionTitle, { color: titleColor }]}>Mess Management</Text>
+            <DashboardActionGrid actions={messActions} variant="grid-3" />
 
             {/* System Settings */}
-            <Text style={[styles.adminSectionTitle, { color: isDark ? '#a78bfa' : '#4c1d95' }]}>System Settings</Text>
-            <View style={styles.adminGrid}>
-                <Pressable style={[styles.adminCard, { backgroundColor: colors.card }]} onPress={() => router.push('/admin/stats')}>
-                    <View style={[styles.adminCardIcon, { backgroundColor: isDark ? '#1e1b4b' : '#e0e7ff' }]}>
-                        <Ionicons name="stats-chart" size={24} color="#4f46e5" />
-                    </View>
-                    <Text style={[styles.adminCardLabel, { color: colors.text }]}>Statistics</Text>
-                </Pressable>
-                <Pressable style={[styles.adminCard, { backgroundColor: colors.card }]} onPress={() => router.push('/admin/config')}>
-                    <View style={[styles.adminCardIcon, { backgroundColor: isDark ? '#831843' : '#fce7f3' }]}>
-                        <Ionicons name="settings" size={24} color="#db2777" />
-                    </View>
-                    <Text style={[styles.adminCardLabel, { color: colors.text }]}>Config</Text>
-                </Pressable>
-                <Pressable style={[styles.adminCard, { backgroundColor: colors.card }]} onPress={() => router.push('/warden/students')}>
-                    <View style={[styles.adminCardIcon, { backgroundColor: isDark ? '#052e16' : '#dcfce7' }]}>
-                        <Ionicons name="people" size={24} color="#16a34a" />
-                    </View>
-                    <Text style={[styles.adminCardLabel, { color: colors.text }]}>Students</Text>
-                </Pressable>
-            </View>
+            <Text style={[styles.adminSectionTitle, { color: titleColor }]}>System Settings</Text>
+            <DashboardActionGrid actions={systemActions} variant="grid-3" />
         </View>
     );
 }
@@ -131,20 +76,4 @@ export function AdminDashboard() {
 const styles = StyleSheet.create({
     adminContent: { padding: 16 },
     adminSectionTitle: { fontSize: 16, fontWeight: '600', marginBottom: 12, marginTop: 8 },
-    adminGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 12, marginBottom: 16 },
-    adminCard: {
-        width: '30%',
-        padding: 16,
-        borderRadius: 16,
-        alignItems: 'center',
-    },
-    adminCardIcon: {
-        width: 48,
-        height: 48,
-        borderRadius: 24,
-        alignItems: 'center',
-        justifyContent: 'center',
-        marginBottom: 8,
-    },
-    adminCardLabel: { fontSize: 13, fontWeight: '500', textAlign: 'center' },
 });
