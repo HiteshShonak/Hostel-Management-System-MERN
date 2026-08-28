@@ -2,7 +2,10 @@
 // Barrel export for all controllers
 
 export * from './auth.controller';
-export * from './gatepass.controller';
+export * from './gatepass.request.controller';
+export * from './gatepass.approval.controller';
+export * from './gatepass.guard.controller';
+export * from './gatepass.logs.controller';
 export * from './notice.controller';
 export * from './complaint.controller';
 export * from './messmenu.controller';
