@@ -11,9 +11,7 @@ import { ApiResponse } from '../utils/ApiResponse';
 import { getPaginationParams, getPaginationMeta } from '../utils/pagination';
 import { logger } from '../utils/logger';
 
-// Register a new user on behalf of another person
-// No JWT token is returned — the helper is not logging in as that user
-// POST /api/helper/register
+// Register a new user on behalf of another person - POST /api/helper/register
 export const helperRegisterUser = asyncHandler(async (req: AuthRequest, res: Response) => {
     const { name, email, password, rollNo, room, hostel, phone, role, year, parentEmail } = req.body;
 
@@ -77,7 +75,6 @@ export const helperRegisterUser = asyncHandler(async (req: AuthRequest, res: Res
 
     logger.info('Helper successfully created user', { userId: user._id, role });
 
-    // Return confirmation — NO JWT token (helper doesn't log in as this user)
     return res.status(201).json(new ApiResponse(201, {
         _id: user._id,
         name: user.name,
@@ -91,16 +88,11 @@ export const helperRegisterUser = asyncHandler(async (req: AuthRequest, res: Res
         avatar: user.avatar,
         createdAt: user.createdAt,
         linkedData,
-        registeredBy: {
-            _id: req.user!._id,
-            name: req.user!.name,
-            email: req.user!.email,
-        },
+        registeredBy: { _id: req.user!._id, name: req.user!.name, email: req.user!.email },
     }, `${role} account created successfully by helper`));
 });
 
-// Force-reset any user's password without needing their current password
-// PUT /api/helper/users/:id/reset-password
+// Force-reset any user's password without needing their current password - PUT /api/helper/users/:id/reset-password
 export const helperResetPassword = asyncHandler(async (req: AuthRequest, res: Response) => {
     const { id } = req.params;
     const { newPassword } = req.body;
@@ -115,13 +107,8 @@ export const helperResetPassword = asyncHandler(async (req: AuthRequest, res: Re
         throw new ApiError(403, 'Helpers cannot reset passwords for admin or other helper accounts');
     }
 
-    logger.info('Helper force-resetting password', {
-        helperEmail: req.user?.email,
-        targetUserId: id,
-        targetRole: user.role,
-    });
+    logger.info('Helper force-resetting password', { helperEmail: req.user?.email, targetUserId: id, targetRole: user.role });
 
-    // Set the new raw password — the pre-save hook in User.ts hashes it automatically
     user.password = newPassword;
     await user.save();
 
@@ -133,8 +120,7 @@ export const helperResetPassword = asyncHandler(async (req: AuthRequest, res: Re
     }, 'Password reset successfully'));
 });
 
-// Search / list users for the helper to find who to manage
-// GET /api/helper/users?search=...&role=...&page=1&limit=20
+// Search / list users for the helper to find who to manage - GET /api/helper/users
 export const helperSearchUsers = asyncHandler(async (req: AuthRequest, res: Response) => {
     const { search, role } = req.query;
     const { page, limit, skip } = getPaginationParams(req, 20);
@@ -160,14 +146,10 @@ export const helperSearchUsers = asyncHandler(async (req: AuthRequest, res: Resp
     return res.status(200).json(new ApiResponse(200, { users, pagination }, 'Users retrieved'));
 });
 
-// Get a single user by ID
-// GET /api/helper/users/:id
+// Get a single user by ID - GET /api/helper/users/:id
 export const helperGetUser = asyncHandler(async (req: AuthRequest, res: Response) => {
     const { id } = req.params;
-
-    const user = await User.findById(id)
-        .select('name email rollNo room hostel phone role year avatar createdAt')
-        .lean();
+    const user = await User.findById(id).select('name email rollNo room hostel phone role year avatar createdAt').lean();
 
     if (!user) {
         throw new ApiError(404, 'User not found');
