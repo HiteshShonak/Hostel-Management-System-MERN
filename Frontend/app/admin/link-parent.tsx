@@ -38,7 +38,11 @@ export default function AdminLinkParent() {
         <View style={[styles.container, { backgroundColor: colors.background }]}>
             <PageHeader title="🔗 Link Parent & Student" showBack />
 
-            <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
+            <ScrollView
+                style={styles.scrollView}
+                contentContainerStyle={styles.scrollContent}
+                showsVerticalScrollIndicator={false}
+            >
                 {/* Progress Steps */}
                 <LinkProgressSteps step={step} />
 

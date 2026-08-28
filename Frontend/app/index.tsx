@@ -58,6 +58,7 @@ export default function Dashboard() {
             <ScrollView
                 style={styles.scrollView}
                 contentContainerStyle={styles.scrollContent}
+                showsVerticalScrollIndicator={false}
                 refreshControl={
                     <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={['#1d4ed8']} tintColor="#1d4ed8" />
                 }

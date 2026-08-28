@@ -38,7 +38,11 @@ export default function HelperResetPasswordScreen() {
         <View style={[styles.container, { backgroundColor: colors.background }]}>
             <PageHeader title="Reset Password" showBack />
             <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
-                <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
+                <ScrollView
+                    contentContainerStyle={styles.scrollContent}
+                    keyboardShouldPersistTaps="handled"
+                    showsVerticalScrollIndicator={false}
+                >
                     {/* User Search Section */}
                     <UserSearchSection
                         searchQuery={searchQuery}

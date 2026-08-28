@@ -40,6 +40,7 @@ export default function AdminUsers() {
             <ScrollView
                 style={styles.scrollView}
                 contentContainerStyle={styles.scrollContent}
+                showsVerticalScrollIndicator={false}
                 refreshControl={
                     <RefreshControl refreshing={isRefetching} onRefresh={refetch} colors={['#7c3aed']} tintColor={colors.primary} />
                 }

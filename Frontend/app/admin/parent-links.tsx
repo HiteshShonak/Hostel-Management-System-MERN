@@ -42,6 +42,7 @@ export default function AdminParentLinks() {
             <ScrollView
                 style={styles.scrollView}
                 contentContainerStyle={styles.scrollContent}
+                showsVerticalScrollIndicator={false}
                 refreshControl={<RefreshControl refreshing={isRefetching} onRefresh={refetch} colors={['#7c3aed']} tintColor={colors.primary} />}
             >
                 <View style={[styles.statsCard, { backgroundColor: isDark ? '#3b0764' : '#f3e8ff' }]}>

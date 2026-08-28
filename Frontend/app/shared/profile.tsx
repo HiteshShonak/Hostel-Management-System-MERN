@@ -119,7 +119,11 @@ export default function ProfilePage() {
     return (
         <View style={[styles.container, { backgroundColor: colors.background }]}>
             <PageHeader title="Profile" />
-            <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
+            <ScrollView
+                style={styles.scrollView}
+                contentContainerStyle={styles.scrollContent}
+                showsVerticalScrollIndicator={false}
+            >
                 <View style={styles.content}>
                     {/* Profile Header */}
                     <View style={styles.profileHeader}>
@@ -212,7 +216,7 @@ export default function ProfilePage() {
 const styles = StyleSheet.create({
     container: { flex: 1 },
     scrollView: { flex: 1 },
-    scrollContent: { paddingBottom: 80 },
+    scrollContent: { paddingBottom: 100 },
     content: { padding: 16, gap: 24 },
     loading: { flex: 1, justifyContent: 'center', alignItems: 'center' },
     notLoggedIn: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: 24 },

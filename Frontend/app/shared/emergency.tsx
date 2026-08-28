@@ -15,7 +15,11 @@ export default function EmergencyPage() {
     return (
         <View style={[styles.container, { backgroundColor: colors.background }]}>
             <PageHeader title={isManagementRole ? 'SOS Alerts' : 'Emergency'} />
-            <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
+            <ScrollView
+                style={styles.scrollView}
+                contentContainerStyle={styles.scrollContent}
+                showsVerticalScrollIndicator={false}
+            >
                 {isManagementRole ? <AlertManagementView /> : <StudentSOSView />}
             </ScrollView>
             <BottomNav />

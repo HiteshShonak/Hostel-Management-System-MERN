@@ -1,11 +1,5 @@
-import { Stack } from 'expo-router';
+import { Slot } from 'expo-router';
 
 export default function ParentLayout() {
-    return (
-        <Stack screenOptions={{ headerShown: false }}>
-            <Stack.Screen name="children" />
-            <Stack.Screen name="pending-passes" />
-            <Stack.Screen name="pass-history" />
-        </Stack>
-    );
+    return <Slot />;
 }

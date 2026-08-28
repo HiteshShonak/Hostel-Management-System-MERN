@@ -44,6 +44,14 @@ const helperNavItems = [
   { icon: 'person', label: 'Profile', href: '/shared/profile' },
 ] as const;
 
+const parentNavItems = [
+  { icon: 'home', label: 'Home', href: '/' },
+  { icon: 'time', label: 'Pending', href: '/parent/pending-passes' },
+  { icon: 'people', label: 'Children', href: '/parent/children' },
+  { icon: 'notifications', label: 'Notices', href: '/shared/notices' },
+  { icon: 'person', label: 'Profile', href: '/shared/profile' },
+] as const;
+
 export function BottomNav() {
   const pathname = usePathname();
   const { user } = useAuth();
@@ -61,6 +69,8 @@ export function BottomNav() {
         return guardNavItems;
       case 'helper':
         return helperNavItems;
+      case 'parent':
+        return parentNavItems;
       default:
         return studentNavItems;
     }
@@ -73,8 +83,8 @@ export function BottomNav() {
       {navItems.map((item) => {
         const isActive = pathname === item.href;
         return (
-          <Link key={`${item.href}-${item.label}`} href={item.href as any} asChild>
-            <Pressable style={styles.navItem}>
+          <Link key={`${item.href}-${item.label}`} href={item.href as any} replace asChild>
+            <Pressable style={styles.navItem} disabled={isActive}>
               <View style={[styles.iconContainer, isActive && { backgroundColor: isDark ? 'rgba(59, 130, 246, 0.2)' : 'rgba(29, 78, 216, 0.12)' }]}>
                 <Ionicons
                   name={isActive ? item.icon : `${item.icon}-outline` as any}
