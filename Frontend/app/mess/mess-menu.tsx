@@ -13,9 +13,7 @@ import {
     MealAverageRating,
     MealRatingBanner,
     MenuDishList,
-    EditMenuModal,
-    RateMealModal,
-    EditTimingsModal,
+    MessMenuModals,
     useMessMenuController,
 } from '@/components/mess';
 
@@ -25,21 +23,13 @@ export default function MessMenuPage() {
     const isMessStaff = user?.role === 'mess_staff' || user?.role === 'admin';
     const { refreshing, onRefresh } = useRefreshDashboard();
 
+    const controller = useMessMenuController();
     const {
         today,
         selectedDay,
         setSelectedDay,
         selectedMeal,
         setSelectedMeal,
-        showEditModal,
-        setShowEditModal,
-        editItems,
-        setEditItems,
-        ratingMeal,
-        setRatingMeal,
-        showTimingModal,
-        setShowTimingModal,
-        editTimings,
         isLoading,
         error,
         menu,
@@ -48,15 +38,10 @@ export default function MessMenuPage() {
         currentTiming,
         currentRating,
         myCurrentRating,
-        updateMenuMutation,
-        updateTimingsMutation,
         handleEditMenu,
-        handleSaveMenu,
         handleOpenTimingEditor,
-        handleSaveTimings,
-        handleRate,
-        handleTimingChange,
-    } = useMessMenuController();
+        setRatingMeal,
+    } = controller;
 
     if (isLoading) {
         return (
@@ -141,35 +126,7 @@ export default function MessMenuPage() {
                 </View>
             </ScrollView>
 
-            {/* Edit Modal (Mess Staff) */}
-            <EditMenuModal
-                visible={showEditModal}
-                selectedMeal={selectedMeal}
-                selectedDay={selectedDay}
-                editItems={editItems}
-                isPending={updateMenuMutation.isPending}
-                onChangeText={setEditItems}
-                onClose={() => setShowEditModal(false)}
-                onSave={handleSaveMenu}
-            />
-
-            {/* Rating Modal (Students) */}
-            <RateMealModal
-                ratingMeal={ratingMeal}
-                onRate={handleRate}
-                onClose={() => setRatingMeal(null)}
-            />
-
-            {/* Timing Editor Modal (Mess Staff) */}
-            <EditTimingsModal
-                visible={showTimingModal}
-                selectedMeal={selectedMeal}
-                editTimings={editTimings}
-                isPending={updateTimingsMutation.isPending}
-                onChangeTiming={handleTimingChange}
-                onClose={() => setShowTimingModal(false)}
-                onSave={handleSaveTimings}
-            />
+            <MessMenuModals controller={controller} />
 
             <BottomNav />
         </View>

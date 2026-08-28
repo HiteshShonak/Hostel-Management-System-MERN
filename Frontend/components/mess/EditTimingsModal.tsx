@@ -2,8 +2,8 @@ import React from 'react';
 import { View, Text, Pressable, StyleSheet, Modal, ActivityIndicator, Platform, KeyboardAvoidingView, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@/lib/contexts/theme';
-import { TimeScrollPicker } from '@/components/ui/TimeScrollPicker';
 import type { MealType, MessTimings } from '@/lib/types';
+import { MealTimingSlotPicker } from './MealTimingSlotPicker';
 
 interface EditTimingsModalProps {
     visible: boolean;
@@ -53,7 +53,7 @@ export function EditTimingsModal({
     return (
         <Modal visible={visible} animationType="slide" transparent>
             <View style={styles.modalOverlay}>
-                <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
+                <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.keyboardAvoid}>
                     <ScrollView
                         keyboardShouldPersistTaps="handled"
                         contentContainerStyle={styles.scrollContent}
@@ -87,28 +87,20 @@ export function EditTimingsModal({
                             ) : null}
 
                             {/* Start Time Section */}
-                            <View style={[styles.timeSectionCard, { backgroundColor: isDark ? '#18181b' : '#f8fafc', borderColor: colors.cardBorder }]}>
-                                <View style={styles.sectionHeader}>
-                                    <Ionicons name="log-in-outline" size={16} color={colors.primary} />
-                                    <Text style={[styles.sectionLabel, { color: colors.text }]}>START TIME</Text>
-                                </View>
-                                <TimeScrollPicker
-                                    value={currentStart}
-                                    onChange={(time) => onChangeTiming(selectedMeal, 'start', time)}
-                                />
-                            </View>
+                            <MealTimingSlotPicker
+                                label="START TIME"
+                                icon="log-in-outline"
+                                value={currentStart}
+                                onChange={(time) => onChangeTiming(selectedMeal, 'start', time)}
+                            />
 
                             {/* End Time Section */}
-                            <View style={[styles.timeSectionCard, { backgroundColor: isDark ? '#18181b' : '#f8fafc', borderColor: colors.cardBorder }]}>
-                                <View style={styles.sectionHeader}>
-                                    <Ionicons name="log-out-outline" size={16} color={colors.primary} />
-                                    <Text style={[styles.sectionLabel, { color: colors.text }]}>END TIME</Text>
-                                </View>
-                                <TimeScrollPicker
-                                    value={currentEnd}
-                                    onChange={(time) => onChangeTiming(selectedMeal, 'end', time)}
-                                />
-                            </View>
+                            <MealTimingSlotPicker
+                                label="END TIME"
+                                icon="log-out-outline"
+                                value={currentEnd}
+                                onChange={(time) => onChangeTiming(selectedMeal, 'end', time)}
+                            />
 
                             {/* Save Action Button */}
                             <Pressable
@@ -135,6 +127,7 @@ export function EditTimingsModal({
 
 const styles = StyleSheet.create({
     modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.55)', justifyContent: 'flex-end' },
+    keyboardAvoid: { flex: 1 },
     scrollContent: { flexGrow: 1, justifyContent: 'flex-end' },
     modalContent: { borderTopLeftRadius: 28, borderTopRightRadius: 28, padding: 20, gap: 12 },
     modalHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
@@ -153,26 +146,7 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         borderWidth: 1,
     },
-    durationBannerText: {
-        fontSize: 13,
-        fontWeight: '600',
-    },
-    timeSectionCard: {
-        borderRadius: 16,
-        borderWidth: 1,
-        padding: 12,
-        gap: 8,
-    },
-    sectionHeader: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 6,
-    },
-    sectionLabel: {
-        fontSize: 12,
-        fontWeight: '700',
-        letterSpacing: 0.5,
-    },
+    durationBannerText: { fontSize: 13, fontWeight: '600' },
     saveBtn: {
         paddingVertical: 14,
         borderRadius: 14,

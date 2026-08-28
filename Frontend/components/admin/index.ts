@@ -9,3 +9,5 @@ export * from './SelectStudentStep';
 export * from './ConfirmLinkStep';
 export * from './ParentLinkCard';
 export * from './useParentLinksController';
+export * from './AdminStatsGrid';
+export * from './AdminDashboardBanner';

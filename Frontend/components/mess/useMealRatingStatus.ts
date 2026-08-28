@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import type { MealType, DayType, MessTimings } from '@/lib/types';
-import { nowIST } from '@/lib/utils/date';
+import { nowIST, formatTime } from '@/lib/utils';
 import { DAYS } from './DayTabBar';
 
 export interface RatingStatusResult {
@@ -48,124 +48,14 @@ export function useMealRatingStatus(
             const diff = targetDate.getTime() - currentISTTime.getTime();
             const hours = Math.floor(diff / (1000 * 60 * 60));
             const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-            if (hours > 0) {
-                return `${hours}h ${minutes}m`;
-            }
-            return `${minutes}m`;
+            return hours > 0 ? `${hours}h ${minutes}m` : `${minutes}m`;
         };
 
-        const formatISTTime = (date: Date): string => {
-            const hours = date.getUTCHours();
-            const minutes = date.getUTCMinutes();
-            const ampm = hours >= 12 ? 'PM' : 'AM';
-            const displayHours = hours % 12 || 12;
-            const displayMinutes = minutes.toString().padStart(2, '0');
-            return `${displayHours}:${displayMinutes} ${ampm}`;
-        };
+        const formatISTTime = (date: Date): string => formatTime(date);
 
-        if (!timings || !timings[selectedMeal]) {
-            return {
-                canRate: false,
-                message: 'Timing not available',
-                isDifferentDay,
-                isBeforeMeal,
-                currentDayName,
-                timing,
-                mealStart,
-                ratingWindowEnd,
-                mealNotStarted,
-                formatTimeRemaining,
-                formatISTTime,
-            };
-        }
-
-        if (isDifferentDay) {
-            const currentDayIndex = DAYS.indexOf(currentDayName);
-            const checkDayIndex = DAYS.indexOf(selectedDay);
-            const isYesterday = checkDayIndex === (currentDayIndex - 1 + 7) % 7;
-
-            if (!isYesterday) {
-                return {
-                    canRate: false,
-                    message: checkDayIndex < currentDayIndex ? 'Past meals cannot be rated' : 'Future meals cannot be rated',
-                    isDifferentDay,
-                    isBeforeMeal,
-                    currentDayName,
-                    timing,
-                    mealStart,
-                    ratingWindowEnd,
-                    mealNotStarted,
-                    formatTimeRemaining,
-                    formatISTTime,
-                };
-            }
-
-            if (currentISTTime > ratingWindowEnd) {
-                return {
-                    canRate: false,
-                    message: `Rating period ended. Switch to ${currentDayName} to rate today's ${selectedMeal.toLowerCase()}`,
-                    isDifferentDay,
-                    isBeforeMeal,
-                    currentDayName,
-                    timing,
-                    mealStart,
-                    ratingWindowEnd,
-                    mealNotStarted,
-                    formatTimeRemaining,
-                    formatISTTime,
-                };
-            }
-
-            return {
-                canRate: true,
-                message: '',
-                isDifferentDay,
-                isBeforeMeal,
-                currentDayName,
-                timing,
-                mealStart,
-                ratingWindowEnd,
-                mealNotStarted,
-                formatTimeRemaining,
-                formatISTTime,
-            };
-        }
-
-        if (currentISTTime < mealStart) {
-            return {
-                canRate: false,
-                message: `Available from ${timing?.start || ''}`,
-                isDifferentDay,
-                isBeforeMeal,
-                currentDayName,
-                timing,
-                mealStart,
-                ratingWindowEnd,
-                mealNotStarted,
-                formatTimeRemaining,
-                formatISTTime,
-            };
-        }
-
-        if (currentISTTime > ratingWindowEnd) {
-            return {
-                canRate: false,
-                message: `Rating period for ${selectedMeal.toLowerCase()} has ended`,
-                isDifferentDay,
-                isBeforeMeal,
-                currentDayName,
-                timing,
-                mealStart,
-                ratingWindowEnd,
-                mealNotStarted,
-                formatTimeRemaining,
-                formatISTTime,
-            };
-        }
-
-        return {
-            canRate: true,
-            message: '',
+        const buildResult = (canRate: boolean, message: string): RatingStatusResult => ({
+            canRate,
+            message,
             isDifferentDay,
             isBeforeMeal,
             currentDayName,
@@ -175,6 +65,40 @@ export function useMealRatingStatus(
             mealNotStarted,
             formatTimeRemaining,
             formatISTTime,
-        };
+        });
+
+        if (!timings || !timings[selectedMeal]) {
+            return buildResult(false, 'Timing not available');
+        }
+
+        if (isDifferentDay) {
+            const currentDayIndex = DAYS.indexOf(currentDayName);
+            const checkDayIndex = DAYS.indexOf(selectedDay);
+            const isYesterday = checkDayIndex === (currentDayIndex - 1 + 7) % 7;
+
+            if (!isYesterday) {
+                const msg = checkDayIndex < currentDayIndex ? 'Past meals cannot be rated' : 'Future meals cannot be rated';
+                return buildResult(false, msg);
+            }
+
+            if (currentISTTime > ratingWindowEnd) {
+                return buildResult(
+                    false,
+                    `Rating period ended. Switch to ${currentDayName} to rate today's ${selectedMeal.toLowerCase()}`
+                );
+            }
+
+            return buildResult(true, '');
+        }
+
+        if (currentISTTime < mealStart) {
+            return buildResult(false, `Available from ${timing?.start || ''}`);
+        }
+
+        if (currentISTTime > ratingWindowEnd) {
+            return buildResult(false, `Rating period for ${selectedMeal.toLowerCase()} has ended`);
+        }
+
+        return buildResult(true, '');
     }, [selectedMeal, selectedDay, timings]);
 }
