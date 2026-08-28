@@ -4,11 +4,13 @@
 import { Router } from 'express';
 import {
     getChildren,
-    getPendingPasses,
     getAllChildrenPasses,
+} from '../controllers/parent.children.controller';
+import {
+    getPendingPasses,
     approvePass,
     rejectPass,
-} from '../controllers/parent.controller';
+} from '../controllers/parent.passes.controller';
 import { protect } from '../middleware/auth.middleware';
 import { parentOnly } from '../middleware/role.middleware';
 import { generalLimiter } from '../middleware/rateLimit.middleware';
@@ -22,12 +24,14 @@ router.use(generalLimiter);
 router.use(protect);
 router.use(parentOnly);
 
-// Children management
+// ==================== CHILDREN DISCOVERY ====================
+// View linked student profiles and paginated gate pass history
 router.get('/children', getChildren);
-
-// Gate passes
-router.get('/pending-passes', getPendingPasses);
 router.get('/passes', getAllChildrenPasses);
+
+// ==================== GATE PASS APPROVALS ====================
+// Review pending requests, authorize, or reject with reason
+router.get('/pending-passes', getPendingPasses);
 router.put('/passes/:id/approve', validate(passIdSchema), approvePass);
 router.put('/passes/:id/reject', validate(rejectPassSchema), rejectPass);
 

@@ -1,28 +1,14 @@
 // src/services/push-notification.service.ts
-// helper for expo push notifications
+// Push notification resolution and high-level dispatching service for users and roles
 
-import { logger } from '../utils/logger';
-import User from '../models/User';
 import { Types } from 'mongoose';
+import User from '../models/User';
+import { logger } from '../utils/logger';
+import { PushMessage, dispatchExpoMessage, dispatchExpoBatches } from './expo-push.service';
 
-interface PushMessage {
-    to: string;
-    sound?: 'default' | null;
-    title: string;
-    body: string;
-    data?: Record<string, any>;
-    priority?: 'default' | 'normal' | 'high';
-    badge?: number;
-}
+export { PushMessage, PushTicket } from './expo-push.service';
 
-interface PushTicket {
-    status: 'ok' | 'error';
-    id?: string;
-    message?: string;
-    details?: any;
-}
-
-// send one push notification
+// Send a single push notification by raw Expo token
 export const sendPushNotification = async (
     pushToken: string,
     title: string,
@@ -44,31 +30,11 @@ export const sendPushNotification = async (
             priority: 'high',
         };
 
-        const response = await fetch('https://exp.host/--/api/v2/push/send', {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Accept-Encoding': 'gzip, deflate',
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(message),
-        });
-
-        const result = await response.json() as { data?: PushTicket[] };
-
-        if (result.data && Array.isArray(result.data)) {
-            const ticket = result.data[0] as PushTicket;
-            if (ticket.status === 'error') {
-                logger.error('Push notification failed', {
-                    error: ticket.message,
-                    details: ticket.details,
-                });
-                return false;
-            }
+        const success = await dispatchExpoMessage(message);
+        if (success) {
+            logger.info('Push notification sent successfully', { title });
         }
-
-        logger.info('Push notification sent successfully', { title });
-        return true;
+        return success;
     } catch (error) {
         logger.error('Failed to send push notification', {
             error: error instanceof Error ? error.message : String(error),
@@ -78,7 +44,7 @@ export const sendPushNotification = async (
     }
 };
 
-// send push to a user id
+// Send a push notification to a specific user ID
 export const sendPushToUser = async (
     userId: Types.ObjectId | string,
     title: string,
@@ -103,7 +69,7 @@ export const sendPushToUser = async (
     }
 };
 
-// send push to many users (batches of 100)
+// Send push notifications to multiple user IDs in batches
 export const sendPushToMultipleUsers = async (
     userIds: (Types.ObjectId | string)[],
     title: string,
@@ -130,51 +96,9 @@ export const sendPushToMultipleUsers = async (
             priority: 'high',
         }));
 
-        // expo limit is 100
-        const batchSize = 100;
-        let totalSent = 0;
-        let totalFailed = 0;
-
-        for (let i = 0; i < messages.length; i += batchSize) {
-            const batch = messages.slice(i, i + batchSize);
-
-            try {
-                const response = await fetch('https://exp.host/--/api/v2/push/send', {
-                    method: 'POST',
-                    headers: {
-                        'Accept': 'application/json',
-                        'Accept-Encoding': 'gzip, deflate',
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(batch),
-                });
-
-                const result = await response.json() as { data?: PushTicket[] };
-
-                if (result.data && Array.isArray(result.data)) {
-                    result.data.forEach((ticket: PushTicket) => {
-                        if (ticket.status === 'ok') {
-                            totalSent++;
-                        } else {
-                            totalFailed++;
-                            logger.warn('Push ticket failed', {
-                                error: ticket.message,
-                                details: ticket.details,
-                            });
-                        }
-                    });
-                }
-            } catch (batchError) {
-                logger.error('Batch push failed', {
-                    error: batchError instanceof Error ? batchError.message : String(batchError),
-                    batchSize: batch.length,
-                });
-                totalFailed += batch.length;
-            }
-        }
-
-        logger.info('Batch push notifications sent', { sent: totalSent, failed: totalFailed, total: tokens.length });
-        return { sent: totalSent, failed: totalFailed };
+        const result = await dispatchExpoBatches(messages, 100);
+        logger.info('Batch push notifications sent', { sent: result.sent, failed: result.failed, total: tokens.length });
+        return result;
     } catch (error) {
         logger.error('Failed to send batch push notifications', {
             error: error instanceof Error ? error.message : String(error),
@@ -184,7 +108,7 @@ export const sendPushToMultipleUsers = async (
     }
 };
 
-// notify everyone with a role
+// Broadcast a push notification to all users having a specific role
 export const sendPushToRole = async (
     role: string,
     title: string,
