@@ -28,4 +28,11 @@ export const notificationService = {
     delete: async (id: string): Promise<void> => {
         await api.delete(`/notifications/${id}`);
     },
+
+    // Sends a real push notification to the current user's registered device.
+    // Backend route is dev-only (disabled when NODE_ENV=production) — see Backend/src/routes/test.routes.ts
+    sendTestPush: async (): Promise<{ success: boolean; message: string }> => {
+        const response = await api.post<{ success: boolean; message: string }>('/test/push-to-me');
+        return response.data;
+    },
 };

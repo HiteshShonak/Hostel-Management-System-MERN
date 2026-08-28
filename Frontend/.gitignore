@@ -90,3 +90,6 @@ ios/.xcode.env.local
 google-services.json
 GoogleService-Info.plist
 firebase-config.js
+
+# One-time FCM credential upload artifact for eas credentials (never commit)
+firebase-setup/

@@ -67,3 +67,6 @@ dump.rdb
 
 # PM2
 .pm2/
+
+# Firebase service account key (never commit)
+firebase-service-account*.json

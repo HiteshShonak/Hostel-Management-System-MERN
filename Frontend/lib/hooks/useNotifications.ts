@@ -46,3 +46,9 @@ export const useDeleteNotification = () => {
         },
     });
 };
+
+export const useSendTestPush = () => {
+    return useMutation({
+        mutationFn: () => notificationService.sendTestPush(),
+    });
+};
