@@ -3,28 +3,34 @@
 
 import { Router } from 'express';
 import {
+    getAllUsers,
+    updateUserRole,
+    deleteUser,
+} from '../controllers/admin.users.controller';
+import {
+    getWardenDashboardStats,
+    getWardenStudentList,
+    getStudentDetail,
+} from '../controllers/admin.warden.controller';
+import {
     linkParentToStudent,
     unlinkParentFromStudent,
     getAllParentLinks,
     getUserRelations,
-    getAllUsers,
-    updateUserRole,
-    deleteUser,
-    getAllGatePasses,
+} from '../controllers/admin.links.controller';
+import {
     getSystemStats,
+    getSystemConfig,
+    updateSystemConfig,
+} from '../controllers/admin.system.controller';
+import {
+    getAllGatePasses,
     adminCancelGatePass,
     adminForceApproveGatePass,
     getAllNotices,
     adminDeleteNotice,
     getAllComplaints,
-    // Warden Dashboard
-    getWardenDashboardStats,
-    getWardenStudentList,
-    getStudentDetail,
-    // Admin Config
-    getSystemConfig,
-    updateSystemConfig,
-} from '../controllers/admin.controller';
+} from '../controllers/admin.oversight.controller';
 import { protect, adminOnly } from '../middleware/auth.middleware';
 import { wardenOnly } from '../middleware/role.middleware';
 import { generalLimiter } from '../middleware/rateLimit.middleware';
@@ -37,7 +43,6 @@ import {
 } from '../schemas/admin.schema';
 import { gatePassIdSchema } from '../schemas/gatepass.schema';
 import { noticeIdSchema } from '../schemas/notice.schema';
-import { studentIdSchema } from '../schemas/parent.schema';
 
 const router = Router();
 
@@ -93,4 +98,3 @@ router.delete('/notices/:id', validate(noticeIdSchema), adminDeleteNotice);
 router.get('/complaints', getAllComplaints);
 
 export default router;
-
