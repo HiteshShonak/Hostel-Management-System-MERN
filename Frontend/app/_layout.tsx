@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider } from '@/lib/contexts/auth';
 import { ThemeProvider, useTheme } from '@/lib/contexts/theme';
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
+import { useBackHandler } from '@/lib/hooks';
 
 // setting up the query client
 const queryClient = new QueryClient({
@@ -38,6 +39,8 @@ const queryClient = new QueryClient({
 function RootLayoutContent() {
     const { isDark, colors } = useTheme();
     const statusBarBg = isDark ? '#1e293b' : '#1d4ed8';
+
+    useBackHandler();
 
     return (
         <SafeAreaProvider>

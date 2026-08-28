@@ -126,7 +126,10 @@ export default function QRScannerPage() {
                         />
 
                         {/* Back to Dashboard */}
-                        <Pressable style={styles.backToDashboard} onPress={() => router.back()}>
+                        <Pressable
+                            style={styles.backToDashboard}
+                            onPress={() => router.canGoBack() ? router.back() : router.replace('/')}
+                        >
                             <Ionicons name="arrow-back" size={18} color={colors.textSecondary} />
                             <Text style={[styles.backToDashboardText, { color: colors.textSecondary }]}>Back to Dashboard</Text>
                         </Pressable>

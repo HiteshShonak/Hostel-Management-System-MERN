@@ -36,10 +36,18 @@ export function PageHeader({ title, showBack = true, showNotifications = true }:
         retry: false,
     });
 
+    const handleBack = () => {
+        if (router.canGoBack()) {
+            router.back();
+        } else {
+            router.replace('/');
+        }
+    };
+
     return (
         <View style={[styles.container, { backgroundColor: headerBg }]}>
             {showBack ? (
-                <Pressable onPress={() => router.back()} style={styles.backButton}>
+                <Pressable onPress={handleBack} style={styles.backButton}>
                     <Ionicons name="arrow-back" size={24} color={iconColor} />
                 </Pressable>
             ) : (

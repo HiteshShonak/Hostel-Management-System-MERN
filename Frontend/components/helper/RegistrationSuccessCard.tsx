@@ -58,7 +58,7 @@ export function RegistrationSuccessCard({ data, onRegisterAnother }: Registratio
 
             <Pressable
                 style={[styles.secondaryBtn, { backgroundColor: colors.card, borderColor: colors.border }]}
-                onPress={() => router.back()}
+                onPress={() => router.canGoBack() ? router.back() : router.replace('/')}
             >
                 <Text style={[styles.secondaryBtnText, { color: colors.text }]}>Back to Dashboard</Text>
             </Pressable>

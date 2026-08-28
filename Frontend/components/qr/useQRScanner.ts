@@ -3,6 +3,7 @@ import { Vibration } from 'react-native';
 import { useValidateGatePass, useMarkExit, useMarkEntry } from '@/lib/hooks';
 import { ScanResult } from './ScanResultStatusHeader';
 import { User } from '@/lib/types';
+import { formatTime } from '@/lib/utils';
 
 // Custom hook managing QR scan mutations, vibration triggers, and result state
 export function useQRScanner() {
@@ -101,7 +102,7 @@ export function useQRScanner() {
         markExitMutation.mutate(scanResult.pass._id, {
             onSuccess: () => {
                 Vibration.vibrate([0, 100]);
-                const now = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                const now = formatTime(new Date());
                 setActionCompleted(true);
                 setScanResult({
                     ...scanResult,
@@ -117,7 +118,7 @@ export function useQRScanner() {
         markEntryMutation.mutate(scanResult.pass._id, {
             onSuccess: (data) => {
                 Vibration.vibrate([0, 100]);
-                const now = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                const now = formatTime(new Date());
 
                 const isLate = data?.isLate || false;
                 const lateNote = data?.lateNote || '';

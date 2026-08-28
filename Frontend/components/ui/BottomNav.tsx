@@ -8,7 +8,7 @@ import { PRIMARY_COLOR } from '@/lib/constants';
 
 const studentNavItems = [
   { icon: 'home', label: 'Home', href: '/' },
-  { icon: 'qr-code', label: 'Gate Pass', href: '/shared/gate-pass' },
+  { icon: 'ticket', label: 'Gate Pass', href: '/shared/gate-pass' },
   { icon: 'restaurant', label: 'Mess', href: '/mess/mess-menu' },
   { icon: 'notifications', label: 'Notices', href: '/shared/notices' },
   { icon: 'person', label: 'Profile', href: '/shared/profile' },
@@ -17,7 +17,7 @@ const studentNavItems = [
 const wardenNavItems = [
   { icon: 'home', label: 'Home', href: '/' },
   { icon: 'scan', label: 'Scanner', href: '/shared/qr-scanner' },
-  { icon: 'checkmark-done', label: 'Passes', href: '/shared/gate-pass' },
+  { icon: 'ticket', label: 'Passes', href: '/shared/gate-pass' },
   { icon: 'notifications', label: 'Notices', href: '/shared/notices' },
   { icon: 'person', label: 'Profile', href: '/shared/profile' },
 ] as const;

@@ -14,7 +14,10 @@ export function NoAccessView() {
                 <Ionicons name="lock-closed" size={64} color="#dc2626" />
                 <Text style={[styles.title, { color: colors.text }]}>Access Denied</Text>
                 <Text style={[styles.text, { color: colors.textSecondary }]}>Only staff members can verify gate passes</Text>
-                <Pressable style={[styles.backBtn, { backgroundColor: colors.background }]} onPress={() => router.back()}>
+                <Pressable
+                    style={[styles.backBtn, { backgroundColor: colors.background }]}
+                    onPress={() => router.canGoBack() ? router.back() : router.replace('/')}
+                >
                     <Text style={[styles.backBtnText, { color: colors.text }]}>Go Back</Text>
                 </Pressable>
             </View>

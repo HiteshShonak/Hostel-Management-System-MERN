@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@/lib/contexts/theme';
+import { formatTime, formatDate } from '@/lib/utils';
 
 interface PassHistoryCardProps {
     pass: any;
@@ -10,21 +11,6 @@ interface PassHistoryCardProps {
 
 export function PassHistoryCard({ pass, statusStyle }: PassHistoryCardProps) {
     const { colors, isDark } = useTheme();
-
-    const formatDate = (dateString: string) => {
-        return new Date(dateString).toLocaleDateString('en-IN', {
-            day: 'numeric',
-            month: 'short',
-            year: 'numeric',
-        });
-    };
-
-    const formatTime = (dateString: string) => {
-        return new Date(dateString).toLocaleTimeString('en-IN', {
-            hour: '2-digit',
-            minute: '2-digit',
-        });
-    };
 
     return (
         <View style={[styles.passCard, { backgroundColor: colors.card }]}>

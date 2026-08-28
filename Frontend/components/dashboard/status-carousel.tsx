@@ -4,6 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useTheme } from '@/lib/contexts/theme';
 import { useCurrentGatePass } from '@/lib/hooks';
+import { formatTime } from '@/lib/utils';
 
 export function StatusCarousel() {
     const { isDark } = useTheme();
@@ -19,7 +20,7 @@ export function StatusCarousel() {
     const iconBg = isOut ? (isDark ? '#7c2d12' : '#fed7aa') : (isDark ? '#1e40af' : '#bfdbfe');
 
     const d = new Date(pass.toDate);
-    const time = d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    const time = formatTime(pass.toDate);
     const date = d.toLocaleDateString([], { month: 'short', day: 'numeric' });
 
     return (

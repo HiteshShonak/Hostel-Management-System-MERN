@@ -14,36 +14,48 @@ export function WardenDashboard() {
 
     return (
         <View style={styles.wardenContent}>
-            {/* Headcount and alert statistics */}
+            {/* Headcount and alert statistics (Interactive Shortcuts) */}
             <View style={styles.statsGrid}>
-                <View style={[styles.statCard, { backgroundColor: isDark ? '#052e16' : '#f0fdf4' }]}>
+                <Pressable
+                    style={[styles.statCard, { backgroundColor: isDark ? '#052e16' : '#f0fdf4' }]}
+                    onPress={() => router.push('/warden/students')}
+                >
                     <View style={[styles.statIcon, { backgroundColor: isDark ? '#052e16' : 'white' }]}>
                         <Ionicons name="home" size={22} color="#16a34a" />
                     </View>
                     <Text style={[styles.statNumber, { color: colors.text }]}>{stats?.studentsInside || 0}</Text>
                     <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Inside</Text>
-                </View>
-                <View style={[styles.statCard, { backgroundColor: isDark ? '#431407' : '#fff7ed' }]}>
+                </Pressable>
+                <Pressable
+                    style={[styles.statCard, { backgroundColor: isDark ? '#431407' : '#fff7ed' }]}
+                    onPress={() => router.push('/guard/students-out')}
+                >
                     <View style={[styles.statIcon, { backgroundColor: isDark ? '#431407' : 'white' }]}>
                         <Ionicons name="walk" size={22} color="#f59e0b" />
                     </View>
                     <Text style={[styles.statNumber, { color: colors.text }]}>{stats?.studentsOut || 0}</Text>
                     <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Outside</Text>
-                </View>
-                <View style={[styles.statCard, { backgroundColor: isDark ? '#451a03' : '#fef3c7' }]}>
+                </Pressable>
+                <Pressable
+                    style={[styles.statCard, { backgroundColor: isDark ? '#451a03' : '#fef3c7' }]}
+                    onPress={() => router.push('/shared/gate-pass')}
+                >
                     <View style={[styles.statIcon, { backgroundColor: isDark ? '#431407' : 'white' }]}>
                         <Ionicons name="time" size={22} color="#d97706" />
                     </View>
                     <Text style={[styles.statNumber, { color: colors.text }]}>{pendingPasses?.length || 0}</Text>
                     <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Requests</Text>
-                </View>
-                <View style={[styles.statCard, { backgroundColor: isDark ? '#450a0a' : '#fef2f2' }]}>
+                </Pressable>
+                <Pressable
+                    style={[styles.statCard, { backgroundColor: isDark ? '#450a0a' : '#fef2f2' }]}
+                    onPress={() => router.push('/shared/emergency')}
+                >
                     <View style={[styles.statIcon, { backgroundColor: isDark ? '#450a0a' : 'white' }]}>
                         <Ionicons name="warning" size={22} color="#dc2626" />
                     </View>
                     <Text style={[styles.statNumber, { color: colors.text }]}>{activeAlerts?.length || 0}</Text>
                     <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Alerts</Text>
-                </View>
+                </Pressable>
             </View>
 
             {/* Quick Actions */}
@@ -55,23 +67,17 @@ export function WardenDashboard() {
                     </View>
                     <Text style={[styles.quickLabel, { color: colors.text }]}>Students</Text>
                 </Pressable>
-                <Pressable style={[styles.quickCard, { backgroundColor: colors.card }]} onPress={() => router.push('/shared/gate-pass')}>
-                    <View style={[styles.quickIcon, { backgroundColor: isDark ? '#451a03' : '#fef3c7' }]}>
-                        <Ionicons name="time" size={24} color="#d97706" />
-                    </View>
-                    <Text style={[styles.quickLabel, { color: colors.text }]}>Requests ({pendingPasses?.length || 0})</Text>
-                </Pressable>
                 <Pressable style={[styles.quickCard, { backgroundColor: colors.card }]} onPress={() => router.push('/warden/pass-history')}>
                     <View style={[styles.quickIcon, { backgroundColor: isDark ? '#1e1b4b' : '#e0e7ff' }]}>
                         <Ionicons name="document-text" size={24} color="#4f46e5" />
                     </View>
                     <Text style={[styles.quickLabel, { color: colors.text }]}>Pass History</Text>
                 </Pressable>
-                <Pressable style={[styles.quickCard, { backgroundColor: colors.card }]} onPress={() => router.push('/shared/qr-scanner')}>
-                    <View style={[styles.quickIcon, { backgroundColor: isDark ? '#052e16' : '#dcfce7' }]}>
-                        <Ionicons name="scan" size={24} color="#16a34a" />
+                <Pressable style={[styles.quickCard, { backgroundColor: colors.card }]} onPress={() => router.push('/mess/mess-menu')}>
+                    <View style={[styles.quickIcon, { backgroundColor: isDark ? '#431407' : '#fff7ed' }]}>
+                        <Ionicons name="restaurant" size={24} color="#f97316" />
                     </View>
-                    <Text style={[styles.quickLabel, { color: colors.text }]}>Scan QR</Text>
+                    <Text style={[styles.quickLabel, { color: colors.text }]}>Mess Menu</Text>
                 </Pressable>
                 <Pressable style={[styles.quickCard, { backgroundColor: colors.card }]} onPress={() => router.push('/guard/students-out')}>
                     <View style={[styles.quickIcon, { backgroundColor: isDark ? '#431407' : '#fff7ed' }]}>
@@ -90,12 +96,6 @@ export function WardenDashboard() {
                         <Ionicons name="list" size={24} color="#1d4ed8" />
                     </View>
                     <Text style={[styles.quickLabel, { color: colors.text }]}>Logs</Text>
-                </Pressable>
-                <Pressable style={[styles.quickCard, { backgroundColor: colors.card }]} onPress={() => router.push('/shared/notices')}>
-                    <View style={[styles.quickIcon, { backgroundColor: isDark ? '#3b0764' : '#f3e8ff' }]}>
-                        <Ionicons name="megaphone" size={24} color="#9333ea" />
-                    </View>
-                    <Text style={[styles.quickLabel, { color: colors.text }]}>Notices</Text>
                 </Pressable>
                 <Pressable style={[styles.quickCard, { backgroundColor: colors.card }]} onPress={() => router.push('/shared/emergency')}>
                     <View style={[styles.quickIcon, { backgroundColor: isDark ? '#450a0a' : '#fef2f2' }]}>

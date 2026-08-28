@@ -14,6 +14,7 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useTheme } from '@/lib/contexts/theme';
+import { formatTime, formatDate } from '@/lib/utils';
 
 interface ApplyGatePassModalProps {
     visible: boolean;
@@ -93,15 +94,13 @@ export function ApplyGatePassModal({
                                         style={[styles.input, { borderColor: colors.inputBorder, backgroundColor: colors.inputBackground }]}
                                         onPress={() => onShowPicker('date', 'from')}
                                     >
-                                        <Text style={{ color: colors.text }}>{fromDate.toLocaleDateString()}</Text>
+                                        <Text style={{ color: colors.text }}>{formatDate(fromDate)}</Text>
                                     </Pressable>
                                     <Pressable
                                         style={[styles.input, { marginTop: 8, borderColor: colors.inputBorder, backgroundColor: colors.inputBackground }]}
                                         onPress={() => onShowPicker('time', 'from')}
                                     >
-                                        <Text style={{ color: colors.text }}>
-                                            {fromDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                        </Text>
+                                        <Text style={{ color: colors.text }}>{formatTime(fromDate)}</Text>
                                     </Pressable>
                                 </View>
                                 <View style={{ flex: 1, marginLeft: 12 }}>
@@ -110,15 +109,13 @@ export function ApplyGatePassModal({
                                         style={[styles.input, { borderColor: colors.inputBorder, backgroundColor: colors.inputBackground }]}
                                         onPress={() => onShowPicker('date', 'to')}
                                     >
-                                        <Text style={{ color: colors.text }}>{toDate.toLocaleDateString()}</Text>
+                                        <Text style={{ color: colors.text }}>{formatDate(toDate)}</Text>
                                     </Pressable>
                                     <Pressable
                                         style={[styles.input, { marginTop: 8, borderColor: colors.inputBorder, backgroundColor: colors.inputBackground }]}
                                         onPress={() => onShowPicker('time', 'to')}
                                     >
-                                        <Text style={{ color: colors.text }}>
-                                            {toDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                        </Text>
+                                        <Text style={{ color: colors.text }}>{formatTime(toDate)}</Text>
                                     </Pressable>
                                 </View>
                             </View>

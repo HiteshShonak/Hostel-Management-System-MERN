@@ -1,47 +1,27 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { View, Text, ScrollView, StyleSheet, Pressable, ActivityIndicator, RefreshControl } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { BottomNav } from '@/components/ui/BottomNav';
-import { useQuery } from '@tanstack/react-query';
-import { gatePassService } from '@/lib/services';
-import { GatePass, User } from '@/lib/types';
 import { useTheme } from '@/lib/contexts/theme';
+import {
+    usePassHistoryController,
+    WardenPassHistoryCard,
+} from '@/components/warden';
 
 export default function PassHistoryScreen() {
-    const { colors, isDark } = useTheme();
-    const [page, setPage] = useState(1);
-    const [refreshing, setRefreshing] = useState(false);
-
-    // Use warden-specific endpoint that shows ALL passes
-    const { data, isLoading, refetch } = useQuery({
-        queryKey: ['warden-all-passes', page],
-        queryFn: () => gatePassService.getAllPassesHistory(page, 20),
-    });
-
-    const passes = data?.data || [];
-    const pagination = data?.pagination;
-
-    const onRefresh = async () => {
-        setRefreshing(true);
-        await refetch();
-        setRefreshing(false);
-    };
-
-    const formatDate = (dateStr: string) => {
-        return new Date(dateStr).toLocaleDateString('en-IN', {
-            day: 'numeric',
-            month: 'short',
-        });
-    };
-
-    const getStatusColor = (status: string) => {
-        switch (status) {
-            case 'APPROVED': return { bg: isDark ? '#052e16' : '#f0fdf4', text: isDark ? '#86efac' : '#16a34a' };
-            case 'REJECTED': return { bg: isDark ? '#451a03' : '#fef2f2', text: isDark ? '#fca5a5' : '#dc2626' };
-            default: return { bg: isDark ? '#422006' : '#fef3c7', text: isDark ? '#fcd34d' : '#f59e0b' };
-        }
-    };
+    const { colors } = useTheme();
+    const {
+        page,
+        setPage,
+        passes,
+        pagination,
+        isLoading,
+        refreshing,
+        onRefresh,
+        formatDate,
+        getStatusColor,
+    } = usePassHistoryController();
 
     return (
         <View style={[styles.container, { backgroundColor: colors.background }]}>
@@ -69,43 +49,14 @@ export default function PassHistoryScreen() {
                         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[colors.primary]} tintColor={colors.primary} />
                     }
                 >
-                    {passes.map((pass: GatePass) => {
-                        const user = typeof pass.user === 'object' ? pass.user as User : null;
-                        const statusColors = getStatusColor(pass.status);
-
-                        return (
-                            <View key={pass._id} style={[styles.passCard, { backgroundColor: colors.card }]}>
-                                <View style={styles.passHeader}>
-                                    <View style={[styles.avatar, { backgroundColor: colors.primary }]}>
-                                        <Text style={styles.avatarText}>
-                                            {user?.name?.charAt(0) || '?'}
-                                        </Text>
-                                    </View>
-                                    <View style={styles.passInfo}>
-                                        <Text style={[styles.studentName, { color: colors.text }]}>{user?.name || 'Unknown'}</Text>
-                                        <Text style={[styles.studentMeta, { color: colors.textSecondary }]}>
-                                            {user?.rollNo || ''} • Room {user?.room || 'N/A'}
-                                        </Text>
-                                    </View>
-                                    <View style={[styles.statusBadge, { backgroundColor: statusColors.bg }]}>
-                                        <Text style={[styles.statusText, { color: statusColors.text }]}>
-                                            {pass.status.replace('_', ' ')}
-                                        </Text>
-                                    </View>
-                                </View>
-
-                                <View style={[styles.passDetails, { borderTopColor: colors.cardBorder }]}>
-                                    <Text style={[styles.passReason, { color: colors.textSecondary }]} numberOfLines={2}>{pass.reason}</Text>
-                                    <View style={styles.dateRow}>
-                                        <Ionicons name="calendar-outline" size={14} color={colors.textSecondary} />
-                                        <Text style={[styles.dateText, { color: colors.textSecondary }]}>
-                                            {formatDate(pass.fromDate)} - {formatDate(pass.toDate)}
-                                        </Text>
-                                    </View>
-                                </View>
-                            </View>
-                        );
-                    })}
+                    {passes.map((pass) => (
+                        <WardenPassHistoryCard
+                            key={pass._id}
+                            pass={pass}
+                            statusColors={getStatusColor(pass.status)}
+                            formatDate={formatDate}
+                        />
+                    ))}
 
                     {passes.length === 0 && !isLoading && (
                         <View style={styles.emptyContainer}>
@@ -151,47 +102,22 @@ const styles = StyleSheet.create({
     loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
     scrollView: { flex: 1 },
     scrollContent: { padding: 16, paddingBottom: 100 },
-    passCard: {
-        borderRadius: 14,
-        padding: 16,
-        marginBottom: 12,
-    },
-    passHeader: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginBottom: 12,
-    },
-    avatar: {
-        width: 40,
-        height: 40,
-        borderRadius: 20,
-        alignItems: 'center',
-        justifyContent: 'center',
-        marginRight: 12,
-    },
-    avatarText: { fontSize: 16, fontWeight: '600', color: 'white' },
-    passInfo: { flex: 1 },
-    studentName: { fontSize: 15, fontWeight: '600' },
-    studentMeta: { fontSize: 13, marginTop: 2 },
-    statusBadge: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 8 },
-    statusText: { fontSize: 13, fontWeight: '600' },
-    passDetails: {
-        paddingTop: 12,
-        borderTopWidth: 1,
-    },
-    passReason: { fontSize: 14, marginBottom: 8 },
-    dateRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
-    dateText: { fontSize: 13 },
     emptyContainer: { alignItems: 'center', paddingVertical: 60 },
-    emptyText: { fontSize: 16, marginTop: 12 },
+    emptyText: { fontSize: 14, marginTop: 8 },
     paginationContainer: {
         flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        gap: 16,
+        paddingVertical: 16,
+    },
+    pageBtn: {
+        width: 36,
+        height: 36,
+        borderRadius: 18,
         alignItems: 'center',
         justifyContent: 'center',
-        gap: 16,
-        marginTop: 16,
     },
-    pageBtn: { padding: 8, borderRadius: 8 },
     pageBtnDisabled: { opacity: 0.5 },
     pageText: { fontSize: 14 },
 });

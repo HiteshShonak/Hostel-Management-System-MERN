@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@/lib/contexts/theme';
+import { formatTime12h } from '@/lib/utils';
 
 interface MealTimingBarProps {
     timing?: { start: string; end: string };
@@ -13,15 +14,6 @@ export function MealTimingBar({ timing, isMessStaff, onOpenTimingEditor }: MealT
     const { colors, isDark } = useTheme();
 
     if (!timing) return null;
-
-    const format12h = (timeStr: string) => {
-        if (!timeStr) return '';
-        const [h, m] = timeStr.split(':').map(Number);
-        const ampm = h >= 12 ? 'PM' : 'AM';
-        const displayHour = h % 12 || 12;
-        const displayMin = m.toString().padStart(2, '0');
-        return `${displayHour}:${displayMin} ${ampm}`;
-    };
 
     return (
         <View
@@ -40,7 +32,7 @@ export function MealTimingBar({ timing, isMessStaff, onOpenTimingEditor }: MealT
             <View style={styles.textContainer}>
                 <Text style={[styles.timingLabel, { color: colors.textSecondary }]}>Serving Hours</Text>
                 <Text style={[styles.timingValue, { color: isDark ? '#93c5fd' : '#1e40af' }]}>
-                    {format12h(timing.start)} – {format12h(timing.end)}
+                    {formatTime12h(timing.start)} – {formatTime12h(timing.end)}
                 </Text>
             </View>
 

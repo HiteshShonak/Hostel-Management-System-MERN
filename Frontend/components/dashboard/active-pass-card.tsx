@@ -4,6 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useTheme } from '@/lib/contexts/theme';
 import { useCurrentGatePass } from '@/lib/hooks';
+import { formatTime } from '@/lib/utils';
 
 export function ActivePassCard() {
     const { colors, isDark } = useTheme();
@@ -15,7 +16,7 @@ export function ActivePassCard() {
     const { pass, isCurrentlyOut } = data;
 
     const toDate = new Date(pass.toDate);
-    const returnTime = toDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    const returnTime = formatTime(pass.toDate);
     const returnDate = toDate.toLocaleDateString([], { month: 'short', day: 'numeric' });
 
     // Dynamic accent styling based on pass state (outside vs approved)

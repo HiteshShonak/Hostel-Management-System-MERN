@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@/lib/contexts/theme';
+import { formatTime12h } from '@/lib/utils';
 import type { MealType } from '@/lib/types';
 import type { RatingStatusResult } from './useMealRatingStatus';
 
@@ -58,7 +59,7 @@ export function RatingBlockedCard({ status, selectedMeal }: RatingBlockedCardPro
                         {isDifferentDay
                             ? `You can only rate ${currentDayName}'s meals`
                             : isBeforeMeal
-                                ? `${selectedMeal} starts at ${timing?.start}`
+                                ? `${selectedMeal} starts at ${formatTime12h(timing?.start || '')}`
                                 : `Rating period ended 12 hours after meal start`
                         }
                     </Text>

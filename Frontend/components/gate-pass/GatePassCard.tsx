@@ -4,6 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { Badge } from '@/components/ui/Badge';
 import { useTheme } from '@/lib/contexts/theme';
 import type { GatePass, User } from '@/lib/types';
+import { formatTime, formatDate } from '@/lib/utils';
 import { GatePassQRSection } from './GatePassQRSection';
 import { GatePassActions } from './GatePassActions';
 
@@ -79,17 +80,17 @@ export function GatePassCard({
             <View style={[styles.datesRow, { backgroundColor: colors.backgroundSecondary }]}>
                 <View style={styles.dateBox}>
                     <Text style={[styles.dateLabel, { color: colors.textSecondary }]}>FROM</Text>
-                    <Text style={[styles.dateValue, { color: colors.text }]}>{new Date(pass.fromDate).toLocaleDateString()}</Text>
+                    <Text style={[styles.dateValue, { color: colors.text }]}>{formatDate(pass.fromDate)}</Text>
                     <Text style={[styles.timeValue, { color: colors.primary }]}>
-                        {new Date(pass.fromDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                        {formatTime(pass.fromDate)}
                     </Text>
                 </View>
                 <Ionicons name="arrow-forward" size={20} color={colors.textTertiary} />
                 <View style={styles.dateBox}>
                     <Text style={[styles.dateLabel, { color: colors.textSecondary }]}>TO</Text>
-                    <Text style={[styles.dateValue, { color: colors.text }]}>{new Date(pass.toDate).toLocaleDateString()}</Text>
+                    <Text style={[styles.dateValue, { color: colors.text }]}>{formatDate(pass.toDate)}</Text>
                     <Text style={[styles.timeValue, { color: colors.primary }]}>
-                        {new Date(pass.toDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                        {formatTime(pass.toDate)}
                     </Text>
                 </View>
             </View>

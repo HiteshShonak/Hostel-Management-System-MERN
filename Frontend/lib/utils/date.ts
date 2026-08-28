@@ -64,6 +64,16 @@ export const formatTime = (date: Date | string): string => {
     });
 };
 
+export const formatTime12h = (timeStr: string): string => {
+    if (!timeStr) return '';
+    const [h, m] = timeStr.split(':').map(Number);
+    if (isNaN(h) || isNaN(m)) return timeStr;
+    const ampm = h >= 12 ? 'PM' : 'AM';
+    const displayHour = h % 12 || 12;
+    const displayMin = m.toString().padStart(2, '0');
+    return `${displayHour}:${displayMin} ${ampm}`;
+};
+
 export const formatTime24 = (date: Date | string): string => {
     const d = toIST(date);
     return d.toLocaleTimeString('en-IN', {

@@ -1,38 +1,27 @@
-import React, { useState } from 'react';
-import { View, Text, ScrollView, StyleSheet, TextInput, Pressable, ActivityIndicator, RefreshControl, Alert } from 'react-native';
+import React from 'react';
+import { View, Text, ScrollView, StyleSheet, TextInput, Pressable, ActivityIndicator, RefreshControl } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { router } from 'expo-router';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { BottomNav } from '@/components/ui/BottomNav';
-import { useWardenStudents } from '@/lib/hooks';
 import { useTheme } from '@/lib/contexts/theme';
+import {
+    useWardenStudentsController,
+    WardenStudentCard,
+} from '@/components/warden';
 
 export default function WardenStudentsScreen() {
-    const { colors, isDark } = useTheme();
-    const [searchQuery, setSearchQuery] = useState('');
-    const [debouncedSearch, setDebouncedSearch] = useState('');
-    const [page, setPage] = useState(1);
-    const [refreshing, setRefreshing] = useState(false);
-
-    const { data, isLoading, refetch } = useWardenStudents(page, 20, debouncedSearch);
-
-    const students = data?.students || [];
-    const pagination = data?.pagination;
-
-    // Debounce search
-    React.useEffect(() => {
-        const timer = setTimeout(() => {
-            setDebouncedSearch(searchQuery);
-            setPage(1);
-        }, 500);
-        return () => clearTimeout(timer);
-    }, [searchQuery]);
-
-    const onRefresh = async () => {
-        setRefreshing(true);
-        await refetch();
-        setRefreshing(false);
-    };
+    const { colors } = useTheme();
+    const {
+        searchQuery,
+        setSearchQuery,
+        page,
+        setPage,
+        students,
+        pagination,
+        isLoading,
+        refreshing,
+        onRefresh,
+    } = useWardenStudentsController();
 
     return (
         <View style={[styles.container, { backgroundColor: colors.background }]}>
@@ -81,41 +70,7 @@ export default function WardenStudentsScreen() {
                     }
                 >
                     {students.map((student) => (
-                        <Pressable
-                            key={student._id}
-                            style={[styles.studentCard, { backgroundColor: colors.card }]}
-                            onPress={() => router.push(`/warden/student-detail?id=${student._id}`)}
-                        >
-                            {/* Avatar & Info */}
-                            <View style={styles.studentInfo}>
-                                <View style={[styles.avatar, { backgroundColor: colors.primary }]}>
-                                    <Text style={styles.avatarText}>
-                                        {student.name.charAt(0).toUpperCase()}
-                                    </Text>
-                                </View>
-                                <View style={styles.studentDetails}>
-                                    <Text style={[styles.studentName, { color: colors.text }]}>{student.name}</Text>
-                                    <Text style={[styles.studentMeta, { color: colors.textSecondary }]}>
-                                        {student.rollNo} • Room {student.room}{student.year ? ` • ${student.year}${student.year === 1 ? 'st' : student.year === 2 ? 'nd' : student.year === 3 ? 'rd' : 'th'} Yr` : ''}
-                                    </Text>
-                                </View>
-                            </View>
-
-                            {/* Status Badges */}
-                            <View style={styles.statusContainer}>
-                                {student.isOut ? (
-                                    <View style={[styles.badge, { backgroundColor: isDark ? '#451a03' : '#fff7ed' }]}>
-                                        <Ionicons name="walk" size={12} color="#f59e0b" />
-                                        <Text style={[styles.outBadgeText, { color: '#f59e0b' }]}>Out</Text>
-                                    </View>
-                                ) : (
-                                    <View style={[styles.badge, { backgroundColor: isDark ? '#052e16' : '#f0fdf4' }]}>
-                                        <Ionicons name="home" size={12} color={isDark ? '#86efac' : '#16a34a'} />
-                                        <Text style={[styles.presentBadgeText, { color: isDark ? '#86efac' : '#16a34a' }]}>Inside</Text>
-                                    </View>
-                                )}
-                            </View>
-                        </Pressable>
+                        <WardenStudentCard key={student._id} student={student} />
                     ))}
 
                     {students.length === 0 && !isLoading && (
@@ -157,64 +112,36 @@ export default function WardenStudentsScreen() {
 
 const styles = StyleSheet.create({
     container: { flex: 1 },
-    searchContainer: { padding: 16, paddingBottom: 8 },
+    searchContainer: { paddingHorizontal: 16, paddingTop: 12, paddingBottom: 8 },
     searchBox: {
         flexDirection: 'row',
         alignItems: 'center',
-        paddingHorizontal: 14,
-        paddingVertical: 12,
         borderRadius: 12,
-        gap: 10,
+        paddingHorizontal: 12,
+        height: 48,
     },
-    searchInput: { flex: 1, fontSize: 16 },
-    summaryBar: { paddingHorizontal: 16, paddingBottom: 8 },
+    searchInput: { flex: 1, marginLeft: 8, fontSize: 15 },
+    summaryBar: { paddingHorizontal: 16, paddingVertical: 8 },
     summaryText: { fontSize: 14 },
     loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
     scrollView: { flex: 1 },
-    scrollContent: { padding: 16, paddingTop: 8, paddingBottom: 100 },
-    studentCard: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        padding: 16,
-        borderRadius: 14,
-        marginBottom: 10,
-    },
-    studentInfo: { flexDirection: 'row', alignItems: 'center', flex: 1 },
-    avatar: {
-        width: 44,
-        height: 44,
-        borderRadius: 22,
-        alignItems: 'center',
-        justifyContent: 'center',
-        marginRight: 12,
-    },
-    avatarText: { fontSize: 18, fontWeight: '600', color: 'white' },
-    studentDetails: { flex: 1 },
-    studentName: { fontSize: 16, fontWeight: '600' },
-    studentMeta: { fontSize: 13, marginTop: 2 },
-    statusContainer: { flexDirection: 'row', gap: 6 },
-    badge: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        paddingHorizontal: 8,
-        paddingVertical: 4,
-        borderRadius: 6,
-        gap: 4,
-    },
-    outBadgeText: { fontSize: 13, fontWeight: '600' },
-    presentBadgeText: { fontSize: 13, fontWeight: '600' },
-    markBadgeText: { fontSize: 13, fontWeight: '600' },
+    scrollContent: { padding: 16, paddingBottom: 100 },
     emptyContainer: { alignItems: 'center', paddingVertical: 60 },
-    emptyText: { fontSize: 16, marginTop: 12 },
+    emptyText: { fontSize: 14, marginTop: 8 },
     paginationContainer: {
         flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        gap: 16,
+        paddingVertical: 16,
+    },
+    pageBtn: {
+        width: 36,
+        height: 36,
+        borderRadius: 18,
         alignItems: 'center',
         justifyContent: 'center',
-        gap: 16,
-        marginTop: 16,
     },
-    pageBtn: { padding: 8, borderRadius: 8 },
     pageBtnDisabled: { opacity: 0.5 },
     pageText: { fontSize: 14 },
 });
