@@ -46,7 +46,11 @@ export function LodgeComplaintModal({
         <Modal visible={visible} animationType="slide" transparent>
             <View style={styles.modalOverlay}>
                 <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
-                    <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={{ flexGrow: 1, justifyContent: 'flex-end' }}>
+                    <ScrollView
+                        keyboardShouldPersistTaps="handled"
+                        contentContainerStyle={{ flexGrow: 1, justifyContent: 'flex-end' }}
+                        showsVerticalScrollIndicator={false}
+                    >
                         <View style={[styles.modalContent, { backgroundColor: colors.card }]}>
                             <View style={styles.modalHeader}>
                                 <Text style={[styles.modalTitle, { color: colors.text }]}>Lodge Complaint</Text>

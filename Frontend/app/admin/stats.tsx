@@ -32,8 +32,12 @@ export default function AdminStatsScreen() {
     return (
         <View style={[styles.container, { backgroundColor: colors.background }]}>
             <PageHeader title="System Statistics" showBack />
-            <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}
-                refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[colors.primary]} tintColor={colors.primary} />}>
+            <ScrollView
+                style={styles.scrollView}
+                contentContainerStyle={styles.scrollContent}
+                showsVerticalScrollIndicator={false}
+                refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[colors.primary]} tintColor={colors.primary} />}
+            >
 
                 {/* Users Section */}
                 <View style={[styles.section, { backgroundColor: colors.card }]}>

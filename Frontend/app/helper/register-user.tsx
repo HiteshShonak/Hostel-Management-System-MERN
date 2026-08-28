@@ -49,7 +49,10 @@ export default function HelperRegisterUserScreen() {
         return (
             <View style={[styles.container, { backgroundColor: colors.background }]}>
                 <PageHeader title="Register User" showBack />
-                <ScrollView contentContainerStyle={styles.successContainer}>
+                <ScrollView
+                    contentContainerStyle={styles.successContainer}
+                    showsVerticalScrollIndicator={false}
+                >
                     <RegistrationSuccessCard data={successCard} onRegisterAnother={reset} />
                 </ScrollView>
             </View>

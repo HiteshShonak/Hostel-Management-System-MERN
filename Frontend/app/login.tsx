@@ -38,7 +38,10 @@ export default function LoginPage() {
             style={[styles.container, { backgroundColor: colors.background }]}
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         >
-            <ScrollView contentContainerStyle={styles.scrollContent}>
+            <ScrollView
+                contentContainerStyle={styles.scrollContent}
+                showsVerticalScrollIndicator={false}
+            >
                 <View style={styles.header}>
                     <View style={[styles.logoContainer, { backgroundColor: isDark ? 'rgba(29, 78, 216, 0.2)' : 'rgba(29, 78, 216, 0.1)' }]}>
                         <Ionicons name="home" size={48} color={colors.primary} />

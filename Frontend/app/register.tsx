@@ -70,7 +70,10 @@ export default function RegisterPage() {
             style={[styles.container, { backgroundColor: colors.background }]}
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         >
-            <ScrollView contentContainerStyle={styles.scrollContent}>
+            <ScrollView
+                contentContainerStyle={styles.scrollContent}
+                showsVerticalScrollIndicator={false}
+            >
                 <View style={styles.header}>
                     <Pressable onPress={() => router.back()} style={styles.backButton}>
                         <Ionicons name="arrow-back" size={24} color={colors.text} />

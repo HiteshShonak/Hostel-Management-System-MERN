@@ -38,7 +38,11 @@ export default function StudentDetailScreen() {
         <View style={[styles.container, { backgroundColor: colors.background }]}>
             <PageHeader title="Student Details" showBack />
 
-            <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
+            <ScrollView
+                style={styles.scrollView}
+                contentContainerStyle={styles.scrollContent}
+                showsVerticalScrollIndicator={false}
+            >
                 {/* Profile Card */}
                 <View style={[styles.profileCard, { backgroundColor: colors.card }]}>
                     <View style={[styles.avatar, { backgroundColor: colors.primary }]}>

@@ -129,8 +129,6 @@ export const adminService = {
     },
 
     updateSystemConfig: async (config: {
-        hostelCoords?: { latitude?: number; longitude?: number; name?: string };
-        geofenceRadiusMeters?: number;
         appConfig?: { maxGatePassDays?: number; maxPendingPasses?: number };
     }): Promise<void> => {
         await api.put('/admin/config', config);

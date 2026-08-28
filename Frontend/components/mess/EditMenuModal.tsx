@@ -37,6 +37,7 @@ export function EditMenuModal({
                     <ScrollView
                         keyboardShouldPersistTaps="handled"
                         contentContainerStyle={{ flexGrow: 1, justifyContent: 'flex-end' }}
+                        showsVerticalScrollIndicator={false}
                     >
                         <View style={[styles.modalContent, { backgroundColor: colors.card }]}>
                             <View style={styles.modalHeader}>

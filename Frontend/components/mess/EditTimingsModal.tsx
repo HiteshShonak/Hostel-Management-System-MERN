@@ -54,7 +54,11 @@ export function EditTimingsModal({
         <Modal visible={visible} animationType="slide" transparent>
             <View style={styles.modalOverlay}>
                 <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
-                    <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={styles.scrollContent}>
+                    <ScrollView
+                        keyboardShouldPersistTaps="handled"
+                        contentContainerStyle={styles.scrollContent}
+                        showsVerticalScrollIndicator={false}
+                    >
                         <View style={[styles.modalContent, { backgroundColor: colors.card }]}>
                             {/* Header */}
                             <View style={styles.modalHeader}>

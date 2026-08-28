@@ -599,7 +599,7 @@ export const getSystemConfig = asyncHandler(async (req: AuthRequest, res: Respon
 
 // Update system configuration settings
 export const updateSystemConfig = asyncHandler(async (req: AuthRequest, res: Response) => {
-    const { hostelCoords, geofenceRadiusMeters, appConfig, emergencyContacts } = req.body;
+    const { appConfig, emergencyContacts } = req.body;
 
     const SystemConfig = (await import('../models/SystemConfig')).default;
     const { logger } = await import('../utils/logger');
@@ -612,27 +612,6 @@ export const updateSystemConfig = asyncHandler(async (req: AuthRequest, res: Res
 
     // Track what changed for logging
     const changes: string[] = [];
-
-    // Update fields if provided
-    if (hostelCoords) {
-        if (hostelCoords.latitude !== undefined && hostelCoords.latitude !== config.hostelCoords.latitude) {
-            changes.push(`hostelCoords.latitude: ${config.hostelCoords.latitude} → ${hostelCoords.latitude}`);
-            config.hostelCoords.latitude = hostelCoords.latitude;
-        }
-        if (hostelCoords.longitude !== undefined && hostelCoords.longitude !== config.hostelCoords.longitude) {
-            changes.push(`hostelCoords.longitude: ${config.hostelCoords.longitude} → ${hostelCoords.longitude}`);
-            config.hostelCoords.longitude = hostelCoords.longitude;
-        }
-        if (hostelCoords.name && hostelCoords.name !== config.hostelCoords.name) {
-            changes.push(`hostelCoords.name: "${config.hostelCoords.name}" → "${hostelCoords.name}"`);
-            config.hostelCoords.name = hostelCoords.name;
-        }
-    }
-
-    if (geofenceRadiusMeters !== undefined && geofenceRadiusMeters !== config.geofenceRadiusMeters) {
-        changes.push(`geofenceRadiusMeters: ${config.geofenceRadiusMeters} → ${geofenceRadiusMeters}`);
-        config.geofenceRadiusMeters = geofenceRadiusMeters;
-    }
 
     if (appConfig) {
         if (appConfig.maxGatePassDays !== undefined && appConfig.maxGatePassDays !== config.appConfig.maxGatePassDays) {

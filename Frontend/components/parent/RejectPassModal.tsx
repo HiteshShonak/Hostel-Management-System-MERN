@@ -36,7 +36,11 @@ export function RejectPassModal({
         <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
             <View style={styles.modalOverlay}>
                 <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
-                    <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={styles.scrollContainer}>
+                    <ScrollView
+                        keyboardShouldPersistTaps="handled"
+                        contentContainerStyle={styles.scrollContainer}
+                        showsVerticalScrollIndicator={false}
+                    >
                         <View style={[styles.modalContent, { backgroundColor: colors.card }]}>
                             <Text style={[styles.modalTitle, { color: colors.text }]}>Reject Gate Pass</Text>
                             <Text style={[styles.modalSubtitle, { color: colors.textSecondary }]}>

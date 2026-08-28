@@ -65,7 +65,11 @@ export default function SettingsPage() {
                 style={{ flex: 1 }}
                 keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0}
             >
-                <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
+                <ScrollView
+                    style={styles.scrollView}
+                    contentContainerStyle={styles.scrollContent}
+                    showsVerticalScrollIndicator={false}
+                >
                     <View style={styles.content}>
                         {/* Change Password Section */}
                         <View style={styles.section}>

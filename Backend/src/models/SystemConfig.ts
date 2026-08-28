@@ -1,16 +1,10 @@
 // SystemConfig model - Singleton document for dynamic system settings
-// Allows admin to update hostel coordinates, app limits, emergency contacts, etc.
+// Allows admin to update app limits, emergency contacts, etc.
 
 import mongoose, { Schema } from 'mongoose';
 
 export interface ISystemConfig {
     _id: string;
-    hostelCoords: {
-        latitude: number;
-        longitude: number;
-        name: string;
-    };
-    geofenceRadiusMeters: number;
     appConfig: {
         maxGatePassDays: number;
         maxPendingPasses: number;
@@ -26,12 +20,6 @@ export interface ISystemConfig {
 
 const systemConfigSchema = new Schema<ISystemConfig>({
     _id: { type: String, default: 'system-config' },
-    hostelCoords: {
-        latitude: { type: Number, default: 28.986701 },
-        longitude: { type: Number, default: 77.152050 },
-        name: { type: String, default: 'Main Hostel Building' },
-    },
-    geofenceRadiusMeters: { type: Number, default: 50 },
     appConfig: {
         maxGatePassDays: { type: Number, default: 14 },
         maxPendingPasses: { type: Number, default: 3 },

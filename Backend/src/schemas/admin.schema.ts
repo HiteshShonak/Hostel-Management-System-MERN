@@ -31,16 +31,10 @@ export const userIdSchema = z.object({
     }),
 });
 
-// validates the complex nested system config update body
+// validates the system config update body
 // all fields are optional since the frontend sends partial updates
 export const updateSystemConfigSchema = z.object({
     body: z.object({
-        hostelCoords: z.object({
-            latitude: z.number().min(-90).max(90).optional(),
-            longitude: z.number().min(-180).max(180).optional(),
-            name: z.string().min(1).max(200).optional(),
-        }).optional(),
-        geofenceRadiusMeters: z.number().min(10).max(5000).optional(),
         appConfig: z.object({
             maxGatePassDays: z.number().int().min(1).max(90).optional(),
             maxPendingPasses: z.number().int().min(1).max(10).optional(),
