@@ -16,6 +16,11 @@ export const API_TIMEOUT = 15000;
 // check for new notifications every 30 secs
 export const NOTIFICATION_REFRESH_INTERVAL = 30000;
 
+// feature flags
+// shows a "Send Test Notification" button in Settings for verifying push delivery.
+// temporary — remove once push notifications are confirmed stable in production.
+export const FEATURE_TEST_NOTIFICATIONS = process.env.EXPO_PUBLIC_ENABLE_TEST_NOTIFICATIONS === 'true';
+
 // ui colors
 export const PRIMARY_COLOR = '#1d4ed8';
 export const DANGER_COLOR = '#ef4444';

@@ -26,6 +26,7 @@
         "backgroundColor": "#1d4ed8"
       },
       "package": "com.hostelhub.app",
+      "googleServicesFile": "./google-services.json",
       "permissions": [
         "android.permission.CAMERA",
         "android.permission.POST_NOTIFICATIONS",
